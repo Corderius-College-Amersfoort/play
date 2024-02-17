@@ -707,7 +707,9 @@ Each value varies from 0 to 255.
 Returns a random position on the screen. A position object has an `x` and `y` component.
 
 ```python
-text = play.text('WOO')
+text = play.Text('WOO')
+
+
 @play.repeat_forever
 def do():
     text.go_to(play.random_position())

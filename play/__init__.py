@@ -1,3 +1,4 @@
-__version__ = '0.0.23'
+__version__ = '1.0.0'
 
 from .play import *
+from .objects import *
