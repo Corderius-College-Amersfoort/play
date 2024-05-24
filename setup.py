@@ -9,14 +9,14 @@ README = (HERE / "README.md").read_text()
 
 # This call to setup() does all the work
 setup(
-    name="python-play",
+    name="corderius-play",
     version="1.0.0",
     description="The easiest way to make games and media projects in Python.",
     long_description=README,
     long_description_content_type="text/markdown",
-    url="https://github.com/replit/play",
-    author="Repl.it",
-    author_email="gchiacchieri@gmail.com",
+    url="https://github.com/Corderius-College-Amersfoort/play",
+    author="koen1711",
+    author_email="koenvurk1711@gmail.com",
     license="MIT",
     classifiers=[
         "License :: OSI Approved :: MIT License",
