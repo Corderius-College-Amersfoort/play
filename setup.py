@@ -9,7 +9,7 @@ README = (HERE / "README.md").read_text()
 
 # This call to setup() does all the work
 setup(
-    name="python-play",
+    name="corderius-play",
     version="1.0.0",
     description="The easiest way to make games and media projects in Python.",
     long_description=README,
