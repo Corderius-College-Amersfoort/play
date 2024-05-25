@@ -1,3 +1,5 @@
+"""This module contains the Box class, which represents a box in the game."""
+
 import pygame
 from .sprite import Sprite
 from ..all_sprites import all_sprites
@@ -5,7 +7,7 @@ from ..color import color_name_to_rgb as _color_name_to_rgb
 
 
 class Box(Sprite):
-    def __init__(
+    def __init__( # pylint: disable=too-many-arguments
         self,
         color="black",
         x=0,
@@ -42,7 +44,7 @@ class Box(Sprite):
 
     def _compute_primary_surface(self):
         self._primary_pygame_surface = pygame.Surface(
-            (self._width, self._height), pygame.SRCALPHA
+            (self._width, self._height), pygame.SRCALPHA # pylint: disable=no-member
         )
 
         if self._border_width and self._border_color:
@@ -127,7 +129,7 @@ class Box(Sprite):
         )
 
 
-def new_box(
+def new_box( # pylint: disable=too-many-arguments
     color="black",
     x=0,
     y=0,

@@ -1,3 +1,5 @@
+"""This module contains a lot of color-related code, including the color_name_to_rgb function."""
+
 from .exceptions import Oops
 
 # most color names from https://upload.wikimedia.org/wikipedia/commons/2/2b/SVG_Recognized_color_keyword_names.svg
@@ -164,7 +166,7 @@ def color_name_to_rgb(name):
 
     are all valid and will produce the rgb value for lightblue.
     """
-    if type(name) == tuple:
+    if isinstance(name, tuple):
         return name
 
     try:

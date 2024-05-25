@@ -1,0 +1,5 @@
+[tool.pylint.MASTER]
+max-line-length = 120
+disable = ["missing-function-docstring", "missing-class-docstring", "duplicate-code", "protected-access", "global-statement","too-many-instance-attributes", "fixme"]
+good-names = ["x","y","i","dx","dy","x1","y1","a","b"]
+

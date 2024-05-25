@@ -1,11 +1,14 @@
-from ..all_sprites import all_sprites
-import pygame
-from ..exceptions import Oops, Hmm
-import os as _os
+"""This module contains the base sprite class for all objects in the game."""
+
 import math as _math
-import pymunk as _pymunk
-from ..physics import physics_space, _Physics
 import warnings as _warnings
+import os as _os
+import pymunk as _pymunk
+import pygame
+
+from ..all_sprites import all_sprites
+from ..exceptions import Oops, Hmm
+from ..physics import physics_space, _Physics
 from ..clamp import _clamp
 from ..io import screen
 from ..async_helpers import _make_async
@@ -20,7 +23,7 @@ def _sprite_touching_sprite(a, b):
     return True
 
 
-def _point_touching_sprite(point, sprite):
+def point_touching_sprite(point, sprite):
     # todo: custom code for circle, line, rotated rectangley sprites
     return (
         sprite.left <= point.x <= sprite.right
@@ -28,8 +31,8 @@ def _point_touching_sprite(point, sprite):
     )
 
 
-class Sprite(object):
-    def __init__(self, image=None, x=0, y=0, size=100, angle=0, transparency=100):
+class Sprite(): # pylint: disable=attribute-defined-outside-init, too-many-public-methods
+    def __init__(self, image=None, x=0, y=0, size=100, angle=0, transparency=100): # pylint: disable=too-many-arguments
         self._image = image or _os.path.join(
             _os.path.split(__file__)[0], "blank_image.png"
         )
@@ -52,7 +55,7 @@ class Sprite(object):
     def _compute_primary_surface(self):
         try:
             self._primary_pygame_surface = pygame.image.load(_os.path.join(self._image))
-        except pygame.error as exc:
+        except pygame.error as exc: # pylint: disable=no-member
             raise Oops(
                 f"""We couldn't find the image file you provided named "{self._image}".
 If the file is in a folder, make sure you add the folder name, too."""
@@ -79,7 +82,7 @@ If the file is in a folder, make sure you add the folder name, too."""
                     array.dtype
                 )  # modify surface pixels in-place
                 del array  # I think pixels are written when array leaves memory, so delete it explicitly here
-            except Exception as e:
+            except Exception: # pylint: disable=broad-except
                 # this works for images without alpha pixels in them
                 self._secondary_pygame_surface.set_alpha(
                     round((self._transparency / 100.0) * 255)
@@ -236,17 +239,16 @@ You might want to look in your code where you're setting transparency and make s
         self._is_hidden = not show
 
     def is_touching(self, sprite_or_point):
-        rect = self._secondary_pygame_surface.get_rect()
+        self._secondary_pygame_surface.get_rect()
         if isinstance(sprite_or_point, Sprite):
             return _sprite_touching_sprite(sprite_or_point, self)
-        else:
-            return _point_touching_sprite(sprite_or_point, self)
+        return point_touching_sprite(sprite_or_point, self)
 
     def point_towards(self, x, y=None):
         try:
             x, y = x.x, x.y
         except AttributeError:
-            x, y = x, y
+            pass
         self.angle = _math.degrees(_math.atan2(y - self.y, x - self.x))
 
     def go_to(self, x=None, y=None):
@@ -388,7 +390,7 @@ You might want to look in your code where you're setting transparency and make s
     #     elif self.physics and name in :
     #         return setattr(self.physics, name, value)
 
-    def start_physics(
+    def start_physics( # pylint: disable=too-many-arguments
         self,
         can_move=True,
         stable=False,

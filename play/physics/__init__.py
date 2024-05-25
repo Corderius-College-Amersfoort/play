@@ -1,23 +1,25 @@
-import pymunk as _pymunk
+"""This handles the physics of the game."""
+
 import math as _math
+import pymunk as _pymunk
 from ..clamp import _clamp
 
 _SPEED_MULTIPLIER = 10
 
 
-class _Physics(object):
+class _Physics():
 
-    def __init__(
-        self,
-        sprite,
-        can_move,
-        stable,
-        x_speed,
-        y_speed,
-        obeys_gravity,
-        bounciness,
-        mass,
-        friction,
+    def __init__( # pylint: disable=too-many-arguments
+            self,
+            sprite,
+            can_move,
+            stable,
+            x_speed,
+            y_speed,
+            obeys_gravity,
+            bounciness,
+            mass,
+            friction,
     ):
         """
 
@@ -51,7 +53,7 @@ class _Physics(object):
 
         self._make_pymunk()
 
-    def _make_pymunk(self):
+    def _make_pymunk(self): # pylint: disable=too-many-branches
         mass = self.mass if self.can_move else 0
 
         # non-moving line shapes are platforms and it's easier to take care of them less-generically
@@ -65,7 +67,7 @@ class _Physics(object):
             )
         else:
             if self.stable:
-                moment = _pymunk.inf
+                moment = float("inf")
             elif self.sprite.__class__ == "Circle":
                 moment = _pymunk.moment_for_circle(mass, 0, self.sprite.radius, (0, 0))
             elif self.sprite.__class__ == "Line":
@@ -128,7 +130,7 @@ class _Physics(object):
 
     def clone(self, sprite):
         # TODO: finish filling out params
-        return self.__class__(
+        return self.__class__( # pylint: disable=no-value-for-parameter
             sprite=sprite,
             can_move=self.can_move,
             x_speed=self.x_speed,
@@ -222,28 +224,28 @@ class _Physics(object):
             self._pymunk_body.velocity_func = lambda body, gravity, damping, dt: None
 
 
-class _Gravity(object):
+class _Gravity(): # pylint: disable=too-few-public-methods
     # TODO: make this default to vertical if horizontal is 0?
     vertical = -100 * _SPEED_MULTIPLIER
     horizontal = 0
 
 
-gravity = _Gravity()
+GRAVITY = _Gravity()
 physics_space = _pymunk.Space()
 physics_space.sleep_time_threshold = 0.5
 physics_space.idle_speed_threshold = (
     0  # pymunk estimates good threshold based on gravity
 )
-physics_space.gravity = gravity.horizontal, gravity.vertical
+physics_space.gravity = GRAVITY.horizontal, GRAVITY.vertical
 
 
 def set_gravity(vertical=-100, horizontal=None):
-    global gravity
-    gravity.vertical = vertical * _SPEED_MULTIPLIER
-    if horizontal != None:
-        gravity.horizontal = horizontal * _SPEED_MULTIPLIER
+    global GRAVITY # pylint: disable=global-variable-not-assigned
+    GRAVITY.vertical = vertical * _SPEED_MULTIPLIER
+    if horizontal is not None:
+        GRAVITY.horizontal = horizontal * _SPEED_MULTIPLIER
 
-    physics_space.gravity = gravity.horizontal, gravity.vertical
+    physics_space.gravity = GRAVITY.horizontal, GRAVITY.vertical
 
 
 _NUM_SIMULATION_STEPS = 3
