@@ -18,6 +18,7 @@ from .io import screen
 from .physics import simulate_physics
 from .all_sprites import all_sprites
 from .objects import Line
+from .objects.sprite import _point_touching_sprite
 
 # _pygame_display = pygame.display.set_mode((screen_width, screen_height), pygame.DOUBLEBUF | pygame.OPENGL)
 _pygame_display = pygame.display.set_mode((screen.width, screen.height), pygame.DOUBLEBUF)

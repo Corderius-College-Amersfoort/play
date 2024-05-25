@@ -9,13 +9,17 @@ from ..color import color_name_to_rgb as _color_name_to_rgb
 class Text(Sprite):
     def __init__(self, words='hi :)', x=0, y=0, font=None, font_size=50, color='black', angle=0, transparency=100,
                  size=100):
-        super().__init__(x, y, size, angle, transparency)
-        self._words = words
-        self._x = x
-        self._y = y
         self._font = font
         self._font_size = font_size
+        self._words = words
         self._color = color
+        super().__init__(x, y, size, angle, transparency)
+
+        self._x = x
+        self._y = y
+
+
+
         self._size = size
         self._angle = angle
         self.transparency = transparency
