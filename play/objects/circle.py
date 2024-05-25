@@ -1,3 +1,5 @@
+"""This module defines the Circle class, which represents a circle in the game."""
+
 import pygame
 from .sprite import Sprite
 from ..all_sprites import all_sprites
@@ -5,8 +7,18 @@ from ..color import color_name_to_rgb as _color_name_to_rgb
 
 
 class Circle(Sprite):
-    def __init__(self, color='black', x=0, y=0, radius=100, border_color='light blue', border_width=0, transparency=100,
-                 size=100, angle=0):
+    def __init__( # pylint: disable=too-many-arguments, super-init-not-called
+        self,
+        color="black",
+        x=0,
+        y=0,
+        radius=100,
+        border_color="light blue",
+        border_width=0,
+        transparency=100,
+        size=100,
+        angle=0,
+    ):
         self._x = x
         self._y = y
         self._color = color
@@ -28,25 +40,44 @@ class Circle(Sprite):
         all_sprites.append(self)
 
     def clone(self):
-        return self.__class__(color=self.color, radius=self.radius, border_color=self.border_color,
-                              border_width=self.border_width, **self._common_properties())
+        return self.__class__(
+            color=self.color,
+            radius=self.radius,
+            border_color=self.border_color,
+            border_width=self.border_width,
+            **self._common_properties()
+        )
 
     def _compute_primary_surface(self):
         total_diameter = (self.radius + self._border_width) * 2
-        self._primary_pygame_surface = pygame.Surface((total_diameter, total_diameter), pygame.SRCALPHA)
+        self._primary_pygame_surface = pygame.Surface(
+            (total_diameter, total_diameter), pygame.SRCALPHA # pylint: disable=no-member
+        )
 
         center = self._radius + self._border_width
 
         if self._border_width and self._border_color:
             # draw border circle
-            pygame.draw.circle(self._primary_pygame_surface, _color_name_to_rgb(self._border_color), (center, center),
-                               self._radius)
+            pygame.draw.circle(
+                self._primary_pygame_surface,
+                _color_name_to_rgb(self._border_color),
+                (center, center),
+                self._radius,
+            )
             # draw fill circle over border circle
-            pygame.draw.circle(self._primary_pygame_surface, _color_name_to_rgb(self._color), (center, center),
-                               self._radius - self._border_width)
+            pygame.draw.circle(
+                self._primary_pygame_surface,
+                _color_name_to_rgb(self._color),
+                (center, center),
+                self._radius - self._border_width,
+            )
         else:
-            pygame.draw.circle(self._primary_pygame_surface, _color_name_to_rgb(self._color), (center, center),
-                               self._radius)
+            pygame.draw.circle(
+                self._primary_pygame_surface,
+                _color_name_to_rgb(self._color),
+                (center, center),
+                self._radius,
+            )
 
         self._should_recompute_primary_surface = False
         self._compute_secondary_surface(force=True)
@@ -94,7 +125,25 @@ class Circle(Sprite):
         self._should_recompute_primary_surface = True
 
 
-def new_circle(color='black', x=0, y=0, radius=100, border_color='light blue', border_width=0, transparency=100,
-               size=100, angle=0):
-    return Circle(color=color, x=x, y=y, radius=radius, border_color=border_color, border_width=border_width,
-                  transparency=transparency, size=size, angle=angle)
+def new_circle( # pylint: disable=too-many-arguments
+    color="black",
+    x=0,
+    y=0,
+    radius=100,
+    border_color="light blue",
+    border_width=0,
+    transparency=100,
+    size=100,
+    angle=0,
+):
+    return Circle(
+        color=color,
+        x=x,
+        y=y,
+        radius=radius,
+        border_color=border_color,
+        border_width=border_width,
+        transparency=transparency,
+        size=size,
+        angle=angle,
+    )
