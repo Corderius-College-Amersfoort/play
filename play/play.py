@@ -14,15 +14,14 @@ from .keypress import \
 from .color import color_name_to_rgb as _color_name_to_rgb
 from .exceptions import Oops, Hmm
 import math as _math
-from .io import screen
+from .io import screen, _pygame_display
 from .physics import simulate_physics
 from .all_sprites import all_sprites
 from .objects import Line
 from .objects.sprite import _point_touching_sprite
 
 # _pygame_display = pygame.display.set_mode((screen_width, screen_height), pygame.DOUBLEBUF | pygame.OPENGL)
-_pygame_display = pygame.display.set_mode((screen.width, screen.height), pygame.DOUBLEBUF)
-pygame.display.set_caption("Python Play")
+
 
 
 class _Mouse(object):
