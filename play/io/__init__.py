@@ -8,6 +8,7 @@ from sys import platform
 
 _pygame_display = None
 
+
 class Screen(object):
     def __init__(self, width=800, height=600):
         global _pygame_display
@@ -77,13 +78,19 @@ class Screen(object):
             return
         self._fullscreen = True
         window = Window.from_display_module()
-        full_screen_size = (pygame.display.Info().current_w, pygame.display.Info().current_h)
-        if platform != 'linux':
+        full_screen_size = (
+            pygame.display.Info().current_w,
+            pygame.display.Info().current_h,
+        )
+        if platform != "linux":
             pygame.display.toggle_fullscreen()  # works for entering and exiting fullscreen, except in linux
-            window.position = (full_screen_size[i] / 2 - window.size[i] / 2 for i in
-                               range(2))  # reset X and Y position of the window to original instead of top left
+            window.position = (
+                full_screen_size[i] / 2 - window.size[i] / 2 for i in range(2)
+            )  # reset X and Y position of the window to original instead of top left
         else:
-            _pygame_display = pygame.display.set_mode((self.width, self.height), SCALED + NOFRAME + FULLSCREEN, 32)  # all flags are necessary
+            _pygame_display = pygame.display.set_mode(
+                (self.width, self.height), SCALED + NOFRAME + FULLSCREEN, 32
+            )  # all flags are necessary
 
     def disable_fullscreen(self):
         global _pygame_display
@@ -101,16 +108,24 @@ screen = Screen()
 def _create_wall(a, b):
     segment = _pymunk.Segment(physics_space.static_body, a, b, 0.0)
     segment.elasticity = 1.0
-    segment.friction = .1
+    segment.friction = 0.1
     physics_space.add(segment)
     return segment
 
 
 def create_walls():
-    _walls.append(_create_wall([screen.left, screen.top], [screen.right, screen.top]))  # top
-    _walls.append(_create_wall([screen.left, screen.bottom], [screen.right, screen.bottom]))  # bottom
-    _walls.append(_create_wall([screen.left, screen.bottom], [screen.left, screen.top]))  # left
-    _walls.append(_create_wall([screen.right, screen.bottom], [screen.right, screen.top]))  # right
+    _walls.append(
+        _create_wall([screen.left, screen.top], [screen.right, screen.top])
+    )  # top
+    _walls.append(
+        _create_wall([screen.left, screen.bottom], [screen.right, screen.bottom])
+    )  # bottom
+    _walls.append(
+        _create_wall([screen.left, screen.bottom], [screen.left, screen.top])
+    )  # left
+    _walls.append(
+        _create_wall([screen.right, screen.bottom], [screen.right, screen.top])
+    )  # right
 
 
 def remove_walls():

@@ -5,8 +5,19 @@ import math as _math
 
 
 class Line(Sprite):
-    def __init__(self, color='black', x=0, y=0, length=None, angle=None, thickness=1, x1=None, y1=None,
-                 transparency=100, size=100):
+    def __init__(
+        self,
+        color="black",
+        x=0,
+        y=0,
+        length=None,
+        angle=None,
+        thickness=1,
+        x1=None,
+        y1=None,
+        transparency=100,
+        size=100,
+    ):
         super().__init__(x, y, size, angle, transparency)
         self._x = x
         self._y = y
@@ -41,8 +52,12 @@ class Line(Sprite):
         all_sprites.append(self)
 
     def clone(self):
-        return self.__class__(color=self.color, length=self.length, thickness=self.thickness,
-                              **self._common_properties())
+        return self.__class__(
+            color=self.color,
+            length=self.length,
+            thickness=self.thickness,
+            **self._common_properties()
+        )
 
     def _compute_primary_surface(self):
         # Make a surface that just contains the line and no white-space around the line.
@@ -68,7 +83,9 @@ class Line(Sprite):
         self._secondary_pygame_surface = self._primary_pygame_surface.copy()
 
         if force or self._transparency != 100:
-            self._secondary_pygame_surface.set_alpha(round((self._transparency / 100.) * 255))
+            self._secondary_pygame_surface.set_alpha(
+                round((self._transparency / 100.0) * 255)
+            )
 
         self._should_recompute_secondary_surface = False
 
@@ -94,7 +111,10 @@ class Line(Sprite):
 
     def _calc_endpoint(self):
         radians = _math.radians(self._angle)
-        return self._length * _math.cos(radians) + self.x, self._length * _math.sin(radians) + self.y
+        return (
+            self._length * _math.cos(radians) + self.x,
+            self._length * _math.sin(radians) + self.y,
+        )
 
     ##### length #####
     @property
@@ -124,7 +144,7 @@ class Line(Sprite):
         dy = self.y1 - self.y
 
         # TODO: this doesn't work at all
-        return _math.sqrt(dx ** 2 + dy ** 2), _math.degrees(_math.atan2(dy, dx))
+        return _math.sqrt(dx**2 + dy**2), _math.degrees(_math.atan2(dy, dx))
 
     ##### x1 #####
     @property
@@ -149,7 +169,27 @@ class Line(Sprite):
         self._should_recompute_primary_surface = True
 
 
-def new_line(color='black', x=0, y=0, length=None, angle=None, thickness=1, x1=None, y1=None, transparency=100,
-             size=100):
-    return Line(color=color, x=x, y=y, length=length, angle=angle, thickness=thickness, x1=x1, y1=y1,
-                transparency=transparency, size=size)
+def new_line(
+    color="black",
+    x=0,
+    y=0,
+    length=None,
+    angle=None,
+    thickness=1,
+    x1=None,
+    y1=None,
+    transparency=100,
+    size=100,
+):
+    return Line(
+        color=color,
+        x=x,
+        y=y,
+        length=length,
+        angle=angle,
+        thickness=thickness,
+        x1=x1,
+        y1=y1,
+        transparency=transparency,
+        size=size,
+    )

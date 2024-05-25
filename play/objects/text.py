@@ -7,8 +7,18 @@ from ..color import color_name_to_rgb as _color_name_to_rgb
 
 
 class Text(Sprite):
-    def __init__(self, words='hi :)', x=0, y=0, font=None, font_size=50, color='black', angle=0, transparency=100,
-                 size=100):
+    def __init__(
+        self,
+        words="hi :)",
+        x=0,
+        y=0,
+        font=None,
+        font_size=50,
+        color="black",
+        angle=0,
+        transparency=100,
+        size=100,
+    ):
         self._font = font
         self._font_size = font_size
         self._words = words
@@ -17,8 +27,6 @@ class Text(Sprite):
 
         self._x = x
         self._y = y
-
-
 
         self._size = size
         self._angle = angle
@@ -35,19 +43,28 @@ class Text(Sprite):
         all_sprites.append(self)
 
     def clone(self):
-        return self.__class__(words=self.words, font=self.font, font_size=self.font_size, color=self.color,
-                              **self._common_properties())
+        return self.__class__(
+            words=self.words,
+            font=self.font,
+            font_size=self.font_size,
+            color=self.color,
+            **self._common_properties(),
+        )
 
     def _compute_primary_surface(self):
         try:
             self._pygame_font = pygame.font.Font(self._font, self._font_size)
         except:
-            _warnings.warn(f"""We couldn't find the font file '{self._font}'. We'll use the default font instead for now.
+            _warnings.warn(
+                f"""We couldn't find the font file '{self._font}'. We'll use the default font instead for now.
 To fix this, either set the font to None, or make sure you have a font file (usually called something like Arial.ttf) in your project folder.\n""",
-                           Hmm)
+                Hmm,
+            )
             self._pygame_font = pygame.font.Font(None, self._font_size)
 
-        self._primary_pygame_surface = self._pygame_font.render(self._words, True, _color_name_to_rgb(self._color))
+        self._primary_pygame_surface = self._pygame_font.render(
+            self._words, True, _color_name_to_rgb(self._color)
+        )
         self._should_recompute_primary_surface = False
 
         self._compute_secondary_surface(force=True)
@@ -89,6 +106,25 @@ To fix this, either set the font to None, or make sure you have a font file (usu
         self._should_recompute_primary_surface = True
 
 
-def new_text(words='hi :)', x=0, y=0, font=None, font_size=50, color='black', angle=0, transparency=100, size=100):
-    return Text(words=words, x=x, y=y, font=font, font_size=font_size, color=color, angle=angle,
-                transparency=transparency, size=size)
+def new_text(
+    words="hi :)",
+    x=0,
+    y=0,
+    font=None,
+    font_size=50,
+    color="black",
+    angle=0,
+    transparency=100,
+    size=100,
+):
+    return Text(
+        words=words,
+        x=x,
+        y=y,
+        font=font,
+        font_size=font_size,
+        color=color,
+        angle=angle,
+        transparency=transparency,
+        size=size,
+    )

@@ -15,18 +15,24 @@ def _sprite_touching_sprite(a, b):
     # todo: custom code for circle, line, rotated rectangley sprites
     # use physics engine if both sprites have physics on
     # if a.physics and b.physics:
-    if a.left >= b.right or a.right <= b.left or a.top <= b.bottom or a.bottom >= b.top: return False
+    if a.left >= b.right or a.right <= b.left or a.top <= b.bottom or a.bottom >= b.top:
+        return False
     return True
 
 
 def _point_touching_sprite(point, sprite):
     # todo: custom code for circle, line, rotated rectangley sprites
-    return sprite.left <= point.x <= sprite.right and sprite.bottom <= point.y <= sprite.top
+    return (
+        sprite.left <= point.x <= sprite.right
+        and sprite.bottom <= point.y <= sprite.top
+    )
 
 
 class Sprite(object):
     def __init__(self, image=None, x=0, y=0, size=100, angle=0, transparency=100):
-        self._image = image or _os.path.join(_os.path.split(__file__)[0], 'blank_image.png')
+        self._image = image or _os.path.join(
+            _os.path.split(__file__)[0], "blank_image.png"
+        )
         self._x = x
         self._y = y
         self._angle = angle
@@ -47,9 +53,13 @@ class Sprite(object):
         try:
             self._primary_pygame_surface = pygame.image.load(_os.path.join(self._image))
         except pygame.error as exc:
-            raise Oops(f"""We couldn't find the image file you provided named "{self._image}".
-If the file is in a folder, make sure you add the folder name, too.""") from exc
-        self._primary_pygame_surface.set_colorkey((255, 255, 255, 255))  # set background to transparent
+            raise Oops(
+                f"""We couldn't find the image file you provided named "{self._image}".
+If the file is in a folder, make sure you add the folder name, too."""
+            ) from exc
+        self._primary_pygame_surface.set_colorkey(
+            (255, 255, 255, 255)
+        )  # set background to transparent
 
         self._should_recompute_primary_surface = False
 
@@ -65,24 +75,32 @@ If the file is in a folder, make sure you add the folder name, too.""") from exc
             try:
                 # for text and images with transparent pixels
                 array = pygame.surfarray.pixels_alpha(self._secondary_pygame_surface)
-                array[:, :] = (array[:, :] * (self._transparency / 100.)).astype(
-                    array.dtype)  # modify surface pixels in-place
+                array[:, :] = (array[:, :] * (self._transparency / 100.0)).astype(
+                    array.dtype
+                )  # modify surface pixels in-place
                 del array  # I think pixels are written when array leaves memory, so delete it explicitly here
             except Exception as e:
                 # this works for images without alpha pixels in them
-                self._secondary_pygame_surface.set_alpha(round((self._transparency / 100.) * 255))
+                self._secondary_pygame_surface.set_alpha(
+                    round((self._transparency / 100.0) * 255)
+                )
 
         # scale
         if (self.size != 100) or force:
-            ratio = self.size / 100.
+            ratio = self.size / 100.0
             self._secondary_pygame_surface = pygame.transform.scale(
                 self._secondary_pygame_surface,
-                (round(self._secondary_pygame_surface.get_width() * ratio),  # width
-                 round(self._secondary_pygame_surface.get_height() * ratio)))  # height
+                (
+                    round(self._secondary_pygame_surface.get_width() * ratio),  # width
+                    round(self._secondary_pygame_surface.get_height() * ratio),
+                ),
+            )  # height
 
         # rotate
         if (self.angle != 0) or force:
-            self._secondary_pygame_surface = pygame.transform.rotate(self._secondary_pygame_surface, self._angle)
+            self._secondary_pygame_surface = pygame.transform.rotate(
+                self._secondary_pygame_surface, self._angle
+            )
 
         self._should_recompute_secondary_surface = False
 
@@ -110,7 +128,10 @@ If the file is in a folder, make sure you add the folder name, too.""") from exc
             self.physics._pymunk_body.position = self._x, self._y
             if prev_x != _x:
                 # setting velocity makes the simulation more realistic usually
-                self.physics._pymunk_body.velocity = _x - prev_x, self.physics._pymunk_body.velocity.y
+                self.physics._pymunk_body.velocity = (
+                    _x - prev_x,
+                    self.physics._pymunk_body.velocity.y,
+                )
             if self.physics._pymunk_body.body_type == _pymunk.Body.STATIC:
                 physics_space.reindex_static()
 
@@ -126,7 +147,10 @@ If the file is in a folder, make sure you add the folder name, too.""") from exc
             self.physics._pymunk_body.position = self._x, self._y
             if prev_y != _y:
                 # setting velocity makes the simulation more realistic usually
-                self.physics._pymunk_body.velocity = self.physics._pymunk_body.velocity.x, _y - prev_y
+                self.physics._pymunk_body.velocity = (
+                    self.physics._pymunk_body.velocity.x,
+                    _y - prev_y,
+                )
             if self.physics._pymunk_body.body_type == _pymunk.Body.STATIC:
                 physics_space.reindex_static()
 
@@ -137,12 +161,17 @@ If the file is in a folder, make sure you add the folder name, too.""") from exc
     @transparency.setter
     def transparency(self, alpha):
         if not isinstance(alpha, float) and not isinstance(alpha, int):
-            raise Oops(f"""Looks like you're trying to set {self}'s transparency to '{alpha}', which isn't a number.
+            raise Oops(
+                f"""Looks like you're trying to set {self}'s transparency to '{alpha}', which isn't a number.
 Try looking in your code for where you're setting transparency for {self} and change it a number.
-""")
+"""
+            )
         if alpha > 100 or alpha < 0:
-            _warnings.warn(f"""The transparency setting for {self} is being set to {alpha} and it should be between 0 and 100.
-You might want to look in your code where you're setting transparency and make sure it's between 0 and 100.  """, Hmm)
+            _warnings.warn(
+                f"""The transparency setting for {self} is being set to {alpha} and it should be between 0 and 100.
+You might want to look in your code where you're setting transparency and make sure it's between 0 and 100.  """,
+                Hmm,
+            )
 
         self._transparency = _clamp(alpha, 0, 100)
         self._should_recompute_secondary_surface = True
@@ -231,7 +260,7 @@ You might want to look in your code where you're setting transparency and make s
             async def do():
                 text.go_to(play.mouse)
         """
-        assert (not x is None)
+        assert not x is None
 
         try:
             # users can call e.g. sprite.go_to(play.mouse), so x will be an object with x and y
@@ -242,7 +271,7 @@ You might want to look in your code where you're setting transparency and make s
             self.y = y
 
     def distance_to(self, x, y=None):
-        assert (not x is None)
+        assert not x is None
 
         try:
             # x can either be a number or a sprite. If it's a sprite:
@@ -255,7 +284,7 @@ You might want to look in your code where you're setting transparency and make s
         dx = self.x - x1
         dy = self.y - y1
 
-        return _math.sqrt(dx ** 2 + dy ** 2)
+        return _math.sqrt(dx**2 + dy**2)
 
     def remove(self):
         if self.physics:
@@ -303,10 +332,18 @@ You might want to look in your code where you're setting transparency and make s
         self.y = y + self.height / 2
 
     def _pygame_x(self):
-        return self.x + (screen.width / 2.) - (self._secondary_pygame_surface.get_width() / 2.)
+        return (
+            self.x
+            + (screen.width / 2.0)
+            - (self._secondary_pygame_surface.get_width() / 2.0)
+        )
 
     def _pygame_y(self):
-        return (screen.height / 2.) - self.y - (self._secondary_pygame_surface.get_height() / 2.)
+        return (
+            (screen.height / 2.0)
+            - self.y
+            - (self._secondary_pygame_surface.get_height() / 2.0)
+        )
 
     # @decorator
     def when_clicked(self, callback, call_with_sprite=False):
@@ -326,7 +363,13 @@ You might want to look in your code where you're setting transparency and make s
 
     def _common_properties(self):
         # used with inheritance to clone
-        return {'x': self.x, 'y': self.y, 'size': self.size, 'transparency': self.transparency, 'angle': self.angle}
+        return {
+            "x": self.x,
+            "y": self.y,
+            "size": self.size,
+            "transparency": self.transparency,
+            "angle": self.angle,
+        }
 
     def clone(self):
         # TODO: make work with physics
@@ -345,8 +388,17 @@ You might want to look in your code where you're setting transparency and make s
     #     elif self.physics and name in :
     #         return setattr(self.physics, name, value)
 
-    def start_physics(self, can_move=True, stable=False, x_speed=0, y_speed=0, obeys_gravity=True, bounciness=1.0,
-                      mass=10, friction=0.1):
+    def start_physics(
+        self,
+        can_move=True,
+        stable=False,
+        x_speed=0,
+        y_speed=0,
+        obeys_gravity=True,
+        bounciness=1.0,
+        mass=10,
+        friction=0.1,
+    ):
         if not self.physics:
             self.physics = _Physics(
                 self,
