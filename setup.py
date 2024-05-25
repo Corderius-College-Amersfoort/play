@@ -1,5 +1,5 @@
 import pathlib
-from setuptools import setup
+from setuptools import setup, find_packages
 
 # The directory containing this file
 HERE = pathlib.Path(__file__).parent
@@ -24,7 +24,7 @@ setup(
         "Programming Language :: Python :: 3.7",
     ],
     python_requires=">=3.5",
-    packages=["play"],
+    packages=find_packages(),
     include_package_data=True,
     install_requires=["pygame", "numpy", "pymunk"],
 )
