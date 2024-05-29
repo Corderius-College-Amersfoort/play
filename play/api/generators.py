@@ -1,9 +1,6 @@
 """Generators for creating new objects."""
 
-import asyncio as _asyncio
-import random as _random
-
-from ..objects import Box, Circle, Line, Text, Group
+from ..objects import Box, Circle, Line, Text
 
 
 def new_text(  # pylint: disable=too-many-arguments

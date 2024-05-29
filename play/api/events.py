@@ -5,9 +5,7 @@ import math as _math
 
 import pygame  # pylint: disable=import-error
 
-from ..globals import all_sprites
-from ..utils.async_helpers import _make_async
-from ..utils import color_name_to_rgb as _color_name_to_rgb
+from ..globals import all_sprites, backdrop
 from ..io import screen, PYGAME_DISPLAY
 from ..io.keypress import (
     pygame_key_to_name as _pygame_key_to_name,
@@ -23,7 +21,8 @@ from ..io.mouse import mouse
 from ..objects.line import Line
 from ..objects.sprite import point_touching_sprite
 from ..physics import simulate_physics
-from ..globals import BACKDROP
+from ..utils import color_name_to_rgb as _color_name_to_rgb
+from ..utils.async_helpers import _make_async
 
 _when_program_starts_callbacks = []
 _clock = pygame.time.Clock()
@@ -128,7 +127,7 @@ def _game_loop():
     # 10. render sprites (with correct z-order)
     # 11. call event loop again
 
-    PYGAME_DISPLAY.fill(_color_name_to_rgb(BACKDROP))
+    PYGAME_DISPLAY.fill(_color_name_to_rgb(backdrop))
 
     # BACKGROUND COLOR
     # note: cannot use screen.fill((1, 1, 1)) because pygame's screen

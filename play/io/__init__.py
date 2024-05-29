@@ -19,7 +19,7 @@ class Screen:
         self._width = width
         self._height = height
         PYGAME_DISPLAY = pygame.display.set_mode(
-            (width, height), pygame.DOUBLEBUF
+            (width, height), pygame.DOUBLEBUF  # pylint: disable=no-member
         )  # pylint: disable=no-member
         pygame.display.set_caption("Python Play")
         self._fullscreen = False
@@ -96,7 +96,7 @@ class Screen:
         else:
             PYGAME_DISPLAY = pygame.display.set_mode(
                 (self.width, self.height),
-                SCALED + NOFRAME + FULLSCREEN,
+                SCALED + NOFRAME + FULLSCREEN,  # pylint: disable=undefined-variable
                 32,  # pylint: disable=undefined-variable
             )  # all flags are necessary
 

@@ -2,9 +2,14 @@
 
 import asyncio as _asyncio
 import logging as _logging
+
 import pygame  # pylint: disable=import-error
+
 from .events import _when_program_starts_callbacks, _game_loop, _loop
 from ..utils import color_name_to_rgb as _color_name_to_rgb
+from ..globals import backdrop as _backdrop
+
+BACKDROP = _backdrop
 
 
 def start_program():

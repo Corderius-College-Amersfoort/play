@@ -4,7 +4,7 @@ all_sprites = []
 
 _walls = []
 
-BACKDROP = (255, 255, 255)
+backdrop = (255, 255, 255)
 
 COLOR_NAMES = {
     "aliceblue": (240, 248, 255),

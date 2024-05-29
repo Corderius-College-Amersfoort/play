@@ -69,7 +69,7 @@ class Line(Sprite):
         height = self.thickness + 1
 
         self._primary_pygame_surface = pygame.Surface(
-            (width, height), pygame.SRCALPHA
+            (width, height), pygame.SRCALPHA  # pylint: disable=no-member
         )  # pylint: disable=no-member
         # self._primary_pygame_surface.set_colorkey((255,255,255, 255)) # set background to transparent
 
@@ -79,17 +79,17 @@ class Line(Sprite):
         self._compute_secondary_surface(force=True)
 
     def _compute_secondary_surface(self, force=False):
-        self._secondary_pygame_surface = (
+        self._secondary_pygame_surface = (  # pylint: disable=attribute-defined-outside-init
             self._primary_pygame_surface.copy()
-        )  # pylint: disable=attribute-defined-outside-init
+        )
 
         if force or self._transparency != 100:
             self._secondary_pygame_surface.set_alpha(
                 round((self._transparency / 100.0) * 255)
             )
 
-        self._should_recompute_secondary_surface = (
-            False  # pylint: disable=attribute-defined-outside-init
+        self._should_recompute_secondary_surface = (  # pylint: disable=attribute-defined-outside-init
+            False
         )
 
     ##### color #####
