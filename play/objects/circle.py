@@ -7,7 +7,7 @@ from ..utils import color_name_to_rgb as _color_name_to_rgb
 
 
 class Circle(Sprite):
-    def __init__( # pylint: disable=too-many-arguments, super-init-not-called
+    def __init__(  # pylint: disable=too-many-arguments, super-init-not-called
         self,
         color="black",
         x=0,
@@ -51,7 +51,8 @@ class Circle(Sprite):
     def _compute_primary_surface(self):
         total_diameter = (self.radius + self._border_width) * 2
         self._primary_pygame_surface = pygame.Surface(
-            (total_diameter, total_diameter), pygame.SRCALPHA # pylint: disable=no-member
+            (total_diameter, total_diameter),
+            pygame.SRCALPHA,  # pylint: disable=no-member
         )
 
         center = self._radius + self._border_width

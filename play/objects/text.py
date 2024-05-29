@@ -1,4 +1,5 @@
 """This module contains the Text class, which is used to create text objects in the game."""
+
 import warnings as _warnings
 import pygame
 from .sprite import Sprite
@@ -8,7 +9,7 @@ from ..utils import color_name_to_rgb as _color_name_to_rgb
 
 
 class Text(Sprite):
-    def __init__( # pylint: disable=too-many-arguments
+    def __init__(  # pylint: disable=too-many-arguments
         self,
         words="hi :)",
         x=0,
@@ -55,10 +56,10 @@ class Text(Sprite):
     def _compute_primary_surface(self):
         try:
             self._pygame_font = pygame.font.Font(self._font, self._font_size)
-        except: # pylint: disable=bare-except
+        except:  # pylint: disable=bare-except
             _warnings.warn(
-                f"""We couldn't find the font file '{self._font}'. We'll use the default font instead for now.""" + # pylint: disable=line-too-long
-"""To fix this, either set the font to None, or make sure you have a font file (usually called something like Arial.ttf) in your project folder.\n""", # pylint: disable=line-too-long
+                f"""We couldn't find the font file '{self._font}'. We'll use the default font instead for now."""  # pylint: disable=line-too-long
+                + """To fix this, either set the font to None, or make sure you have a font file (usually called something like Arial.ttf) in your project folder.\n""",  # pylint: disable=line-too-long
                 Hmm,
             )
             self._pygame_font = pygame.font.Font(None, self._font_size)
@@ -105,4 +106,3 @@ class Text(Sprite):
     def color(self, color_):
         self._color = color_
         self._should_recompute_primary_surface = True
-

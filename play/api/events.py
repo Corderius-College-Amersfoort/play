@@ -10,8 +10,14 @@ from ..utils.async_helpers import _make_async
 from ..utils import color_name_to_rgb as _color_name_to_rgb
 from ..io import screen, PYGAME_DISPLAY
 from ..io.keypress import (
-    pygame_key_to_name as _pygame_key_to_name, _loop, _keys_pressed_this_frame, _keys_released_this_frame,
-    _keys_to_skip, _pressed_keys, _keypress_callbacks, _keyrelease_callbacks,
+    pygame_key_to_name as _pygame_key_to_name,
+    _loop,
+    _keys_pressed_this_frame,
+    _keys_released_this_frame,
+    _keys_to_skip,
+    _pressed_keys,
+    _keypress_callbacks,
+    _keyrelease_callbacks,
 )  # don't pollute user-facing namespace with library internals
 from ..io.mouse import mouse
 from ..objects.line import Line
@@ -33,12 +39,12 @@ def _game_loop():
     _clock.tick(60)
     for event in pygame.event.get():
         if event.type == pygame.QUIT or (  # pylint: disable=no-member
-                event.type == pygame.KEYDOWN  # pylint: disable=no-member
-                and event.key == pygame.K_q  # pylint: disable=no-member
-                and (
-                        pygame.key.get_mods() & pygame.KMOD_META  # pylint: disable=no-member
-                        or pygame.key.get_mods() & pygame.KMOD_CTRL  # pylint: disable=no-member
-                )
+            event.type == pygame.KEYDOWN  # pylint: disable=no-member
+            and event.key == pygame.K_q  # pylint: disable=no-member
+            and (
+                pygame.key.get_mods() & pygame.KMOD_META  # pylint: disable=no-member
+                or pygame.key.get_mods() & pygame.KMOD_CTRL  # pylint: disable=no-member
+            )
         ):
             # quitting by clicking window's close button or pressing ctrl+q / command+q
             _loop.stop()
@@ -51,7 +57,7 @@ def _game_loop():
             mouse._is_clicked = False
         if event.type == pygame.MOUSEMOTION:  # pylint: disable=no-member
             mouse.x, mouse.y = (event.pos[0] - screen.width / 2.0), (
-                    screen.height / 2.0 - event.pos[1]
+                screen.height / 2.0 - event.pos[1]
             )
         if event.type == pygame.KEYDOWN:  # pylint: disable=no-member
             if event.key not in _keys_to_skip:
@@ -69,7 +75,7 @@ def _game_loop():
     for key in _keys_pressed_this_frame:
         for callback in _keypress_callbacks:
             if not callback.is_running and (
-                    callback.keys is None or key in callback.keys
+                callback.keys is None or key in callback.keys
             ):
                 _loop.create_task(callback(key))
 
@@ -79,7 +85,7 @@ def _game_loop():
     for key in _keys_released_this_frame:
         for callback in _keyrelease_callbacks:
             if not callback.is_running and (
-                    callback.keys is None or key in callback.keys
+                callback.keys is None or key in callback.keys
             ):
                 _loop.create_task(callback(key))
 
@@ -152,7 +158,7 @@ def _game_loop():
                 # sprite._length, sprite._angle = sprite._calc_length_angle()
             else:
                 if (
-                        str(body.position.x) != "nan"
+                    str(body.position.x) != "nan"
                 ):  # this condition can happen when changing sprite.physics.can_move
                     sprite._x = body.position.x
                 if str(body.position.y) != "nan":
@@ -317,6 +323,7 @@ def when_sprite_clicked(*sprites):
     :param sprites: The sprites to run the function on.
     :return: The function to run.
     """
+
     def wrapper(func):
         for sprite in sprites:
             sprite.when_clicked(func, call_with_sprite=True)

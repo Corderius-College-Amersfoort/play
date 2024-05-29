@@ -1,4 +1,5 @@
 """Generators for creating new objects."""
+
 import asyncio as _asyncio
 import random as _random
 
@@ -6,15 +7,15 @@ from ..objects import Box, Circle, Line, Text, Group
 
 
 def new_text(  # pylint: disable=too-many-arguments
-        words="hi :)",
-        x=0,
-        y=0,
-        font=None,
-        font_size=50,
-        color="black",
-        angle=0,
-        transparency=100,
-        size=100,
+    words="hi :)",
+    x=0,
+    y=0,
+    font=None,
+    font_size=50,
+    color="black",
+    angle=0,
+    transparency=100,
+    size=100,
 ):
     """Make a new text object.
     :param words: The text to display.
@@ -42,16 +43,16 @@ def new_text(  # pylint: disable=too-many-arguments
 
 
 def new_box(  # pylint: disable=too-many-arguments
-        color="black",
-        x=0,
-        y=0,
-        width=100,
-        height=200,
-        border_color="light blue",
-        border_width=0,
-        angle=0,
-        transparency=100,
-        size=100,
+    color="black",
+    x=0,
+    y=0,
+    width=100,
+    height=200,
+    border_color="light blue",
+    border_width=0,
+    angle=0,
+    transparency=100,
+    size=100,
 ):
     """Make a new box object.
     :param color: The color of the box.
@@ -81,15 +82,15 @@ def new_box(  # pylint: disable=too-many-arguments
 
 
 def new_circle(  # pylint: disable=too-many-arguments
-        color="black",
-        x=0,
-        y=0,
-        radius=100,
-        border_color="light blue",
-        border_width=0,
-        transparency=100,
-        size=100,
-        angle=0,
+    color="black",
+    x=0,
+    y=0,
+    radius=100,
+    border_color="light blue",
+    border_width=0,
+    transparency=100,
+    size=100,
+    angle=0,
 ):
     """Make a new circle object.
     :param color: The color of the circle.
@@ -117,16 +118,16 @@ def new_circle(  # pylint: disable=too-many-arguments
 
 
 def new_line(  # pylint: disable=too-many-arguments
-        color="black",
-        x=0,
-        y=0,
-        length=None,
-        angle=None,
-        thickness=1,
-        x1=None,
-        y1=None,
-        transparency=100,
-        size=100,
+    color="black",
+    x=0,
+    y=0,
+    length=None,
+    angle=None,
+    thickness=1,
+    x1=None,
+    y1=None,
+    transparency=100,
+    size=100,
 ):
     """Make a new line object.
     :param color: The color of the line.

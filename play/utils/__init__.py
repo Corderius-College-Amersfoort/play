@@ -1,4 +1,5 @@
 """A bunch of random math functions."""
+
 from ..globals import COLOR_NAMES
 from ..io.exceptions import Oops
 
@@ -11,7 +12,7 @@ def _clamp(num, min_, max_):
     return num
 
 
-class _Position():
+class _Position:
     def __init__(self, x, y):
         self.x = x
         self.y = y

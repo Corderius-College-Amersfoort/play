@@ -6,7 +6,7 @@ from ..utils.async_helpers import _make_async
 from ..objects.sprite import point_touching_sprite
 
 
-class _Mouse():
+class _Mouse:
     def __init__(self):
         self.x = 0
         self.y = 0
@@ -59,7 +59,7 @@ class _Mouse():
         dx = self.x - x
         dy = self.y - y
 
-        return _math.sqrt(dx ** 2 + dy ** 2)
+        return _math.sqrt(dx**2 + dy**2)
 
 
 # @decorator

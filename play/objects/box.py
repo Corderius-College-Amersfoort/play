@@ -7,7 +7,7 @@ from ..utils import color_name_to_rgb as _color_name_to_rgb
 
 
 class Box(Sprite):
-    def __init__( # pylint: disable=too-many-arguments
+    def __init__(  # pylint: disable=too-many-arguments
         self,
         color="black",
         x=0,
@@ -44,7 +44,7 @@ class Box(Sprite):
 
     def _compute_primary_surface(self):
         self._primary_pygame_surface = pygame.Surface(
-            (self._width, self._height), pygame.SRCALPHA # pylint: disable=no-member
+            (self._width, self._height), pygame.SRCALPHA  # pylint: disable=no-member
         )
 
         if self._border_width and self._border_color:
