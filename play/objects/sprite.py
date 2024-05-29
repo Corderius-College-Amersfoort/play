@@ -6,12 +6,12 @@ import os as _os
 import pymunk as _pymunk
 import pygame
 
-from ..all_sprites import all_sprites
-from ..exceptions import Oops, Hmm
+from ..globals import all_sprites
+from ..io.exceptions import Oops, Hmm
 from ..physics import physics_space, _Physics
-from ..clamp import _clamp
+from ..utils import _clamp
 from ..io import screen
-from ..async_helpers import _make_async
+from ..utils.async_helpers import _make_async
 
 
 def _sprite_touching_sprite(a, b):

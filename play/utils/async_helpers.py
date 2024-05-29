@@ -2,7 +2,7 @@
 
 import asyncio as _asyncio
 import warnings as _warnings
-from .exceptions import Oops
+from ..io.exceptions import Oops
 
 
 def _raise_on_await_warning(func):

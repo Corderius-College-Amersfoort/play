@@ -7,7 +7,7 @@ import pymunk as _pymunk
 from pygame._sdl2.video import Window # pylint: disable=no-name-in-module
 from pygame.locals import *
 
-from ..all_sprites import _walls
+from ..globals import _walls
 from ..physics import physics_space
 
 PYGAME_DISPLAY = None

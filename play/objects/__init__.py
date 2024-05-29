@@ -7,11 +7,11 @@ For example, play.new_box() creates a new Box object.
 
 
 from statistics import mean as _mean
-from .box import Box, new_box
-from .circle import Circle, new_circle
-from .line import Line, new_line
+from .box import Box
+from .circle import Circle
+from .line import Line
 from .sprite import Sprite
-from .text import Text, new_text
+from .text import Text
 
 
 class _MetaGroup(type):

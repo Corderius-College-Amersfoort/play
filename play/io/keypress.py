@@ -4,8 +4,8 @@ import asyncio as _asyncio
 
 import pygame
 
-from .exceptions import Oops
-from .async_helpers import _make_async
+from ..io.exceptions import Oops
+from ..utils.async_helpers import _make_async
 
 # pylint: disable=no-member
 keypress_map = {

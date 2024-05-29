@@ -2,9 +2,9 @@
 import warnings as _warnings
 import pygame
 from .sprite import Sprite
-from ..all_sprites import all_sprites
-from ..exceptions import Hmm
-from ..color import color_name_to_rgb as _color_name_to_rgb
+from ..globals import all_sprites
+from ..io.exceptions import Hmm
+from ..utils import color_name_to_rgb as _color_name_to_rgb
 
 
 class Text(Sprite):
@@ -106,26 +106,3 @@ class Text(Sprite):
         self._color = color_
         self._should_recompute_primary_surface = True
 
-
-def new_text( # pylint: disable=too-many-arguments
-    words="hi :)",
-    x=0,
-    y=0,
-    font=None,
-    font_size=50,
-    color="black",
-    angle=0,
-    transparency=100,
-    size=100,
-):
-    return Text(
-        words=words,
-        x=x,
-        y=y,
-        font=font,
-        font_size=font_size,
-        color=color,
-        angle=angle,
-        transparency=transparency,
-        size=size,
-    )

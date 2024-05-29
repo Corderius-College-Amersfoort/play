@@ -2,8 +2,8 @@
 
 import pygame
 from .sprite import Sprite
-from ..all_sprites import all_sprites
-from ..color import color_name_to_rgb as _color_name_to_rgb
+from ..globals import all_sprites
+from ..utils import color_name_to_rgb as _color_name_to_rgb
 
 
 class Circle(Sprite):
@@ -123,27 +123,3 @@ class Circle(Sprite):
     def border_width(self, _border_width):
         self._border_width = _border_width
         self._should_recompute_primary_surface = True
-
-
-def new_circle( # pylint: disable=too-many-arguments
-    color="black",
-    x=0,
-    y=0,
-    radius=100,
-    border_color="light blue",
-    border_width=0,
-    transparency=100,
-    size=100,
-    angle=0,
-):
-    return Circle(
-        color=color,
-        x=x,
-        y=y,
-        radius=radius,
-        border_color=border_color,
-        border_width=border_width,
-        transparency=transparency,
-        size=size,
-        angle=angle,
-    )

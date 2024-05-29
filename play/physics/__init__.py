@@ -2,7 +2,7 @@
 
 import math as _math
 import pymunk as _pymunk
-from ..clamp import _clamp
+from ..utils import _clamp
 
 _SPEED_MULTIPLIER = 10
 

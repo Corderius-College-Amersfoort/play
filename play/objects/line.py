@@ -4,7 +4,7 @@ import math as _math
 
 import pygame
 from .sprite import Sprite
-from ..all_sprites import all_sprites
+from ..globals import all_sprites
 
 
 class Line(Sprite):
@@ -166,27 +166,3 @@ class Line(Sprite):
         self._should_recompute_primary_surface = True
 
 
-def new_line( # pylint: disable=too-many-arguments
-    color="black",
-    x=0,
-    y=0,
-    length=None,
-    angle=None,
-    thickness=1,
-    x1=None,
-    y1=None,
-    transparency=100,
-    size=100,
-):
-    return Line(
-        color=color,
-        x=x,
-        y=y,
-        length=length,
-        angle=angle,
-        thickness=thickness,
-        x1=x1,
-        y1=y1,
-        transparency=transparency,
-        size=size,
-    )
