@@ -2,24 +2,24 @@
 
 import math as _math
 import pymunk as _pymunk
-from ..clamp import _clamp
+from ..utils import _clamp
 
 _SPEED_MULTIPLIER = 10
 
 
-class _Physics():
+class _Physics:
 
-    def __init__( # pylint: disable=too-many-arguments
-            self,
-            sprite,
-            can_move,
-            stable,
-            x_speed,
-            y_speed,
-            obeys_gravity,
-            bounciness,
-            mass,
-            friction,
+    def __init__(  # pylint: disable=too-many-arguments
+        self,
+        sprite,
+        can_move,
+        stable,
+        x_speed,
+        y_speed,
+        obeys_gravity,
+        bounciness,
+        mass,
+        friction,
     ):
         """
 
@@ -53,7 +53,7 @@ class _Physics():
 
         self._make_pymunk()
 
-    def _make_pymunk(self): # pylint: disable=too-many-branches
+    def _make_pymunk(self):  # pylint: disable=too-many-branches
         mass = self.mass if self.can_move else 0
 
         # non-moving line shapes are platforms and it's easier to take care of them less-generically
@@ -130,7 +130,7 @@ class _Physics():
 
     def clone(self, sprite):
         # TODO: finish filling out params
-        return self.__class__( # pylint: disable=no-value-for-parameter
+        return self.__class__(  # pylint: disable=no-value-for-parameter
             sprite=sprite,
             can_move=self.can_move,
             x_speed=self.x_speed,
@@ -224,7 +224,7 @@ class _Physics():
             self._pymunk_body.velocity_func = lambda body, gravity, damping, dt: None
 
 
-class _Gravity(): # pylint: disable=too-few-public-methods
+class _Gravity:  # pylint: disable=too-few-public-methods
     # TODO: make this default to vertical if horizontal is 0?
     vertical = -100 * _SPEED_MULTIPLIER
     horizontal = 0
@@ -240,7 +240,7 @@ physics_space.gravity = GRAVITY.horizontal, GRAVITY.vertical
 
 
 def set_gravity(vertical=-100, horizontal=None):
-    global GRAVITY # pylint: disable=global-variable-not-assigned
+    global GRAVITY  # pylint: disable=global-variable-not-assigned
     GRAVITY.vertical = vertical * _SPEED_MULTIPLIER
     if horizontal is not None:
         GRAVITY.horizontal = horizontal * _SPEED_MULTIPLIER

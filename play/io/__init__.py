@@ -4,21 +4,23 @@ from sys import platform
 
 import pygame
 import pymunk as _pymunk
-from pygame._sdl2.video import Window # pylint: disable=no-name-in-module
+from pygame._sdl2.video import Window  # pylint: disable=no-name-in-module
 from pygame.locals import *
 
-from ..all_sprites import _walls
+from ..globals import _walls
 from ..physics import physics_space
 
 PYGAME_DISPLAY = None
 
 
-class Screen():
+class Screen:
     def __init__(self, width=800, height=600):
         global PYGAME_DISPLAY
         self._width = width
         self._height = height
-        PYGAME_DISPLAY = pygame.display.set_mode((width, height), pygame.DOUBLEBUF) # pylint: disable=no-member
+        PYGAME_DISPLAY = pygame.display.set_mode(
+            (width, height), pygame.DOUBLEBUF  # pylint: disable=no-member
+        )  # pylint: disable=no-member
         pygame.display.set_caption("Python Play")
         self._fullscreen = False
 
@@ -93,7 +95,9 @@ class Screen():
             )  # reset X and Y position of the window to original instead of top left
         else:
             PYGAME_DISPLAY = pygame.display.set_mode(
-                (self.width, self.height), SCALED + NOFRAME + FULLSCREEN, 32 # pylint: disable=undefined-variable
+                (self.width, self.height),
+                SCALED + NOFRAME + FULLSCREEN,  # pylint: disable=undefined-variable
+                32,  # pylint: disable=undefined-variable
             )  # all flags are necessary
 
     def disable_fullscreen(self):

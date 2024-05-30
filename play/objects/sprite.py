@@ -6,12 +6,12 @@ import os as _os
 import pymunk as _pymunk
 import pygame
 
-from ..all_sprites import all_sprites
-from ..exceptions import Oops, Hmm
+from ..globals import all_sprites
+from ..io.exceptions import Oops, Hmm
 from ..physics import physics_space, _Physics
-from ..clamp import _clamp
+from ..utils import _clamp
 from ..io import screen
-from ..async_helpers import _make_async
+from ..utils.async_helpers import _make_async
 
 
 def _sprite_touching_sprite(a, b):
@@ -31,8 +31,10 @@ def point_touching_sprite(point, sprite):
     )
 
 
-class Sprite(): # pylint: disable=attribute-defined-outside-init, too-many-public-methods
-    def __init__(self, image=None, x=0, y=0, size=100, angle=0, transparency=100): # pylint: disable=too-many-arguments
+class Sprite:  # pylint: disable=attribute-defined-outside-init, too-many-public-methods
+    def __init__(
+        self, image=None, x=0, y=0, size=100, angle=0, transparency=100
+    ):  # pylint: disable=too-many-arguments
         self._image = image or _os.path.join(
             _os.path.split(__file__)[0], "blank_image.png"
         )
@@ -55,7 +57,7 @@ class Sprite(): # pylint: disable=attribute-defined-outside-init, too-many-publi
     def _compute_primary_surface(self):
         try:
             self._primary_pygame_surface = pygame.image.load(_os.path.join(self._image))
-        except pygame.error as exc: # pylint: disable=no-member
+        except pygame.error as exc:  # pylint: disable=no-member
             raise Oops(
                 f"""We couldn't find the image file you provided named "{self._image}".
 If the file is in a folder, make sure you add the folder name, too."""
@@ -82,7 +84,7 @@ If the file is in a folder, make sure you add the folder name, too."""
                     array.dtype
                 )  # modify surface pixels in-place
                 del array  # I think pixels are written when array leaves memory, so delete it explicitly here
-            except Exception: # pylint: disable=broad-except
+            except Exception:  # pylint: disable=broad-except
                 # this works for images without alpha pixels in them
                 self._secondary_pygame_surface.set_alpha(
                     round((self._transparency / 100.0) * 255)
@@ -390,7 +392,7 @@ You might want to look in your code where you're setting transparency and make s
     #     elif self.physics and name in :
     #         return setattr(self.physics, name, value)
 
-    def start_physics( # pylint: disable=too-many-arguments
+    def start_physics(  # pylint: disable=too-many-arguments
         self,
         can_move=True,
         stable=False,

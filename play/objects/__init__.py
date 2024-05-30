@@ -5,13 +5,12 @@ Each object has a corresponding new_* function that can be used to create the ob
 For example, play.new_box() creates a new Box object.
 """
 
-
 from statistics import mean as _mean
-from .box import Box, new_box
-from .circle import Circle, new_circle
-from .line import Line, new_line
+from .box import Box
+from .circle import Circle
+from .line import Line
 from .sprite import Sprite
-from .text import Text, new_text
+from .text import Text
 
 
 class _MetaGroup(type):
@@ -31,9 +30,9 @@ class _MetaGroup(type):
             group.move(10) # calls move(10) on all the group's sprites
         """
 
-        def get_attr(*args, **kwargs): # pylint: disable=inconsistent-return-statements
+        def get_attr(*args, **kwargs):  # pylint: disable=inconsistent-return-statements
             results = []
-            for sprite in cls: # pylint: disable=not-an-iterable
+            for sprite in cls:  # pylint: disable=not-an-iterable
                 result = getattr(sprite, attr)
                 if callable(result):
                     result(*args, **kwargs)
@@ -46,22 +45,22 @@ class _MetaGroup(type):
 
     @property
     def x(cls):
-        return _mean(sprite.x for sprite in cls) # pylint: disable=not-an-iterable
+        return _mean(sprite.x for sprite in cls)  # pylint: disable=not-an-iterable
 
     @x.setter
     def x(cls, new_x):
         x_offset = new_x - cls.x
-        for sprite in cls: # pylint: disable=not-an-iterable
+        for sprite in cls:  # pylint: disable=not-an-iterable
             sprite.x += x_offset
 
     @property
     def y(cls):
-        return _mean(sprite.y for sprite in cls) # pylint: disable=not-an-iterable
+        return _mean(sprite.y for sprite in cls)  # pylint: disable=not-an-iterable
 
     @y.setter
     def y(cls, new_y):
         y_offset = new_y - cls.y
-        for sprite in cls: # pylint: disable=not-an-iterable
+        for sprite in cls:  # pylint: disable=not-an-iterable
             sprite.y += y_offset
 
 
@@ -99,7 +98,7 @@ class Group(metaclass=_MetaGroup):
             if isinstance(item, Sprite):
                 yield item
 
-    def sprites(self): # pylint: disable=function-redefined
+    def sprites(self):  # pylint: disable=function-redefined
         for sprite in self.sprites_:
             yield sprite
         print(self.__class__.sprites)
@@ -107,7 +106,7 @@ class Group(metaclass=_MetaGroup):
             yield sprite
 
     def __iter__(self):
-        for sprite in self.sprites: # pylint: disable=not-an-iterable
+        for sprite in self.sprites:  # pylint: disable=not-an-iterable
             yield sprite
 
     def go_to(self, x_or_sprite, y):
@@ -148,7 +147,9 @@ def new_group(*sprites):
     return Group(*sprites)
 
 
-def new_image(image=None, x=0, y=0, size=100, angle=0, transparency=100): # pylint: disable=too-many-arguments
+def new_image(
+    image=None, x=0, y=0, size=100, angle=0, transparency=100
+):  # pylint: disable=too-many-arguments
     return Sprite(
         image=image, x=x, y=y, size=size, angle=angle, transparency=transparency
     )

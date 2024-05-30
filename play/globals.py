@@ -1,10 +1,12 @@
-"""This module contains a lot of color-related code, including the color_name_to_rgb function."""
+"""Global variables for the game"""
 
-from .exceptions import Oops
+all_sprites = []
 
-# most color names from https://upload.wikimedia.org/wikipedia/commons/2/2b/SVG_Recognized_color_keyword_names.svg
-# except that list doesn't have obvious colors people might want to use like "light brown", so we add those manually
-color_names = {
+_walls = []
+
+backdrop = (255, 255, 255)
+
+COLOR_NAMES = {
     "aliceblue": (240, 248, 255),
     "antiquewhite": (250, 235, 215),
     "aqua": (0, 255, 255),
@@ -154,26 +156,3 @@ color_names = {
     "yellowgreen": (154, 205, 50),
     "transparent": (0, 0, 0, 0),
 }
-
-
-def color_name_to_rgb(name):
-    """
-    Turn an English color name into an RGB value.
-
-    lightBlue
-    light-blue
-    light blue
-
-    are all valid and will produce the rgb value for lightblue.
-    """
-    if isinstance(name, tuple):
-        return name
-
-    try:
-        return color_names[name.lower().strip().replace("-", "").replace(" ", "")]
-    except KeyError as exception:
-        raise Oops(
-            f"""You gave a color name we didn't understand: '{name}'
-If this our mistake, please let us know. Otherwise, try using the RGB number form of the color e.g. '(0, 255, 255)'.
-You can find the RGB form of a color on websites like this: https://www.rapidtables.com/web/color/RGB_Color.html\n"""
-        ) from exception

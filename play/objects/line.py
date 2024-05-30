@@ -4,11 +4,11 @@ import math as _math
 
 import pygame
 from .sprite import Sprite
-from ..all_sprites import all_sprites
+from ..globals import all_sprites
 
 
 class Line(Sprite):
-    def __init__( # pylint: disable=too-many-arguments
+    def __init__(  # pylint: disable=too-many-arguments
         self,
         color="black",
         x=0,
@@ -68,7 +68,9 @@ class Line(Sprite):
         width = self.length
         height = self.thickness + 1
 
-        self._primary_pygame_surface = pygame.Surface((width, height), pygame.SRCALPHA) # pylint: disable=no-member
+        self._primary_pygame_surface = pygame.Surface(
+            (width, height), pygame.SRCALPHA  # pylint: disable=no-member
+        )  # pylint: disable=no-member
         # self._primary_pygame_surface.set_colorkey((255,255,255, 255)) # set background to transparent
 
         # line is actually drawn in _game_loop because coordinates work different
@@ -77,14 +79,18 @@ class Line(Sprite):
         self._compute_secondary_surface(force=True)
 
     def _compute_secondary_surface(self, force=False):
-        self._secondary_pygame_surface = self._primary_pygame_surface.copy() # pylint: disable=attribute-defined-outside-init
+        self._secondary_pygame_surface = (  # pylint: disable=attribute-defined-outside-init
+            self._primary_pygame_surface.copy()
+        )
 
         if force or self._transparency != 100:
             self._secondary_pygame_surface.set_alpha(
                 round((self._transparency / 100.0) * 255)
             )
 
-        self._should_recompute_secondary_surface = False # pylint: disable=attribute-defined-outside-init
+        self._should_recompute_secondary_surface = (  # pylint: disable=attribute-defined-outside-init
+            False
+        )
 
     ##### color #####
     @property
@@ -164,29 +170,3 @@ class Line(Sprite):
         self._angle = _y1
         self._length, self._angle = self._calc_length_angle()
         self._should_recompute_primary_surface = True
-
-
-def new_line( # pylint: disable=too-many-arguments
-    color="black",
-    x=0,
-    y=0,
-    length=None,
-    angle=None,
-    thickness=1,
-    x1=None,
-    y1=None,
-    transparency=100,
-    size=100,
-):
-    return Line(
-        color=color,
-        x=x,
-        y=y,
-        length=length,
-        angle=angle,
-        thickness=thickness,
-        x1=x1,
-        y1=y1,
-        transparency=transparency,
-        size=size,
-    )

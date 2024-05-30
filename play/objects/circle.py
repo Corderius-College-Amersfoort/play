@@ -2,12 +2,12 @@
 
 import pygame
 from .sprite import Sprite
-from ..all_sprites import all_sprites
-from ..color import color_name_to_rgb as _color_name_to_rgb
+from ..globals import all_sprites
+from ..utils import color_name_to_rgb as _color_name_to_rgb
 
 
 class Circle(Sprite):
-    def __init__( # pylint: disable=too-many-arguments, super-init-not-called
+    def __init__(  # pylint: disable=too-many-arguments, super-init-not-called
         self,
         color="black",
         x=0,
@@ -51,7 +51,8 @@ class Circle(Sprite):
     def _compute_primary_surface(self):
         total_diameter = (self.radius + self._border_width) * 2
         self._primary_pygame_surface = pygame.Surface(
-            (total_diameter, total_diameter), pygame.SRCALPHA # pylint: disable=no-member
+            (total_diameter, total_diameter),
+            pygame.SRCALPHA,  # pylint: disable=no-member
         )
 
         center = self._radius + self._border_width
@@ -123,27 +124,3 @@ class Circle(Sprite):
     def border_width(self, _border_width):
         self._border_width = _border_width
         self._should_recompute_primary_surface = True
-
-
-def new_circle( # pylint: disable=too-many-arguments
-    color="black",
-    x=0,
-    y=0,
-    radius=100,
-    border_color="light blue",
-    border_width=0,
-    transparency=100,
-    size=100,
-    angle=0,
-):
-    return Circle(
-        color=color,
-        x=x,
-        y=y,
-        radius=radius,
-        border_color=border_color,
-        border_width=border_width,
-        transparency=transparency,
-        size=size,
-        angle=angle,
-    )

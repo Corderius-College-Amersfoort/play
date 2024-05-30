@@ -2,12 +2,12 @@
 
 import pygame
 from .sprite import Sprite
-from ..all_sprites import all_sprites
-from ..color import color_name_to_rgb as _color_name_to_rgb
+from ..globals import all_sprites
+from ..utils import color_name_to_rgb as _color_name_to_rgb
 
 
 class Box(Sprite):
-    def __init__( # pylint: disable=too-many-arguments
+    def __init__(  # pylint: disable=too-many-arguments
         self,
         color="black",
         x=0,
@@ -44,7 +44,7 @@ class Box(Sprite):
 
     def _compute_primary_surface(self):
         self._primary_pygame_surface = pygame.Surface(
-            (self._width, self._height), pygame.SRCALPHA # pylint: disable=no-member
+            (self._width, self._height), pygame.SRCALPHA  # pylint: disable=no-member
         )
 
         if self._border_width and self._border_color:
@@ -127,29 +127,3 @@ class Box(Sprite):
             border_width=self.border_width,
             **self._common_properties()
         )
-
-
-def new_box( # pylint: disable=too-many-arguments
-    color="black",
-    x=0,
-    y=0,
-    width=100,
-    height=200,
-    border_color="light blue",
-    border_width=0,
-    angle=0,
-    transparency=100,
-    size=100,
-):
-    return Box(
-        color=color,
-        x=x,
-        y=y,
-        width=width,
-        height=height,
-        border_color=border_color,
-        border_width=border_width,
-        angle=angle,
-        transparency=transparency,
-        size=size,
-    )

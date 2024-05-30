@@ -2,7 +2,7 @@
 
 import asyncio as _asyncio
 import warnings as _warnings
-from .exceptions import Oops
+from ..io.exceptions import Oops
 
 
 def _raise_on_await_warning(func):
@@ -22,8 +22,8 @@ def _raise_on_await_warning(func):
                     unawaited_function_name = str_message.split("'")[1]
 
                     raise Oops(
-                        f"""Looks like you forgot to put "await" before play.{unawaited_function_name} on line {warning.lineno} of file {warning.filename}.""" + # pylint: disable=line-too-long
-"""To fix this, just add the word 'await' before play.{unawaited_function_name} on line {warning.lineno} of file {warning.filename} in the function {func.__name__}.""" # pylint: disable=line-too-long
+                        f"""Looks like you forgot to put "await" before play.{unawaited_function_name} on line {warning.lineno} of file {warning.filename}."""  # pylint: disable=line-too-long
+                        + """To fix this, just add the word 'await' before play.{unawaited_function_name} on line {warning.lineno} of file {warning.filename} in the function {func.__name__}."""  # pylint: disable=line-too-long
                         # pylint: enable=line-too-long
                     )
                 print(warning.message)
