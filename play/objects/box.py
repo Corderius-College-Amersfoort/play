@@ -20,27 +20,16 @@ class Box(Sprite):
         size=100,
         angle=0,
     ):
-        super().__init__(x, y, size, angle, transparency)
-        self._x = x
-        self._y = y
         self._width = width
         self._height = height
         self._color = color
         self._border_color = border_color
         self._border_width = border_width
 
-        self._transparency = transparency
-        self._size = size
-        self._angle = angle
         self._is_clicked = False
         self._is_hidden = False
         self.physics = None
-
-        self._when_clicked_callbacks = []
-
-        self._compute_primary_surface()
-
-        all_sprites.append(self)
+        super().__init__(x, y, size, angle, transparency)
 
     def _compute_primary_surface(self):
         self._primary_pygame_surface = pygame.Surface(
