@@ -8,6 +8,7 @@ import pygame  # pylint: disable=import-error
 from .events import _when_program_starts_callbacks, _game_loop, _loop
 from ..utils import color_name_to_rgb as _color_name_to_rgb
 from ..globals import backdrop as _backdrop
+from ..io.keypress import _pressed_keys
 
 BACKDROP = _backdrop
 
@@ -55,3 +56,25 @@ async def timer(seconds=1.0):
     """
     await _asyncio.sleep(seconds)
     return True
+
+
+def key_is_pressed(*keys):
+    """
+    Returns True if any of the given keys are pressed.
+
+    Example:
+
+        @play.repeat_forever
+        async def do():
+            if play.key_is_pressed('up', 'w'):
+                print('up or w pressed')
+    """
+    # Called this function key_is_pressed instead of is_key_pressed so it will
+    # sound more english-like with if-statements:
+    #
+    #   if play.key_is_pressed('w', 'up'): ...
+
+    for key in keys:
+        if key in _pressed_keys.values():
+            return True
+    return False

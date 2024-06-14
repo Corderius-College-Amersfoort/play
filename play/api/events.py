@@ -7,6 +7,7 @@ import pygame  # pylint: disable=import-error
 
 from ..globals import all_sprites, backdrop
 from ..io import screen, PYGAME_DISPLAY
+from ..io.exceptions import Oops
 from ..io.keypress import (
     pygame_key_to_name as _pygame_key_to_name,
     _loop,
@@ -38,12 +39,12 @@ def _game_loop():
     _clock.tick(60)
     for event in pygame.event.get():
         if event.type == pygame.QUIT or (  # pylint: disable=no-member
-            event.type == pygame.KEYDOWN  # pylint: disable=no-member
-            and event.key == pygame.K_q  # pylint: disable=no-member
-            and (
-                pygame.key.get_mods() & pygame.KMOD_META  # pylint: disable=no-member
-                or pygame.key.get_mods() & pygame.KMOD_CTRL  # pylint: disable=no-member
-            )
+                event.type == pygame.KEYDOWN  # pylint: disable=no-member
+                and event.key == pygame.K_q  # pylint: disable=no-member
+                and (
+                        pygame.key.get_mods() & pygame.KMOD_META  # pylint: disable=no-member
+                        or pygame.key.get_mods() & pygame.KMOD_CTRL  # pylint: disable=no-member
+                )
         ):
             # quitting by clicking window's close button or pressing ctrl+q / command+q
             _loop.stop()
@@ -56,7 +57,7 @@ def _game_loop():
             mouse._is_clicked = False
         if event.type == pygame.MOUSEMOTION:  # pylint: disable=no-member
             mouse.x, mouse.y = (event.pos[0] - screen.width / 2.0), (
-                screen.height / 2.0 - event.pos[1]
+                    screen.height / 2.0 - event.pos[1]
             )
         if event.type == pygame.KEYDOWN:  # pylint: disable=no-member
             if event.key not in _keys_to_skip:
@@ -74,7 +75,7 @@ def _game_loop():
     for key in _keys_pressed_this_frame:
         for callback in _keypress_callbacks:
             if not callback.is_running and (
-                callback.keys is None or key in callback.keys
+                    callback.keys is None or key in callback.keys
             ):
                 _loop.create_task(callback(key))
 
@@ -84,7 +85,7 @@ def _game_loop():
     for key in _keys_released_this_frame:
         for callback in _keyrelease_callbacks:
             if not callback.is_running and (
-                callback.keys is None or key in callback.keys
+                    callback.keys is None or key in callback.keys
             ):
                 _loop.create_task(callback(key))
 
@@ -157,7 +158,7 @@ def _game_loop():
                 # sprite._length, sprite._angle = sprite._calc_length_angle()
             else:
                 if (
-                    str(body.position.x) != "nan"
+                        str(body.position.x) != "nan"
                 ):  # this condition can happen when changing sprite.physics.can_move
                     sprite._x = body.position.x
                 if str(body.position.y) != "nan":
@@ -329,3 +330,87 @@ def when_sprite_clicked(*sprites):
         return func
 
     return wrapper
+
+
+# @decorator
+def when_any_key_pressed(func):
+    if not callable(func):
+        raise Oops(
+            """@play.when_any_key_pressed doesn't use a list of keys. Try just this instead:
+
+@play.when_any_key_pressed
+async def do(key):
+    print("This key was pressed!", key)
+"""
+        )
+    async_callback = _make_async(func)
+
+    async def wrapper(*args, **kwargs):
+        wrapper.is_running = True
+        await async_callback(*args, **kwargs)
+        wrapper.is_running = False
+
+    wrapper.keys = None
+    wrapper.is_running = False
+    _keypress_callbacks.append(wrapper)
+    return wrapper
+
+
+# @decorator
+def when_key_pressed(*keys):
+    def decorator(func):
+        async_callback = _make_async(func)
+
+        async def wrapper(*args, **kwargs):
+            wrapper.is_running = True
+            await async_callback(*args, **kwargs)
+            wrapper.is_running = False
+
+        wrapper.keys = keys
+        wrapper.is_running = False
+        _keypress_callbacks.append(wrapper)
+        return wrapper
+
+    return decorator
+
+
+# @decorator
+def when_any_key_released(func):
+    if not callable(func):
+        raise Oops(
+            """@play.when_any_key_released doesn't use a list of keys. Try just this instead:
+
+@play.when_any_key_released
+async def do(key):
+    print("This key was released!", key)
+"""
+        )
+    async_callback = _make_async(func)
+
+    async def wrapper(*args, **kwargs):
+        wrapper.is_running = True
+        await async_callback(*args, **kwargs)
+        wrapper.is_running = False
+
+    wrapper.keys = None
+    wrapper.is_running = False
+    _keyrelease_callbacks.append(wrapper)
+    return wrapper
+
+
+# @decorator
+def when_key_released(*keys):
+    def decorator(func):
+        async_callback = _make_async(func)
+
+        async def wrapper(*args, **kwargs):
+            wrapper.is_running = True
+            await async_callback(*args, **kwargs)
+            wrapper.is_running = False
+
+        wrapper.keys = keys
+        wrapper.is_running = False
+        _keyrelease_callbacks.append(wrapper)
+        return wrapper
+
+    return decorator
