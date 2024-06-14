@@ -25,7 +25,7 @@ class Box(Sprite):
         self._color = color
         self._border_color = border_color
         self._border_width = border_width
-        super().__init__(x, y, size, angle, transparency)
+        super().__init__(None, x, y, size, angle, transparency)
 
         self._transparency = transparency
         self._size = size
@@ -39,6 +39,7 @@ class Box(Sprite):
 
 
     def _compute_primary_surface(self):
+        print(self._x)
         self._primary_pygame_surface = pygame.Surface(
             (self._width, self._height), pygame.SRCALPHA  # pylint: disable=no-member
         )
