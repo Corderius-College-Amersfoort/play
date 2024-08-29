@@ -1,6 +1,6 @@
 """Generators for creating new objects."""
 
-from ..objects import Box, Circle, Line, Text
+from ..objects import Box, Circle, Line, Text, Sprite
 
 
 def new_text(  # pylint: disable=too-many-arguments
