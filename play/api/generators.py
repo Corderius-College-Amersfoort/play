@@ -151,3 +151,19 @@ def new_line(  # pylint: disable=too-many-arguments
         transparency=transparency,
         size=size,
     )
+
+def new_image(
+        image=None, x=0, y=0, size=100, angle=0, transparency=100
+):  # pylint: disable=too-many-arguments
+    """Make a new image object.
+    :param image: The image to display.
+    :param x: The x-coordinate of the image.
+    :param y: The y-coordinate of the image.
+    :param size: The size of the image.
+    :param angle: The angle of the image.
+    :param transparency: The transparency of the image.
+    :return: A new image object.
+    """
+    return Sprite(
+        image=image, x=x, y=y, size=size, angle=angle, transparency=transparency
+    )

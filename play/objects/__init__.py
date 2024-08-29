@@ -147,9 +147,4 @@ def new_group(*sprites):
     return Group(*sprites)
 
 
-def new_image(
-    image=None, x=0, y=0, size=100, angle=0, transparency=100
-):  # pylint: disable=too-many-arguments
-    return Sprite(
-        image=image, x=x, y=y, size=size, angle=angle, transparency=transparency
-    )
+

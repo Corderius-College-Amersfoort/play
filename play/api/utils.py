@@ -30,6 +30,16 @@ def start_program():
         pygame.quit()  # pylint: disable=no-member
 
 
+def stop_program():
+    """
+    Calling this function stops your program running.
+
+    play.stop_program() should almost certainly go at the very end of your program.
+    """
+    _loop.stop()
+    pygame.quit()  # pylint: disable=no-member
+
+
 async def animate():
     await _asyncio.sleep(0)
 
