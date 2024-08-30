@@ -7,18 +7,9 @@ from ..utils import color_name_to_rgb as _color_name_to_rgb
 
 
 class Circle(Sprite):
-    def __init__(  # pylint: disable=too-many-arguments, super-init-not-called
-        self,
-        color="black",
-        x=0,
-        y=0,
-        radius=100,
-        border_color="light blue",
-        border_width=0,
-        transparency=100,
-        size=100,
-        angle=0,
-    ):
+    def __init__(self, color="black", x=0, y=0, radius=100, border_color="light blue", border_width=0, transparency=100,
+                 size=100, angle=0):
+        super().__init__(x, y, size, angle, transparency)
         self._x = x
         self._y = y
         self._color = color

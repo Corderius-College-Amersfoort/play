@@ -36,8 +36,6 @@ class Box(Sprite):
 
         self._compute_primary_surface()
 
-
-
     def _compute_primary_surface(self):
         print(self._x)
         self._primary_pygame_surface = pygame.Surface(

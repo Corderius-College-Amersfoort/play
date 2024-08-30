@@ -2,6 +2,8 @@
 
 import math as _math
 import pymunk as _pymunk
+
+from ..globals import FRAME_RATE
 from ..utils import _clamp
 
 _SPEED_MULTIPLIER = 10
@@ -129,6 +131,10 @@ class _Physics:
         physics_space.add(self._pymunk_body, self._pymunk_shape)
 
     def clone(self, sprite):
+        """
+        Clone the physics object.
+        :param sprite: The sprite to clone.
+        """
         # TODO: finish filling out params
         return self.__class__(  # pylint: disable=no-value-for-parameter
             sprite=sprite,
@@ -225,6 +231,9 @@ class _Physics:
 
 
 class _Gravity:  # pylint: disable=too-few-public-methods
+    """
+    The gravity of the game.
+    """
     # TODO: make this default to vertical if horizontal is 0?
     vertical = -100 * _SPEED_MULTIPLIER
     horizontal = 0
@@ -240,6 +249,11 @@ physics_space.gravity = GRAVITY.horizontal, GRAVITY.vertical
 
 
 def set_gravity(vertical=-100, horizontal=None):
+    """
+    Set the gravity of the game.
+    :param vertical: The vertical gravity of the game.
+    :param horizontal: The horizontal gravity of the game.
+    """
     global GRAVITY  # pylint: disable=global-variable-not-assigned
     GRAVITY.vertical = vertical * _SPEED_MULTIPLIER
     if horizontal is not None:
@@ -252,7 +266,10 @@ _NUM_SIMULATION_STEPS = 3
 
 
 def simulate_physics():
+    """
+    Simulate the physics of the game
+    """
     # more steps means more accurate simulation, but more processing time
     for _ in range(_NUM_SIMULATION_STEPS):
         # the smaller the simulation step, the more accurate the simulation
-        physics_space.step(1 / (60.0 * _NUM_SIMULATION_STEPS))
+        physics_space.step(1 / (FRAME_RATE * _NUM_SIMULATION_STEPS))

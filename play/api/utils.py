@@ -41,6 +41,9 @@ def stop_program():
 
 
 async def animate():
+    """
+    Wait for the next frame to be drawn.
+    """
     await _asyncio.sleep(0)
 
 

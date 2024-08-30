@@ -9,6 +9,7 @@ def _raise_on_await_warning(func):
     """
     If someone doesn't put 'await' before functions that require 'await'
     like play.timer() or play.animate(), raise an exception.
+    :param func: A function that may or may not be async
     """
 
     async def raise_on_warning(*args, **kwargs):
@@ -35,6 +36,7 @@ def _make_async(func):
     """
     Turn a non-async function into an async function.
     Used mainly in decorators like @repeat_forever.
+    :param func: A function that may or may not be async.
     """
     if _asyncio.iscoroutinefunction(func):
         # if it's already async just return it

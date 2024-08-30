@@ -6,6 +6,8 @@ _walls = []
 
 backdrop = (255, 255, 255)
 
+FRAME_RATE = 60
+
 COLOR_NAMES = {
     "aliceblue": (240, 248, 255),
     "antiquewhite": (250, 235, 215),

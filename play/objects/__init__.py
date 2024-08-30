@@ -145,6 +145,3 @@ class Group(metaclass=_MetaGroup):
 
 def new_group(*sprites):
     return Group(*sprites)
-
-
-
