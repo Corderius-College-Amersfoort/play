@@ -59,17 +59,7 @@ class _Mouse:
         dx = self.x - x
         dy = self.y - y
 
-        return _math.sqrt(dx**2 + dy**2)
-
-
-# @decorator
-def when_mouse_clicked(func):
-    return mouse.when_clicked(func)
-
-
-# @decorator
-def when_click_released(func):
-    return mouse.when_click_released(func)
+        return _math.sqrt(dx ** 2 + dy ** 2)
 
 
 mouse = _Mouse()

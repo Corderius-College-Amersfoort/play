@@ -9,7 +9,7 @@ from ..globals import all_sprites, backdrop, FRAME_RATE
 from ..io import screen, PYGAME_DISPLAY
 from ..io.exceptions import Oops
 from ..io.keypress import (
-    pygame_key_to_name as _pygame_key_to_name,
+    key_num_to_name as _pygame_key_to_name,
     _loop,
     _keys_pressed_this_frame,
     _keys_released_this_frame,
@@ -426,3 +426,19 @@ def when_key_released(*keys):
         return wrapper
 
     return decorator
+
+
+# @decorator
+def when_mouse_clicked(func):
+    """
+    Calls the given function when the mouse is clicked.
+    """
+    return mouse.when_clicked(func)
+
+
+# @decorator
+def when_click_released(func):
+    """
+    Calls the given function when the mouse click is released.
+    """
+    return mouse.when_click_released(func)

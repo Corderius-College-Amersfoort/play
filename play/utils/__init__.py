@@ -58,6 +58,6 @@ def color_name_to_rgb(name):
     except KeyError as exception:
         raise Oops(
             f"""You gave a color name we didn't understand: '{name}'
-If this our mistake, please let us know. Otherwise, try using the RGB number form of the color e.g. '(0, 255, 255)'.
+Try using the RGB number form of the color e.g. '(0, 255, 255)'.
 You can find the RGB form of a color on websites like this: https://www.rapidtables.com/web/color/RGB_Color.html\n"""
         ) from exception
