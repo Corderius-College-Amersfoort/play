@@ -14,11 +14,23 @@ from ..io import screen
 from ..utils.async_helpers import _make_async
 
 
+def _circle_touching_circle(a, b):
+    # determine which is the circle and which is the sprite or if they're both circles
+    if hasattr(a, "_radius") and hasattr(b, "_radius"):
+        return a.distance_to(b) <= a.radius + b.radius
+    elif hasattr(a, "_radius"):
+        return a.distance_to(b) <= a.radius
+    return b.distance_to(a) <= b.radius
+
+
 def _sprite_touching_sprite(a, b):
     # todo: custom code for circle, line, rotated rectangley sprites
     # use physics engine if both sprites have physics on
     # if a.physics and b.physics:
     if a.left >= b.right or a.right <= b.left or a.top <= b.bottom or a.bottom >= b.top:
+        if hasattr(a, "_radius") or hasattr(b, "_radius"):
+            # if one of the sprites is a circle, use circle collision
+            return _circle_touching_circle(a, b)
         return False
     return True
 
@@ -26,14 +38,14 @@ def _sprite_touching_sprite(a, b):
 def point_touching_sprite(point, sprite):
     # todo: custom code for circle, line, rotated rectangley sprites
     return (
-        sprite.left <= point.x <= sprite.right
-        and sprite.bottom <= point.y <= sprite.top
+            sprite.left <= point.x <= sprite.right
+            and sprite.bottom <= point.y <= sprite.top
     )
 
 
 class Sprite:  # pylint: disable=attribute-defined-outside-init, too-many-public-methods
     def __init__(
-        self, image=None, x=0, y=0, size=100, angle=0, transparency=100
+            self, image=None, x=0, y=0, size=100, angle=0, transparency=100
     ):  # pylint: disable=too-many-arguments
         self._image = image or _os.path.join(
             _os.path.split(__file__)[0], "blank_image.png"
@@ -288,7 +300,7 @@ You might want to look in your code where you're setting transparency and make s
         dx = self.x - x1
         dy = self.y - y1
 
-        return _math.sqrt(dx**2 + dy**2)
+        return _math.sqrt(dx ** 2 + dy ** 2)
 
     def remove(self):
         if self.physics:
@@ -337,16 +349,16 @@ You might want to look in your code where you're setting transparency and make s
 
     def _pygame_x(self):
         return (
-            self.x
-            + (screen.width / 2.0)
-            - (self._secondary_pygame_surface.get_width() / 2.0)
+                self.x
+                + (screen.width / 2.0)
+                - (self._secondary_pygame_surface.get_width() / 2.0)
         )
 
     def _pygame_y(self):
         return (
-            (screen.height / 2.0)
-            - self.y
-            - (self._secondary_pygame_surface.get_height() / 2.0)
+                (screen.height / 2.0)
+                - self.y
+                - (self._secondary_pygame_surface.get_height() / 2.0)
         )
 
     # @decorator
@@ -393,15 +405,15 @@ You might want to look in your code where you're setting transparency and make s
     #         return setattr(self.physics, name, value)
 
     def start_physics(  # pylint: disable=too-many-arguments
-        self,
-        can_move=True,
-        stable=False,
-        x_speed=0,
-        y_speed=0,
-        obeys_gravity=True,
-        bounciness=1.0,
-        mass=10,
-        friction=0.1,
+            self,
+            can_move=True,
+            stable=False,
+            x_speed=0,
+            y_speed=0,
+            obeys_gravity=True,
+            bounciness=1.0,
+            mass=10,
+            friction=0.1,
     ):
         if not self.physics:
             self.physics = _Physics(

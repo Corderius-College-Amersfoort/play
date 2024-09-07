@@ -50,7 +50,7 @@ class _Mouse:
         assert x is not None
 
         try:
-            # x can either by a number or a sprite. If it's a sprite:
+            # x can either be a number or a sprite. If it's a sprite:
             x = x.x
             y = x.y
         except AttributeError:
@@ -59,7 +59,7 @@ class _Mouse:
         dx = self.x - x
         dy = self.y - y
 
-        return _math.sqrt(dx ** 2 + dy ** 2)
+        return _math.sqrt(dx**2 + dy**2)
 
 
 mouse = _Mouse()

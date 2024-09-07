@@ -32,3 +32,6 @@ def test_physics(size=100):
         pytest.fail("The sprite should have fallen to the ground.")
 
 # create a pytest for test_physics
+
+if __name__ == "__main__":
+    test_physics()

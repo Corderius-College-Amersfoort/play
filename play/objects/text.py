@@ -56,10 +56,11 @@ class Text(Sprite):
     def _compute_primary_surface(self):
         try:
             self._pygame_font = pygame.font.Font(self._font, self._font_size)
-        except:  # pylint: disable=bare-except
+        except pygame.error:  # pylint: disable=bare-except
             _warnings.warn(
                 f"""We couldn't find the font file '{self._font}'. We'll use the default font instead for now."""  # pylint: disable=line-too-long
-                + """To fix this, either set the font to None, or make sure you have a font file (usually called something like Arial.ttf) in your project folder.\n""",  # pylint: disable=line-too-long
+                + """To fix this, either set the font to None, or make sure you have a font file (usually called 
+                something like Arial.ttf) in your project folder.\n""",  # pylint: disable=line-too-long
                 Hmm,
             )
             self._pygame_font = pygame.font.Font(None, self._font_size)

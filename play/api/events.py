@@ -17,6 +17,8 @@ from ..io.keypress import (
     _pressed_keys,
     _keypress_callbacks,
     _keyrelease_callbacks,
+    when_key,
+    when_any_key,
 )  # don't pollute user-facing namespace with library internals
 from ..io.mouse import mouse
 from ..objects.line import Line
@@ -180,7 +182,7 @@ def _game_loop():
                     if not callback.is_running:
                         _loop.create_task(callback())
 
-        # do sprite image transforms (re-rendering images/fonts, scaling, rotating, etc)
+        # do sprite image transforms (re-rendering images/fonts, scaling, rotating, etc.)
 
         # we put it in the event loop instead of just recomputing immediately because if we do it
         # synchronously then the data and rendered image may get out of sync
@@ -346,17 +348,7 @@ async def do(key):
     print("This key was pressed!", key)
 """
         )
-    async_callback = _make_async(func)
-
-    async def wrapper(*args, **kwargs):
-        wrapper.is_running = True
-        await async_callback(*args, **kwargs)
-        wrapper.is_running = False
-
-    wrapper.keys = None
-    wrapper.is_running = False
-    _keypress_callbacks.append(wrapper)
-    return wrapper
+    return when_any_key(func, released=False)
 
 
 # @decorator
@@ -364,20 +356,7 @@ def when_key_pressed(*keys):
     """
     Calls the given function when any of the specified keys are pressed.
     """
-    def decorator(func):
-        async_callback = _make_async(func)
-
-        async def wrapper(*args, **kwargs):
-            wrapper.is_running = True
-            await async_callback(*args, **kwargs)
-            wrapper.is_running = False
-
-        wrapper.keys = keys
-        wrapper.is_running = False
-        _keypress_callbacks.append(wrapper)
-        return wrapper
-
-    return decorator
+    return when_key(*keys, released=False)
 
 
 # @decorator
@@ -394,17 +373,7 @@ async def do(key):
     print("This key was released!", key)
 """
         )
-    async_callback = _make_async(func)
-
-    async def wrapper(*args, **kwargs):
-        wrapper.is_running = True
-        await async_callback(*args, **kwargs)
-        wrapper.is_running = False
-
-    wrapper.keys = None
-    wrapper.is_running = False
-    _keyrelease_callbacks.append(wrapper)
-    return wrapper
+    return when_any_key(func, released=True)
 
 
 # @decorator
@@ -412,20 +381,7 @@ def when_key_released(*keys):
     """
     Calls the given function when any of the specified keys are released.
     """
-    def decorator(func):
-        async_callback = _make_async(func)
-
-        async def wrapper(*args, **kwargs):
-            wrapper.is_running = True
-            await async_callback(*args, **kwargs)
-            wrapper.is_running = False
-
-        wrapper.keys = keys
-        wrapper.is_running = False
-        _keyrelease_callbacks.append(wrapper)
-        return wrapper
-
-    return decorator
+    return when_key(*keys, released=True)
 
 
 # @decorator

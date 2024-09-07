@@ -58,7 +58,7 @@ class _Physics:
     def _make_pymunk(self):  # pylint: disable=too-many-branches
         mass = self.mass if self.can_move else 0
 
-        # non-moving line shapes are platforms and it's easier to take care of them less-generically
+        # non-moving line shapes are platforms, and it's easier to take care of them less-generically
         if not self.can_move and self.sprite.__class__ == "Line":
             self._pymunk_body = physics_space.static_body.copy()
             self._pymunk_shape = _pymunk.Segment(
@@ -135,13 +135,16 @@ class _Physics:
         Clone the physics object.
         :param sprite: The sprite to clone.
         """
-        # TODO: finish filling out params
         return self.__class__(  # pylint: disable=no-value-for-parameter
             sprite=sprite,
             can_move=self.can_move,
             x_speed=self.x_speed,
             y_speed=self.y_speed,
             obeys_gravity=self.obeys_gravity,
+            bounciness=self.bounciness,
+            mass=self.mass,
+            friction=self._friction,
+            stable=self.stable,
         )
 
     def pause(self):
@@ -234,7 +237,7 @@ class _Gravity:  # pylint: disable=too-few-public-methods
     """
     The gravity of the game.
     """
-    # TODO: make this default to vertical if horizontal is 0?
+
     vertical = -100 * _SPEED_MULTIPLIER
     horizontal = 0
 
