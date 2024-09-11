@@ -2,11 +2,10 @@
 
 import math as _math
 import warnings as _warnings
-import os as _os
 import pymunk as _pymunk
 import pygame
 
-from ..globals import all_sprites
+from ..globals import all_sprites, sprites_group
 from ..io.exceptions import Oops, Hmm
 from ..physics import physics_space, _Physics
 from ..utils import _clamp
@@ -24,102 +23,37 @@ def _circle_touching_circle(a, b):
 
 
 def _sprite_touching_sprite(a, b):
-    # todo: custom code for circle, line, rotated rectangley sprites
-    # use physics engine if both sprites have physics on
-    # if a.physics and b.physics:
-    if a.left >= b.right or a.right <= b.left or a.top <= b.bottom or a.bottom >= b.top:
-        if hasattr(a, "_radius") or hasattr(b, "_radius"):
-            # if one of the sprites is a circle, use circle collision
-            return _circle_touching_circle(a, b)
-        return False
-    return True
+    return pygame.sprite.collide_mask(a, b) is not None
 
 
 def point_touching_sprite(point, sprite):
     # todo: custom code for circle, line, rotated rectangley sprites
     return (
-            sprite.left <= point.x <= sprite.right
-            and sprite.bottom <= point.y <= sprite.top
+        sprite.left <= point.x <= sprite.right
+        and sprite.bottom <= point.y <= sprite.top
     )
 
 
-class Sprite:  # pylint: disable=attribute-defined-outside-init, too-many-public-methods
-    def __init__(
-            self, image=None, x=0, y=0, size=100, angle=0, transparency=100
-    ):  # pylint: disable=too-many-arguments
-        self._image = image or _os.path.join(
-            _os.path.split(__file__)[0], "blank_image.png"
-        )
-        self._x = x
-        self._y = y
-        self._angle = angle
-        self._size = size
-        self._transparency = transparency
+class Sprite(
+    pygame.sprite.Sprite
+):  # pylint: disable=attribute-defined-outside-init, too-many-public-methods
+    def __init__(self, image=None):
+        self._size = None
+        self._x = None
+        self._y = None
+        self._angle = None
+        self._transparency = None
 
+        self._should_recompute = False
+        self._image = image
         self.physics = None
         self._is_clicked = False
         self._is_hidden = False
 
-        self._compute_primary_surface()
-
         self._when_clicked_callbacks = []
 
-        all_sprites.append(self)
-
-    def _compute_primary_surface(self):
-        try:
-            self._primary_pygame_surface = pygame.image.load(_os.path.join(self._image))
-        except pygame.error as exc:  # pylint: disable=no-member
-            raise Oops(
-                f"""We couldn't find the image file you provided named "{self._image}".
-If the file is in a folder, make sure you add the folder name, too."""
-            ) from exc
-        self._primary_pygame_surface.set_colorkey(
-            (255, 255, 255, 255)
-        )  # set background to transparent
-
-        self._should_recompute_primary_surface = False
-
-        # always recompute secondary surface if the primary surface changes
-        self._compute_secondary_surface(force=True)
-
-    def _compute_secondary_surface(self, force=False):
-
-        self._secondary_pygame_surface = self._primary_pygame_surface.copy()
-
-        # transparency
-        if self._transparency != 100 or force:
-            try:
-                # for text and images with transparent pixels
-                array = pygame.surfarray.pixels_alpha(self._secondary_pygame_surface)
-                array[:, :] = (array[:, :] * (self._transparency / 100.0)).astype(
-                    array.dtype
-                )  # modify surface pixels in-place
-                del array  # I think pixels are written when array leaves memory, so delete it explicitly here
-            except Exception:  # pylint: disable=broad-except
-                # this works for images without alpha pixels in them
-                self._secondary_pygame_surface.set_alpha(
-                    round((self._transparency / 100.0) * 255)
-                )
-
-        # scale
-        if (self.size != 100) or force:
-            ratio = self.size / 100.0
-            self._secondary_pygame_surface = pygame.transform.scale(
-                self._secondary_pygame_surface,
-                (
-                    round(self._secondary_pygame_surface.get_width() * ratio),  # width
-                    round(self._secondary_pygame_surface.get_height() * ratio),
-                ),
-            )  # height
-
-        # rotate
-        if (self.angle != 0) or force:
-            self._secondary_pygame_surface = pygame.transform.rotate(
-                self._secondary_pygame_surface, self._angle
-            )
-
-        self._should_recompute_secondary_surface = False
+        pygame.sprite.Sprite.__init__(self)
+        sprites_group.add(self)
 
     @property
     def is_clicked(self):
@@ -191,7 +125,6 @@ You might want to look in your code where you're setting transparency and make s
             )
 
         self._transparency = _clamp(alpha, 0, 100)
-        self._should_recompute_secondary_surface = True
 
     @property
     def image(self):
@@ -200,7 +133,7 @@ You might want to look in your code where you're setting transparency and make s
     @image.setter
     def image(self, image_filename):
         self._image = image_filename
-        self._should_recompute_primary_surface = True
+        self._should_recompute = True
 
     @property
     def angle(self):
@@ -209,7 +142,6 @@ You might want to look in your code where you're setting transparency and make s
     @angle.setter
     def angle(self, _angle):
         self._angle = _angle
-        self._should_recompute_secondary_surface = True
 
         if self.physics:
             self.physics._pymunk_body.angle = _math.radians(_angle)
@@ -221,7 +153,6 @@ You might want to look in your code where you're setting transparency and make s
     @size.setter
     def size(self, percent):
         self._size = percent
-        self._should_recompute_secondary_surface = True
         if self.physics:
             self.physics._remove()
             self.physics._make_pymunk()
@@ -253,7 +184,6 @@ You might want to look in your code where you're setting transparency and make s
         self._is_hidden = not show
 
     def is_touching(self, sprite_or_point):
-        self._secondary_pygame_surface.get_rect()
         if isinstance(sprite_or_point, Sprite):
             return _sprite_touching_sprite(sprite_or_point, self)
         return point_touching_sprite(sprite_or_point, self)
@@ -300,20 +230,20 @@ You might want to look in your code where you're setting transparency and make s
         dx = self.x - x1
         dy = self.y - y1
 
-        return _math.sqrt(dx ** 2 + dy ** 2)
+        return _math.sqrt(dx**2 + dy**2)
 
     def remove(self):
         if self.physics:
             self.physics._remove()
-        all_sprites.remove(self)
+        sprites_group.remove(self)
 
     @property
     def width(self):
-        return self._secondary_pygame_surface.get_width()
+        return self.rect.width
 
     @property
     def height(self):
-        return self._secondary_pygame_surface.get_height()
+        return self.rect.height
 
     @property
     def right(self):
@@ -348,18 +278,10 @@ You might want to look in your code where you're setting transparency and make s
         self.y = y + self.height / 2
 
     def _pygame_x(self):
-        return (
-                self.x
-                + (screen.width / 2.0)
-                - (self._secondary_pygame_surface.get_width() / 2.0)
-        )
+        return self.x + (screen.width / 2.0) - (self.rect.width / 2.0)
 
     def _pygame_y(self):
-        return (
-                (screen.height / 2.0)
-                - self.y
-                - (self._secondary_pygame_surface.get_height() / 2.0)
-        )
+        return (screen.height / 2.0) - self.y - (self.rect.height / 2.0)
 
     # @decorator
     def when_clicked(self, callback, call_with_sprite=False):
@@ -405,15 +327,15 @@ You might want to look in your code where you're setting transparency and make s
     #         return setattr(self.physics, name, value)
 
     def start_physics(  # pylint: disable=too-many-arguments
-            self,
-            can_move=True,
-            stable=False,
-            x_speed=0,
-            y_speed=0,
-            obeys_gravity=True,
-            bounciness=1.0,
-            mass=10,
-            friction=0.1,
+        self,
+        can_move=True,
+        stable=False,
+        x_speed=0,
+        y_speed=0,
+        obeys_gravity=True,
+        bounciness=1.0,
+        mass=10,
+        friction=0.1,
     ):
         if not self.physics:
             self.physics = _Physics(

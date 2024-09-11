@@ -1,4 +1,5 @@
 """A bunch of random math functions."""
+
 import pygame
 
 from ..io.exceptions import Oops
@@ -54,7 +55,9 @@ def color_name_to_rgb(name):
         return name
 
     try:
-        return pygame.color.THECOLORS[name.lower().strip().replace("-", "").replace(" ", "")]
+        return pygame.color.THECOLORS[
+            name.lower().strip().replace("-", "").replace(" ", "")
+        ]
     except KeyError as exception:
         raise Oops(
             f"""You gave a color name we didn't understand: '{name}'

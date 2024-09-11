@@ -1,6 +1,9 @@
 """Global variables for the game"""
 
+import pygame
+
 all_sprites = []
+sprites_group = pygame.sprite.Group()
 
 _walls = []
 

@@ -3,6 +3,7 @@
 import pygame
 from .sprite import Sprite
 from ..globals import all_sprites
+from ..io import convert_pos
 from ..utils import color_name_to_rgb as _color_name_to_rgb
 
 
@@ -20,48 +21,28 @@ class Box(Sprite):
         size=100,
         angle=0,
     ):
+        super().__init__(self)
+        self._color = color
+        self._x = x
+        self._y = y
         self._width = width
         self._height = height
-        self._color = color
         self._border_color = border_color
         self._border_width = border_width
-        super().__init__(None, x, y, size, angle, transparency)
-
         self._transparency = transparency
         self._size = size
         self._angle = angle
-        self._is_clicked = False
-        self._is_hidden = False
-        self.physics = None
+        self.rect = pygame.Rect(0, 0, 0, 0)
+        self.update()
 
-        self._compute_primary_surface()
-
-    def _compute_primary_surface(self):
-        print(self._x)
-        self._primary_pygame_surface = pygame.Surface(
-            (self._width, self._height), pygame.SRCALPHA  # pylint: disable=no-member
-        )
-
-        if self._border_width and self._border_color:
-            # draw border rectangle
-            self._primary_pygame_surface.fill(_color_name_to_rgb(self._border_color))
-            # draw fill rectangle over border rectangle at the proper position
-            pygame.draw.rect(
-                self._primary_pygame_surface,
-                _color_name_to_rgb(self._color),
-                (
-                    self._border_width,
-                    self._border_width,
-                    self._width - 2 * self._border_width,
-                    self._height - 2 * self.border_width,
-                ),
-            )
-
-        else:
-            self._primary_pygame_surface.fill(_color_name_to_rgb(self._color))
-
-        self._should_recompute_primary_surface = False
-        self._compute_secondary_surface(force=True)
+    def update(self):
+        self.image = pygame.Surface((self._width, self._height), pygame.SRCALPHA)
+        self.image.fill(_color_name_to_rgb(self._color))
+        self.image.set_alpha(self._transparency)
+        self.rect = self.image.get_rect()
+        pos = convert_pos(self.x, self.y)
+        self.rect.x = pos[0] - self._width // 2
+        self.rect.y = pos[1] - self._height // 2
 
     ##### width #####
     @property
@@ -71,7 +52,7 @@ class Box(Sprite):
     @width.setter
     def width(self, _width):
         self._width = _width
-        self._should_recompute_primary_surface = True
+        self._should_recompute = True
 
     ##### height #####
     @property
@@ -81,7 +62,7 @@ class Box(Sprite):
     @height.setter
     def height(self, _height):
         self._height = _height
-        self._should_recompute_primary_surface = True
+        self._should_recompute = True
 
     ##### color #####
     @property
@@ -91,7 +72,7 @@ class Box(Sprite):
     @color.setter
     def color(self, _color):
         self._color = _color
-        self._should_recompute_primary_surface = True
+        self._should_recompute = True
 
     ##### border_color #####
     @property
@@ -101,7 +82,7 @@ class Box(Sprite):
     @border_color.setter
     def border_color(self, _border_color):
         self._border_color = _border_color
-        self._should_recompute_primary_surface = True
+        self._should_recompute = True
 
     ##### border_width #####
     @property
@@ -111,7 +92,7 @@ class Box(Sprite):
     @border_width.setter
     def border_width(self, _border_width):
         self._border_width = _border_width
-        self._should_recompute_primary_surface = True
+        self._should_recompute = True
 
     def clone(self):
         return self.__class__(

@@ -25,10 +25,10 @@ def test_physics(size=100):
     play.start_program()
     global y
     global screeny
-    print(y)
-    print((screeny / 2 * -1) + size)
+    print(round(y))
+    print(round((screeny / 2 * -1) + size))
     # check if the y is within 1% of ((screeny /2 * -1) + size):
-    if ((screeny / 2 * -1) + size) * 1.01 > y > ((screeny / 2 * -1) + size) * 0.99:
+    if round(y) != round((screeny / 2 * -1) + size):
         pytest.fail("The sprite should have fallen to the ground.")
 
 # create a pytest for test_physics

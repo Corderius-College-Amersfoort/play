@@ -5,7 +5,7 @@ import math as _math
 
 import pygame  # pylint: disable=import-error
 
-from ..globals import all_sprites, backdrop, FRAME_RATE
+from ..globals import all_sprites, backdrop, FRAME_RATE, sprites_group
 from ..io import screen, PYGAME_DISPLAY
 from ..io.exceptions import Oops
 from ..io.keypress import (
@@ -138,7 +138,7 @@ def _game_loop():
     # gl.glClearColor(_background_color[0], _background_color[1], _background_color[2], 1)
     # gl.glClear(gl.GL_COLOR_BUFFER_BIT)
 
-    for sprite in all_sprites:
+    for sprite in sprites_group.sprites():
 
         sprite._is_clicked = False
 
@@ -182,51 +182,8 @@ def _game_loop():
                     if not callback.is_running:
                         _loop.create_task(callback())
 
-        # do sprite image transforms (re-rendering images/fonts, scaling, rotating, etc.)
-
-        # we put it in the event loop instead of just recomputing immediately because if we do it
-        # synchronously then the data and rendered image may get out of sync
-        if sprite._should_recompute_primary_surface:
-            # recomputing primary surface also recomputes secondary surface
-            _loop.call_soon(sprite._compute_primary_surface)
-        elif sprite._should_recompute_secondary_surface:
-            _loop.call_soon(sprite._compute_secondary_surface)
-
-        if isinstance(sprite, Line):
-            # @hack: Line-drawing code should probably be in the line._compute_primary_surface function
-            # but the coordinates work different for lines than other sprites.
-
-            # x = screen.width/2 + sprite.x
-            # y = screen.height/2 - sprite.y - sprite.thickness
-            # _pygame_display.blit(sprite._secondary_pygame_surface, (x,y) )
-
-            x = screen.width / 2 + sprite.x  # pylint: disable=invalid-name
-            y = screen.height / 2 - sprite.y  # pylint: disable=invalid-name
-            x_1 = screen.width / 2 + sprite.x1
-            y_1 = screen.height / 2 - sprite.y1
-            if sprite.thickness == 1:
-                pygame.draw.aaline(
-                    PYGAME_DISPLAY,
-                    _color_name_to_rgb(sprite.color),
-                    (x, y),
-                    (x_1, y_1),
-                    True,
-                )
-            else:
-                pygame.draw.line(
-                    PYGAME_DISPLAY,
-                    _color_name_to_rgb(sprite.color),
-                    (x, y),
-                    (x_1, y_1),
-                    sprite.thickness,
-                )
-        else:
-
-            PYGAME_DISPLAY.blit(
-                sprite._secondary_pygame_surface,
-                (sprite._pygame_x(), sprite._pygame_y()),
-            )
-
+    sprites_group.update()
+    sprites_group.draw(PYGAME_DISPLAY)
     pygame.display.flip()
     _loop.call_soon(_game_loop)
     return True

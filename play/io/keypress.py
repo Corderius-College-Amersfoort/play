@@ -49,6 +49,7 @@ def when_any_key(func, released=False):
 
 def when_key(*keys, released=False):
     """Run a function when a key is pressed or released."""
+
     def decorator(func):
         async_callback = _make_async(func)
 

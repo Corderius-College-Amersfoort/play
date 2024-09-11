@@ -142,3 +142,23 @@ def remove_walls():
 
 
 create_walls()
+
+
+def convert_pos(x, y):
+    """
+    Convert from the Play coordinate system to the Pygame coordinate system.
+
+    """
+    x1 = screen.width / 2 + x
+    y1 = screen.height / 2 - y
+    return x1, y1
+
+
+def pos_convert(x, y):
+    """
+    Convert from the Pygame coordinate system to the Play coordinate system.
+
+    """
+    x1 = x - screen.width / 2
+    y1 = screen.height / 2 - y
+    return x1, y1

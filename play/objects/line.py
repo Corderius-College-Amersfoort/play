@@ -4,7 +4,8 @@ import math as _math
 
 import pygame
 from .sprite import Sprite
-from ..globals import all_sprites
+from ..io import convert_pos, screen, pos_convert
+from ..utils import color_name_to_rgb as _color_name_to_rgb
 
 
 class Line(Sprite):
@@ -21,7 +22,7 @@ class Line(Sprite):
         transparency=100,
         size=100,
     ):
-        super().__init__(x, y, size, angle, transparency)
+        super().__init__()
         self._x = x
         self._y = y
         self._color = color
@@ -44,15 +45,25 @@ class Line(Sprite):
 
         self._transparency = transparency
         self._size = size
-        self._is_hidden = False
-        self._is_clicked = False
-        self.physics = None
 
-        self._when_clicked_callbacks = []
+        self.rect = pygame.Rect(0, 0, 0, 0)
+        self.update()
 
-        self._compute_primary_surface()
+    def update(self):
+        # print(self.y1)
+        pos_begin = convert_pos(self.x, self.y)
+        pos_end = convert_pos(self.x1, self.y1)
+        # print(pos_begin, pos_end)
 
-        all_sprites.append(self)
+        self._image = pygame.Surface((screen.width, screen.height), pygame.SRCALPHA)
+        pygame.draw.line(
+            self._image,
+            _color_name_to_rgb(self._color),
+            pos_begin,
+            pos_end,
+            self._thickness,
+        )
+        self.rect = self._image.get_rect()
 
     def clone(self):
         return self.__class__(
@@ -60,36 +71,6 @@ class Line(Sprite):
             length=self.length,
             thickness=self.thickness,
             **self._common_properties()
-        )
-
-    def _compute_primary_surface(self):
-        # Make a surface that just contains the line and no white-space around the line.
-        # If line isn't horizontal, this surface will be drawn rotated.
-        width = self.length
-        height = self.thickness + 1
-
-        self._primary_pygame_surface = pygame.Surface(
-            (width, height), pygame.SRCALPHA  # pylint: disable=no-member
-        )  # pylint: disable=no-member
-        # self._primary_pygame_surface.set_colorkey((255,255,255, 255)) # set background to transparent
-
-        # line is actually drawn in _game_loop because coordinates work different
-
-        self._should_recompute_primary_surface = False
-        self._compute_secondary_surface(force=True)
-
-    def _compute_secondary_surface(self, force=False):
-        self._secondary_pygame_surface = (  # pylint: disable=attribute-defined-outside-init
-            self._primary_pygame_surface.copy()
-        )
-
-        if force or self._transparency != 100:
-            self._secondary_pygame_surface.set_alpha(
-                round((self._transparency / 100.0) * 255)
-            )
-
-        self._should_recompute_secondary_surface = (  # pylint: disable=attribute-defined-outside-init
-            False
         )
 
     ##### color #####
@@ -100,7 +81,7 @@ class Line(Sprite):
     @color.setter
     def color(self, _color):
         self._color = _color
-        self._should_recompute_primary_surface = True
+        self._should_recompute = True
 
     ##### thickness #####
     @property
@@ -110,7 +91,7 @@ class Line(Sprite):
     @thickness.setter
     def thickness(self, _thickness):
         self._thickness = _thickness
-        self._should_recompute_primary_surface = True
+        self._should_recompute = True
 
     def _calc_endpoint(self):
         radians = _math.radians(self._angle)
@@ -128,7 +109,7 @@ class Line(Sprite):
     def length(self, _length):
         self._length = _length
         self._x1, self._y1 = self._calc_endpoint()
-        self._should_recompute_primary_surface = True
+        self._should_recompute = True
 
     ##### angle #####
     @property
@@ -158,7 +139,7 @@ class Line(Sprite):
     def x1(self, _x1):
         self._x1 = _x1
         self._length, self._angle = self._calc_length_angle()
-        self._should_recompute_primary_surface = True
+        self._should_recompute = True
 
     ##### y1 #####
     @property
@@ -167,6 +148,6 @@ class Line(Sprite):
 
     @y1.setter
     def y1(self, _y1):
-        self._angle = _y1
+        self._y1 = _y1
         self._length, self._angle = self._calc_length_angle()
-        self._should_recompute_primary_surface = True
+        self._should_recompute = True

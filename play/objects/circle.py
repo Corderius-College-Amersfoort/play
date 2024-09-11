@@ -2,7 +2,7 @@
 
 import pygame
 from .sprite import Sprite
-from ..globals import all_sprites
+from ..io import convert_pos
 from ..utils import color_name_to_rgb as _color_name_to_rgb
 
 
@@ -19,6 +19,7 @@ class Circle(Sprite):
         size=100,
         angle=0,
     ):
+        super().__init__()
         self._x = x
         self._y = y
         self._color = color
@@ -35,9 +36,8 @@ class Circle(Sprite):
 
         self._when_clicked_callbacks = []
 
-        self._compute_primary_surface()
-
-        all_sprites.append(self)
+        self.rect = pygame.Rect(0, 0, 0, 0)
+        self.update()
 
     def clone(self):
         return self.__class__(
@@ -48,40 +48,21 @@ class Circle(Sprite):
             **self._common_properties()
         )
 
-    def _compute_primary_surface(self):
-        total_diameter = (self.radius + self._border_width) * 2
-        self._primary_pygame_surface = pygame.Surface(
-            (total_diameter, total_diameter),
-            pygame.SRCALPHA,  # pylint: disable=no-member
+    def update(self):
+        self._image = pygame.Surface(
+            (self._radius * 2, self._radius * 2), pygame.SRCALPHA
         )
-
-        center = self._radius + self._border_width
-
-        if self._border_width and self._border_color:
-            # draw border circle
-            pygame.draw.circle(
-                self._primary_pygame_surface,
-                _color_name_to_rgb(self._border_color),
-                (center, center),
-                self._radius,
-            )
-            # draw fill circle over border circle
-            pygame.draw.circle(
-                self._primary_pygame_surface,
-                _color_name_to_rgb(self._color),
-                (center, center),
-                self._radius - self._border_width,
-            )
-        else:
-            pygame.draw.circle(
-                self._primary_pygame_surface,
-                _color_name_to_rgb(self._color),
-                (center, center),
-                self._radius,
-            )
-
-        self._should_recompute_primary_surface = False
-        self._compute_secondary_surface(force=True)
+        pygame.draw.circle(
+            self._image,
+            _color_name_to_rgb(self._color),
+            (self._radius, self._radius),
+            self._radius,
+        )
+        self.rect = self._image.get_rect()
+        pos = convert_pos(self.x, self.y)
+        self.rect.x = pos[0] - self._radius
+        self.rect.y = pos[1] - self._radius
+        # self._should_recompute = False
 
     ##### color #####
     @property
@@ -91,7 +72,7 @@ class Circle(Sprite):
     @color.setter
     def color(self, _color):
         self._color = _color
-        self._should_recompute_primary_surface = True
+        self._should_recompute = True
 
     ##### radius #####
     @property
@@ -101,7 +82,7 @@ class Circle(Sprite):
     @radius.setter
     def radius(self, _radius):
         self._radius = _radius
-        self._should_recompute_primary_surface = True
+        self._should_recompute = True
         if self.physics:
             self.physics._pymunk_shape.unsafe_set_radius(self._radius)
 
@@ -113,7 +94,7 @@ class Circle(Sprite):
     @border_color.setter
     def border_color(self, _border_color):
         self._border_color = _border_color
-        self._should_recompute_primary_surface = True
+        self._should_recompute = True
 
     ##### border_width #####
     @property
@@ -123,4 +104,4 @@ class Circle(Sprite):
     @border_width.setter
     def border_width(self, _border_width):
         self._border_width = _border_width
-        self._should_recompute_primary_surface = True
+        self._should_recompute = True
