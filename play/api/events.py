@@ -5,7 +5,7 @@ import math as _math
 
 import pygame  # pylint: disable=import-error
 
-from ..globals import all_sprites, backdrop, FRAME_RATE, sprites_group
+from ..globals import backdrop, FRAME_RATE, sprites_group
 from ..io import screen, PYGAME_DISPLAY
 from ..io.exceptions import Oops
 from ..io.keypress import (
@@ -29,6 +29,23 @@ from ..utils.async_helpers import _make_async
 
 _when_program_starts_callbacks = []
 _clock = pygame.time.Clock()
+
+def handle_mouse_loop():
+    click = False
+    ####################################
+    # @mouse.when_clicked callbacks
+    ####################################
+    if mouse._when_clicked_callbacks:
+        for callback in mouse._when_clicked_callbacks:
+
+            _loop.create_task(callback())
+
+    ########################################
+    # @mouse.when_click_released callbacks
+    ########################################
+    if mouse._when_click_released_callbacks:
+        for callback in mouse._when_click_released_callbacks:
+            _loop.create_task(callback())
 
 
 # pylint: disable=too-many-branches, too-many-statements
@@ -91,19 +108,8 @@ def _game_loop():
             ):
                 _loop.create_task(callback(key))
 
-    ####################################
-    # @mouse.when_clicked callbacks
-    ####################################
-    if click_happened_this_frame and mouse._when_clicked_callbacks:
-        for callback in mouse._when_clicked_callbacks:
-            _loop.create_task(callback())
-
-    ########################################
-    # @mouse.when_click_released callbacks
-    ########################################
-    if click_release_happened_this_frame and mouse._when_click_released_callbacks:
-        for callback in mouse._when_click_released_callbacks:
-            _loop.create_task(callback())
+    if click_release_happened_this_frame:
+        handle_mouse_loop()
 
     #############################
     # @repeat_forever callbacks
