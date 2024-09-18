@@ -4,9 +4,6 @@ import asyncio as _asyncio
 
 import pygame
 
-from ..io.exceptions import Oops
-from ..utils.async_helpers import _make_async
-
 # pylint: disable=no-member
 keypress_map = {
     pygame.K_BACKSPACE: "backspace",

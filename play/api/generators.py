@@ -152,8 +152,9 @@ def new_line(  # pylint: disable=too-many-arguments
         size=size,
     )
 
+
 def new_image(
-        image=None, x=0, y=0, size=100, angle=0, transparency=100
+    image=None, x=0, y=0, size=100, angle=0, transparency=100
 ):  # pylint: disable=too-many-arguments
     """Make a new image object.
     :param image: The image to display.

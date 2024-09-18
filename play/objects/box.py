@@ -2,7 +2,6 @@
 
 import pygame
 from .sprite import Sprite
-from ..globals import all_sprites
 from ..utils import color_name_to_rgb as _color_name_to_rgb
 
 
@@ -35,8 +34,6 @@ class Box(Sprite):
         self.physics = None
 
         self._compute_primary_surface()
-
-
 
     def _compute_primary_surface(self):
         print(self._x)
