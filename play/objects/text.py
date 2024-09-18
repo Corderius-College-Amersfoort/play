@@ -1,11 +1,8 @@
 """This module contains the Text class, which is used to create text objects in the game."""
 
-import warnings as _warnings
 import pygame
 from .sprite import Sprite
-from ..globals import all_sprites
 from ..io import convert_pos
-from ..io.exceptions import Hmm
 from ..utils import color_name_to_rgb as _color_name_to_rgb
 
 
@@ -46,6 +43,7 @@ class Text(Sprite):
         self.update()
 
     def update(self):
+        """Update the text object."""
         pos = convert_pos(self.x, self.y)
         self._image = self._pygame_font.render(
             self._words, True, _color_name_to_rgb(self._color)
@@ -67,24 +65,34 @@ class Text(Sprite):
 
     @property
     def words(self):
+        """Get the words of the text object.
+        :return: The words of the text object."""
         return self._words
 
     @words.setter
     def words(self, string):
+        """Set the words of the text object.
+        :param string: The new words of the text object."""
         self._words = str(string)
         self._should_recompute = True
 
     @property
     def font(self):
+        """Get the font of the text object.
+        :return: The font of the text object."""
         return self._font
 
     @font.setter
     def font(self, font_name):
+        """Set the font of the text object.
+        :param font_name: The new font of the text object."""
         self._font = str(font_name)
         self._should_recompute = True
 
     @property
     def font_size(self):
+        """Get the font size of the text object.
+        :return: The font size of the text object."""
         return self._font_size
 
     @font_size.setter
@@ -94,6 +102,8 @@ class Text(Sprite):
 
     @property
     def color(self):
+        """Get the color of the text object.
+        :return: The color of the text object."""
         return self._color
 
     @color.setter

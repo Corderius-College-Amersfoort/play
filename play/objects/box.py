@@ -2,7 +2,6 @@
 
 import pygame
 from .sprite import Sprite
-from ..globals import all_sprites
 from ..io import convert_pos
 from ..utils import color_name_to_rgb as _color_name_to_rgb
 
@@ -36,6 +35,7 @@ class Box(Sprite):
         self.update()
 
     def update(self):
+        """Update the box's position, size, angle, and transparency."""
         self.image = pygame.Surface((self._width, self._height), pygame.SRCALPHA)
         self.image.fill(_color_name_to_rgb(self._color))
         self.image.set_alpha(self._transparency)
@@ -47,54 +47,76 @@ class Box(Sprite):
     ##### width #####
     @property
     def width(self):
+        """The width of the box.
+        :return: The width of the box."""
         return self._width
 
     @width.setter
     def width(self, _width):
+        """Set the width of the box.
+        :param _width: The new width of the box."""
         self._width = _width
         self._should_recompute = True
 
     ##### height #####
     @property
     def height(self):
+        """The height of the box.
+        :return: The height of the box."""
         return self._height
 
     @height.setter
     def height(self, _height):
+        """Set the height of the box.
+        :param _height: The new height of the box."""
         self._height = _height
         self._should_recompute = True
 
     ##### color #####
     @property
     def color(self):
+        """The color of the box.
+        :return: The color of the box."""
         return self._color
 
     @color.setter
     def color(self, _color):
+        """Set the color of the box.
+        :param _color: The new color of the box."""
         self._color = _color
         self._should_recompute = True
 
     ##### border_color #####
     @property
     def border_color(self):
+        """The color of the box's border.
+        :return: The color of the box's border."""
         return self._border_color
 
     @border_color.setter
     def border_color(self, _border_color):
+        """Set the color of the box's border.
+        :param _border_color: The new color of the box's border."""
         self._border_color = _border_color
         self._should_recompute = True
 
     ##### border_width #####
     @property
     def border_width(self):
+        """The width of the box's border.
+        :return: The width of the box's border."""
         return self._border_width
 
     @border_width.setter
     def border_width(self, _border_width):
+        """Set the width of the box's border.
+        :param _border_width: The new width of the box's border."""
         self._border_width = _border_width
         self._should_recompute = True
 
     def clone(self):
+        """Create a copy of the box.
+        :return: A copy of the box."""
         return self.__class__(
             color=self.color,
             width=self.width,

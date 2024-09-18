@@ -30,8 +30,9 @@ from ..utils.async_helpers import _make_async
 _when_program_starts_callbacks = []
 _clock = pygame.time.Clock()
 
+
 def handle_mouse_loop():
-    click = False
+    """Handle mouse events in the game loop."""
     ####################################
     # @mouse.when_clicked callbacks
     ####################################

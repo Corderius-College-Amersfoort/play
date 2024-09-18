@@ -148,9 +148,11 @@ class _Physics:
         )
 
     def pause(self):
+        """Pause the object."""
         self._remove()
 
     def unpause(self):
+        """Unpause the object."""
         if not self._pymunk_body and not self._pymunk_shape:
             physics_space.add(self._pymunk_body, self._pymunk_shape)
 
@@ -162,6 +164,8 @@ class _Physics:
 
     @property
     def can_move(self):
+        """Check if the object can move.
+        :return: True if the object can move, False otherwise."""
         return self._can_move
 
     @can_move.setter
@@ -174,6 +178,8 @@ class _Physics:
 
     @property
     def x_speed(self):
+        """Get the x-speed of the object.
+        :return: The x-speed of the object."""
         return self._x_speed / _SPEED_MULTIPLIER
 
     @x_speed.setter
@@ -183,6 +189,8 @@ class _Physics:
 
     @property
     def y_speed(self):
+        """Get the y-speed of the object.
+        :return: The y-speed of the object."""
         return self._y_speed / _SPEED_MULTIPLIER
 
     @y_speed.setter
@@ -192,6 +200,8 @@ class _Physics:
 
     @property
     def bounciness(self):
+        """Get the bounciness of the object.
+        :return: The bounciness of the object."""
         return self._bounciness
 
     @bounciness.setter
@@ -201,6 +211,8 @@ class _Physics:
 
     @property
     def stable(self):
+        """Check if the object is stable.
+        :return: True if the object is stable, False otherwise."""
         return self._stable
 
     @stable.setter
@@ -213,15 +225,21 @@ class _Physics:
 
     @property
     def mass(self):
+        """Get the mass of the object.
+        :return: The mass of the object."""
         return self._mass
 
     @mass.setter
     def mass(self, _mass):
+        """Set the mass of the object.
+        :param _mass: The mass of the object."""
         self._mass = _mass
         self._pymunk_body.mass = _mass
 
     @property
     def obeys_gravity(self):
+        """Check if the object obeys gravity.
+        :return: True if the object obeys gravity, False otherwise."""
         return self._obeys_gravity
 
     @obeys_gravity.setter

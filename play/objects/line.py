@@ -4,7 +4,7 @@ import math as _math
 
 import pygame
 from .sprite import Sprite
-from ..io import convert_pos, screen, pos_convert
+from ..io import convert_pos, screen
 from ..utils import color_name_to_rgb as _color_name_to_rgb
 
 
@@ -50,6 +50,7 @@ class Line(Sprite):
         self.update()
 
     def update(self):
+        """Update the line's position and appearance."""
         # print(self.y1)
         pos_begin = convert_pos(self.x, self.y)
         pos_end = convert_pos(self.x1, self.y1)
@@ -66,6 +67,8 @@ class Line(Sprite):
         self.rect = self._image.get_rect()
 
     def clone(self):
+        """Return a clone of the line.
+        :return: A clone of the line."""
         return self.__class__(
             color=self.color,
             length=self.length,
@@ -76,20 +79,28 @@ class Line(Sprite):
     ##### color #####
     @property
     def color(self):
+        """Return the color of the line.
+        :return: The color of the line."""
         return self._color
 
     @color.setter
     def color(self, _color):
+        """Set the color of the line.
+        :param _color: The new color of the line."""
         self._color = _color
         self._should_recompute = True
 
     ##### thickness #####
     @property
     def thickness(self):
+        """Return the thickness of the line.
+        :return: The thickness of the line."""
         return self._thickness
 
     @thickness.setter
     def thickness(self, _thickness):
+        """Set the thickness of the line.
+        :param _thickness: The new thickness of the line."""
         self._thickness = _thickness
         self._should_recompute = True
 
@@ -103,10 +114,15 @@ class Line(Sprite):
     ##### length #####
     @property
     def length(self):
+        """Return the length of the line.
+        :return: The length of the line
+        :rtype: float"""
         return self._length
 
     @length.setter
     def length(self, _length):
+        """Set the length of the line.
+        :param _length: The new length of the line."""
         self._length = _length
         self._x1, self._y1 = self._calc_endpoint()
         self._should_recompute = True
@@ -114,10 +130,14 @@ class Line(Sprite):
     ##### angle #####
     @property
     def angle(self):
+        """Return the angle of the line.
+        :return: The angle of the line."""
         return self._angle
 
     @angle.setter
     def angle(self, _angle):
+        """Set the angle of the line.
+        :param _angle: The new angle of the line."""
         self._angle = _angle
         self._x1, self._y1 = self._calc_endpoint()
         if self.physics:
@@ -133,10 +153,14 @@ class Line(Sprite):
     ##### x1 #####
     @property
     def x1(self):
+        """Return the x-coordinate of the line's endpoint.
+        :return: The x-coordinate of the line's endpoint."""
         return self._x1
 
     @x1.setter
     def x1(self, _x1):
+        """Set the x-coordinate of the line's endpoint.
+        :param _x1: The new x-coordinate of the line's endpoint."""
         self._x1 = _x1
         self._length, self._angle = self._calc_length_angle()
         self._should_recompute = True
@@ -144,10 +168,14 @@ class Line(Sprite):
     ##### y1 #####
     @property
     def y1(self):
+        """Return the y-coordinate of the line's endpoint.
+        :return: The y-coordinate of the line's endpoint."""
         return self._y1
 
     @y1.setter
     def y1(self, _y1):
+        """Set the y-coordinate of the line's endpoint.
+        :param _y1: The new y-coordinate of the line's endpoint."""
         self._y1 = _y1
         self._length, self._angle = self._calc_length_angle()
         self._should_recompute = True

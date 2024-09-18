@@ -1,4 +1,4 @@
-""""""
+"""This module contains the Image class, which is a subclass of the Sprite class."""
 
 import pygame
 
@@ -7,7 +7,9 @@ from ..io import convert_pos
 
 
 class Image(Sprite):
-    def __init__(self, image, x=0, y=0, angle=0, size=100, transparency=100):
+    def __init__(
+        self, image, x=0, y=0, angle=0, size=100, transparency=100
+    ):  # pylint: disable=too-many-arguments
         super().__init__()
         if isinstance(image, str):
             image = pygame.image.load(image)
@@ -21,6 +23,7 @@ class Image(Sprite):
         self.update()
 
     def update(self):
+        """Update the image's position, size, angle, and transparency."""
         self._image = pygame.transform.scale(self._image, (self.width, self.height))
         self._image = pygame.transform.rotate(self._image, self.angle)
         self._image.set_alpha(self.transparency)

@@ -7,7 +7,7 @@ from ..utils import color_name_to_rgb as _color_name_to_rgb
 
 
 class Circle(Sprite):
-    def __init__(
+    def __init__(  # pylint: disable=too-many-arguments
         self,
         color="black",
         x=0,
@@ -40,6 +40,8 @@ class Circle(Sprite):
         self.update()
 
     def clone(self):
+        """Create a copy of the circle.
+        :return: A copy of the circle."""
         return self.__class__(
             color=self.color,
             radius=self.radius,
@@ -49,6 +51,7 @@ class Circle(Sprite):
         )
 
     def update(self):
+        """Update the circle's position, size, angle, and transparency."""
         self._image = pygame.Surface(
             (self._radius * 2, self._radius * 2), pygame.SRCALPHA
         )
@@ -67,20 +70,28 @@ class Circle(Sprite):
     ##### color #####
     @property
     def color(self):
+        """The color of the circle.
+        :return: The color of the circle."""
         return self._color
 
     @color.setter
     def color(self, _color):
+        """Set the color of the circle.
+        :param _color: The color of the circle."""
         self._color = _color
         self._should_recompute = True
 
     ##### radius #####
     @property
     def radius(self):
+        """The radius of the circle.
+        :return: The radius of the circle."""
         return self._radius
 
     @radius.setter
     def radius(self, _radius):
+        """Set the radius of the circle.
+        :param _radius: The radius of the circle."""
         self._radius = _radius
         self._should_recompute = True
         if self.physics:
@@ -89,19 +100,27 @@ class Circle(Sprite):
     ##### border_color #####
     @property
     def border_color(self):
+        """The color of the circle's border.
+        :return: The color of the circle's border."""
         return self._border_color
 
     @border_color.setter
     def border_color(self, _border_color):
+        """Set the color of the circle's border.
+        :param _border_color: The color of the circle's border."""
         self._border_color = _border_color
         self._should_recompute = True
 
     ##### border_width #####
     @property
     def border_width(self):
+        """The width of the circle's border.
+        :return: The width of the circle's border."""
         return self._border_width
 
     @border_width.setter
     def border_width(self, _border_width):
+        """Set the width of the circle's border.
+        :param _border_width: The width of the circle's border."""
         self._border_width = _border_width
         self._should_recompute = True

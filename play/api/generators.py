@@ -1,6 +1,6 @@
 """Generators for creating new objects."""
 
-from ..objects import Box, Circle, Line, Text, Sprite
+from ..objects import Box, Circle, Line, Text
 from ..objects.image import Image
 
 
@@ -166,4 +166,6 @@ def new_image(
     :param transparency: The transparency of the image.
     :return: A new image object.
     """
-    return Image(image=image, x=x, y=y, size=size, angle=angle, transparency=transparency)
+    return Image(
+        image=image, x=x, y=y, size=size, angle=angle, transparency=transparency
+    )
