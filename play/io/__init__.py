@@ -163,13 +163,21 @@ def remove_walls():
     _walls.clear()
 
 
+def remove_wall(index):
+    """Remove a wall from the physics space.
+    :param index: The index of the wall to remove. 0: top, 1: bottom, 2: left, 3: right."""
+    physics_space.remove(_walls[index])
+    _walls.pop(index)
+
+
 create_walls()
 
 
 def convert_pos(x, y):
     """
     Convert from the Play coordinate system to the Pygame coordinate system.
-
+    :param x: The x-coordinate in the Play coordinate system.
+    :param y: The y-coordinate in the Play coordinate system.
     """
     x1 = screen.width / 2 + x
     y1 = screen.height / 2 - y
@@ -179,7 +187,8 @@ def convert_pos(x, y):
 def pos_convert(x, y):
     """
     Convert from the Pygame coordinate system to the Play coordinate system.
-
+    :param x: The x-coordinate in the Pygame coordinate system.
+    :param y: The y-coordinate in the Pygame coordinate system.
     """
     x1 = x - screen.width / 2
     y1 = screen.height / 2 - y
