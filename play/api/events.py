@@ -11,12 +11,11 @@ from ..io.exceptions import Oops
 from ..io.keypress import (
     key_num_to_name as _pygame_key_to_name,
     _loop,
-    _keys_pressed_this_frame,
     _keys_released_this_frame,
     _keys_to_skip,
     _pressed_keys,
-    _keypress_callbacks,
-    _keyrelease_callbacks,
+    _pressed_keys_subscriptions,
+    _release_keys_subscriptions,
     when_key,
     when_any_key,
 )  # don't pollute user-facing namespace with library internals
@@ -51,7 +50,6 @@ def handle_mouse_loop():
 
 # pylint: disable=too-many-branches, too-many-statements
 def _game_loop():
-    _keys_pressed_this_frame.clear()  # do this instead of `_keys_pressed_this_frame = []` to save a tiny bit of memory
     _keys_released_this_frame.clear()
     click_happened_this_frame = False
     click_release_happened_this_frame = False
@@ -82,32 +80,39 @@ def _game_loop():
         if event.type == pygame.KEYDOWN:  # pylint: disable=no-member
             if event.key not in _keys_to_skip:
                 name = _pygame_key_to_name(event)
-                _pressed_keys[event.key] = name
-                _keys_pressed_this_frame.append(name)
+                if name not in _pressed_keys:
+                    _pressed_keys.append(name)
         if event.type == pygame.KEYUP:  # pylint: disable=no-member
-            if not (event.key in _keys_to_skip) and event.key in _pressed_keys:
-                _keys_released_this_frame.append(_pressed_keys[event.key])
-                del _pressed_keys[event.key]
+            name = _pygame_key_to_name(event)
+            if not (event.key in _keys_to_skip) and name in _pressed_keys:
+                _keys_released_this_frame.append(name)
+                _pressed_keys.remove(name)
 
     ############################################################
     # @when_any_key_pressed and @when_key_pressed callbacks
     ############################################################
-    for key in _keys_pressed_this_frame:
-        for callback in _keypress_callbacks:
-            if not callback.is_running and (
-                callback.keys is None or key in callback.keys
-            ):
-                _loop.create_task(callback(key))
+    for key in _pressed_keys:
+        if key in _pressed_keys_subscriptions:
+            for callback in _pressed_keys_subscriptions[key]:
+                if not callback.is_running:
+                    _loop.create_task(callback(key))
+        if "any" in _pressed_keys_subscriptions:
+            for callback in _pressed_keys_subscriptions["any"]:
+                if not callback.is_running:
+                    _loop.create_task(callback(key))
 
     ############################################################
     # @when_any_key_released and @when_key_released callbacks
     ############################################################
     for key in _keys_released_this_frame:
-        for callback in _keyrelease_callbacks:
-            if not callback.is_running and (
-                callback.keys is None or key in callback.keys
-            ):
-                _loop.create_task(callback(key))
+        if key in _release_keys_subscriptions:
+            for callback in _release_keys_subscriptions[key]:
+                if not callback.is_running:
+                    _loop.create_task(callback(key))
+        if "any" in _release_keys_subscriptions:
+            for callback in _release_keys_subscriptions["any"]:
+                if not callback.is_running:
+                    _loop.create_task(callback(key))
 
     if click_release_happened_this_frame:
         handle_mouse_loop()

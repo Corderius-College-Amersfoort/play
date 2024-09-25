@@ -7,14 +7,15 @@ import pygame
 from ..utils.async_helpers import _make_async
 
 pygame.key.set_repeat(200, 16)
-_pressed_keys = {}
-_keypress_callbacks = []
-_keyrelease_callbacks = []
+
+_pressed_keys_subscriptions = {}
+_release_keys_subscriptions = {}
+
+_pressed_keys = []
 
 _loop = _asyncio.get_event_loop()
 _loop.set_debug(False)
 
-_keys_pressed_this_frame = []
 _keys_released_this_frame = []
 _keys_to_skip = (pygame.K_MODE,)
 pygame.event.set_allowed(
@@ -41,14 +42,21 @@ def when_any_key(func, released=False):
     wrapper.keys = None
     wrapper.is_running = False
     if released:
-        _keyrelease_callbacks.append(wrapper)
+        if "any" not in _release_keys_subscriptions:
+            _release_keys_subscriptions["any"] = []
+        _release_keys_subscriptions["any"].append(wrapper)
     else:
-        _keypress_callbacks.append(wrapper)
+        if "any" not in _pressed_keys_subscriptions:
+            _pressed_keys_subscriptions["any"] = []
+        _pressed_keys_subscriptions["any"].append(wrapper)
     return wrapper
 
 
 def when_key(*keys, released=False):
     """Run a function when a key is pressed or released."""
+    for key in keys:
+        if not isinstance(key, str) and not isinstance(key, list):
+            raise ValueError("Key must be a string or a list of strings.")
 
     def decorator(func):
         async_callback = _make_async(func)
@@ -60,10 +68,16 @@ def when_key(*keys, released=False):
 
         wrapper.keys = keys
         wrapper.is_running = False
-        if released:
-            _keyrelease_callbacks.append(wrapper)
-        else:
-            _keypress_callbacks.append(wrapper)
+
+        for key in keys:
+            if released:
+                if key not in _release_keys_subscriptions:
+                    _release_keys_subscriptions[key] = []
+                _release_keys_subscriptions[key].append(wrapper)
+            else:
+                if key not in _pressed_keys_subscriptions:
+                    _pressed_keys_subscriptions[key] = []
+                _pressed_keys_subscriptions[key].append(wrapper)
         return wrapper
 
     return decorator
