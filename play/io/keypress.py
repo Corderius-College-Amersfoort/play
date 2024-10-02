@@ -55,8 +55,13 @@ def when_any_key(func, released=False):
 def when_key(*keys, released=False):
     """Run a function when a key is pressed or released."""
     for key in keys:
-        if not isinstance(key, str) and not isinstance(key, list):
+        if not isinstance(key, str) and not (isinstance(key, list) and (not released)):
+            print(key)
             raise ValueError("Key must be a string or a list of strings.")
+        if isinstance(key, list):
+            for sub_key in key:
+                if not isinstance(sub_key, str):
+                    raise ValueError("Key must be a string or a list of strings.")
 
     def decorator(func):
         async_callback = _make_async(func)
@@ -66,10 +71,11 @@ def when_key(*keys, released=False):
             await async_callback(*args, **kwargs)
             wrapper.is_running = False
 
-        wrapper.keys = keys
         wrapper.is_running = False
 
         for key in keys:
+            if isinstance(key, list):
+                key = hash(frozenset(key))
             if released:
                 if key not in _release_keys_subscriptions:
                     _release_keys_subscriptions[key] = []

@@ -7,11 +7,10 @@ import pygame  # pylint: disable=import-error
 
 from .events import _when_program_starts_callbacks, _game_loop, _loop
 from ..utils import color_name_to_rgb as _color_name_to_rgb
-from ..globals import backdrop as _backdrop
 from ..io.keypress import _pressed_keys
+from ..globals import backdrop as __backdrop
 
-BACKDROP = _backdrop
-
+_backdrop = __backdrop # Work around for the global variable not being imported
 
 def start_program():
     """
@@ -51,10 +50,10 @@ def set_backdrop(color_or_image_name):
     """Set the backdrop color or image for the game.
     :param color_or_image_name: The color or image to set as the backdrop.
     """
-    global BACKDROP
+    global _backdrop
     _color_name_to_rgb(color_or_image_name)
 
-    BACKDROP = color_or_image_name
+    _backdrop = color_or_image_name
 
 
 async def timer(seconds=1.0):

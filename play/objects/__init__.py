@@ -10,3 +10,4 @@ from .circle import Circle
 from .line import Line
 from .sprite import Sprite
 from .text import Text
+from .image import Image

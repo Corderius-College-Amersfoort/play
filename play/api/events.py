@@ -1,204 +1,20 @@
 """All the events that can be triggered in the game."""
 
 import logging as _logging
-import math as _math
 
 import pygame  # pylint: disable=import-error
-
-from ..globals import backdrop, FRAME_RATE, sprites_group
-from ..io import screen, PYGAME_DISPLAY
-from ..io.exceptions import Oops
+from play.core import (
+    game_loop as _game_loop,
+    _repeat_forever_callbacks,
+    _when_program_starts_callbacks,
+)
 from ..io.keypress import (
-    key_num_to_name as _pygame_key_to_name,
     _loop,
-    _keys_released_this_frame,
-    _keys_to_skip,
-    _pressed_keys,
-    _pressed_keys_subscriptions,
-    _release_keys_subscriptions,
-    when_key,
-    when_any_key,
-)  # don't pollute user-facing namespace with library internals
+    when_key as _when_key,
+    when_any_key as _when_any_key,
+)
 from ..io.mouse import mouse
-from ..objects.line import Line
-from ..objects.sprite import point_touching_sprite
-from ..physics import simulate_physics
-from ..utils import color_name_to_rgb as _color_name_to_rgb
 from ..utils.async_helpers import _make_async
-
-_when_program_starts_callbacks = []
-_clock = pygame.time.Clock()
-
-
-def handle_mouse_loop():
-    """Handle mouse events in the game loop."""
-    ####################################
-    # @mouse.when_clicked callbacks
-    ####################################
-    if mouse._when_clicked_callbacks:
-        for callback in mouse._when_clicked_callbacks:
-
-            _loop.create_task(callback())
-
-    ########################################
-    # @mouse.when_click_released callbacks
-    ########################################
-    if mouse._when_click_released_callbacks:
-        for callback in mouse._when_click_released_callbacks:
-            _loop.create_task(callback())
-
-
-# pylint: disable=too-many-branches, too-many-statements
-def _game_loop():
-    _keys_released_this_frame.clear()
-    click_happened_this_frame = False
-    click_release_happened_this_frame = False
-
-    _clock.tick(FRAME_RATE)
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT or (  # pylint: disable=no-member
-            event.type == pygame.KEYDOWN  # pylint: disable=no-member
-            and event.key == pygame.K_q  # pylint: disable=no-member
-            and (
-                pygame.key.get_mods() & pygame.KMOD_META  # pylint: disable=no-member
-                or pygame.key.get_mods() & pygame.KMOD_CTRL  # pylint: disable=no-member
-            )
-        ):
-            # quitting by clicking window's close button or pressing ctrl+q / command+q
-            _loop.stop()
-            return False
-        if event.type == pygame.MOUSEBUTTONDOWN:  # pylint: disable=no-member
-            click_happened_this_frame = True
-            mouse._is_clicked = True
-        if event.type == pygame.MOUSEBUTTONUP:  # pylint: disable=no-member
-            click_release_happened_this_frame = True
-            mouse._is_clicked = False
-        if event.type == pygame.MOUSEMOTION:  # pylint: disable=no-member
-            mouse.x, mouse.y = (event.pos[0] - screen.width / 2.0), (
-                screen.height / 2.0 - event.pos[1]
-            )
-        if event.type == pygame.KEYDOWN:  # pylint: disable=no-member
-            if event.key not in _keys_to_skip:
-                name = _pygame_key_to_name(event)
-                if name not in _pressed_keys:
-                    _pressed_keys.append(name)
-        if event.type == pygame.KEYUP:  # pylint: disable=no-member
-            name = _pygame_key_to_name(event)
-            if not (event.key in _keys_to_skip) and name in _pressed_keys:
-                _keys_released_this_frame.append(name)
-                _pressed_keys.remove(name)
-
-    ############################################################
-    # @when_any_key_pressed and @when_key_pressed callbacks
-    ############################################################
-    for key in _pressed_keys:
-        if key in _pressed_keys_subscriptions:
-            for callback in _pressed_keys_subscriptions[key]:
-                if not callback.is_running:
-                    _loop.create_task(callback(key))
-        if "any" in _pressed_keys_subscriptions:
-            for callback in _pressed_keys_subscriptions["any"]:
-                if not callback.is_running:
-                    _loop.create_task(callback(key))
-
-    ############################################################
-    # @when_any_key_released and @when_key_released callbacks
-    ############################################################
-    for key in _keys_released_this_frame:
-        if key in _release_keys_subscriptions:
-            for callback in _release_keys_subscriptions[key]:
-                if not callback.is_running:
-                    _loop.create_task(callback(key))
-        if "any" in _release_keys_subscriptions:
-            for callback in _release_keys_subscriptions["any"]:
-                if not callback.is_running:
-                    _loop.create_task(callback(key))
-
-    if click_release_happened_this_frame:
-        handle_mouse_loop()
-
-    #############################
-    # @repeat_forever callbacks
-    #############################
-    for callback in _repeat_forever_callbacks:
-        if not callback.is_running:
-            _loop.create_task(callback())
-
-    #############################
-    # physics simulation
-    #############################
-    _loop.call_soon(simulate_physics)
-
-    # 1.  get pygame events
-    #       - set mouse position, clicked, keys pressed, keys released
-    # 2.  run when_program_starts callbacks
-    # 3.  run physics simulation
-    # 4.  compute new pygame_surfaces (scale, rotate)
-    # 5.  run repeat_forever callbacks
-    # 6.  run mouse/click callbacks (make sure more than one isn't running at a time)
-    # 7.  run keyboard callbacks (make sure more than one isn't running at a time)
-    # 8.  run when_touched callbacks
-    # 9.  render background
-    # 10. render sprites (with correct z-order)
-    # 11. call event loop again
-
-    PYGAME_DISPLAY.fill(_color_name_to_rgb(backdrop))
-
-    # BACKGROUND COLOR
-    # note: cannot use screen.fill((1, 1, 1)) because pygame's screen
-    #       does not support fill() on OpenGL surfaces
-    # gl.glClearColor(_background_color[0], _background_color[1], _background_color[2], 1)
-    # gl.glClear(gl.GL_COLOR_BUFFER_BIT)
-
-    for sprite in sprites_group.sprites():
-
-        sprite._is_clicked = False
-
-        if sprite.is_hidden:
-            continue
-
-        ######################################################
-        # update sprites with results of physics simulation
-        ######################################################
-        if sprite.physics and sprite.physics.can_move:
-
-            body = sprite.physics._pymunk_body
-            angle = _math.degrees(body.angle)
-            if isinstance(sprite, Line):
-                sprite._x = body.position.x - (sprite.length / 2) * _math.cos(angle)
-                sprite._y = body.position.y - (sprite.length / 2) * _math.sin(angle)
-                sprite._x1 = body.position.x + (sprite.length / 2) * _math.cos(angle)
-                sprite._y1 = body.position.y + (sprite.length / 2) * _math.sin(angle)
-                # sprite._length, sprite._angle = sprite._calc_length_angle()
-            else:
-                if (
-                    str(body.position.x) != "nan"
-                ):  # this condition can happen when changing sprite.physics.can_move
-                    sprite._x = body.position.x
-                if str(body.position.y) != "nan":
-                    sprite._y = body.position.y
-
-            sprite.angle = (
-                angle  # needs to be .angle, not ._angle so surface gets recalculated
-            )
-            sprite.physics._x_speed, sprite.physics._y_speed = body.velocity
-
-        #################################
-        # @sprite.when_clicked events
-        #################################
-        if mouse.is_clicked and not isinstance(sprite, Line):
-            if point_touching_sprite(mouse, sprite) and click_happened_this_frame:
-                # only run sprite clicks on the frame the mouse was clicked
-                sprite._is_clicked = True
-                for callback in sprite._when_clicked_callbacks:
-                    if not callback.is_running:
-                        _loop.create_task(callback())
-
-    sprites_group.update()
-    sprites_group.draw(PYGAME_DISPLAY)
-    pygame.display.flip()
-    _loop.call_soon(_game_loop)
-    return True
 
 
 # @decorator
@@ -258,9 +74,6 @@ def start_program():
         pygame.quit()  # pylint: disable=no-member
 
 
-_repeat_forever_callbacks = []
-
-
 # @decorator
 def repeat_forever(func):
     """
@@ -309,7 +122,7 @@ def when_any_key_pressed(func):
     Calls the given function when any key is pressed.
     """
     if not callable(func):
-        raise Oops(
+        raise ValueError(
             """@play.when_any_key_pressed doesn't use a list of keys. Try just this instead:
 
 @play.when_any_key_pressed
@@ -317,7 +130,7 @@ async def do(key):
     print("This key was pressed!", key)
 """
         )
-    return when_any_key(func, released=False)
+    return _when_any_key(func, released=False)
 
 
 # @decorator
@@ -325,7 +138,7 @@ def when_key_pressed(*keys):
     """
     Calls the given function when any of the specified keys are pressed.
     """
-    return when_key(*keys, released=False)
+    return _when_key(*keys, released=False)
 
 
 # @decorator
@@ -334,7 +147,7 @@ def when_any_key_released(func):
     Calls the given function when any key is released.
     """
     if not callable(func):
-        raise Oops(
+        raise ValueError(
             """@play.when_any_key_released doesn't use a list of keys. Try just this instead:
 
 @play.when_any_key_released
@@ -342,7 +155,7 @@ async def do(key):
     print("This key was released!", key)
 """
         )
-    return when_any_key(func, released=True)
+    return _when_any_key(func, released=True)
 
 
 # @decorator
@@ -350,7 +163,7 @@ def when_key_released(*keys):
     """
     Calls the given function when any of the specified keys are released.
     """
-    return when_key(*keys, released=True)
+    return _when_key(*keys, released=True)
 
 
 # @decorator
