@@ -10,7 +10,8 @@ from ..utils import color_name_to_rgb as _color_name_to_rgb
 from ..io.keypress import _pressed_keys
 from ..globals import backdrop as __backdrop
 
-_backdrop = __backdrop # Work around for the global variable not being imported
+_backdrop = __backdrop  # Work around for the global variable not being imported
+
 
 def start_program():
     """

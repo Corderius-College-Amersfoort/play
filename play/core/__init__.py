@@ -19,14 +19,14 @@ from ..objects.line import Line
 from ..objects.sprite import point_touching_sprite
 from ..physics import simulate_physics
 from ..utils import color_name_to_rgb as _color_name_to_rgb
-from play.loop import _loop
+from ..loop import _loop
 
 _repeat_forever_callbacks = []
 _when_program_starts_callbacks = []
 _clock = pygame.time.Clock()
 
-click_happened_this_frame = False # pylint: disable=invalid-name
-click_release_happened_this_frame = False # pylint: disable=invalid-name
+click_happened_this_frame = False  # pylint: disable=invalid-name
+click_release_happened_this_frame = False  # pylint: disable=invalid-name
 
 
 def _handle_pygame_events():

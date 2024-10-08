@@ -1,7 +1,6 @@
 """This module contains the Box class, which represents a box in the game."""
 
 import pygame
-from typing_extensions import override
 
 from .sprite import Sprite
 from ..io import convert_pos

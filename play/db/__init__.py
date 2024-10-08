@@ -39,7 +39,6 @@ def set_data(key, value):
             raise KeyError(f"Key {k} not found in {target}")
         target = target[k]
     target[keys[-1]] = value
-    print(JSON_DATA)
 
     with open(FILENAME, "w", encoding="utf-8") as write_file:
         write_file.write(json.dumps(JSON_DATA))

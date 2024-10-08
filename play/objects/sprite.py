@@ -4,7 +4,6 @@ import math as _math
 import warnings as _warnings
 import pymunk as _pymunk
 import pygame
-from typing_extensions import override
 
 from ..loop import _loop
 from ..globals import sprites_group
@@ -47,6 +46,7 @@ class Sprite(
     pygame.sprite.Sprite
 ):  # pylint: disable=attribute-defined-outside-init, too-many-public-methods
     _when_touching_callbacks = []
+
     def __init__(self, image=None):
         self._size = None
         self._x = None
@@ -73,6 +73,7 @@ class Sprite(
         self._should_recompute = True
 
     def update(self):
+        """Update the sprite."""
         if self._should_recompute:
             # check if we are touching any other sprites
             for callback, sprite in self._when_touching_callbacks:
@@ -403,6 +404,7 @@ You might want to look in your code where you're setting transparency and make s
         """Run a function when the sprite is touching another sprite.
         :param sprites: The sprites to check if they're touching.
         """
+
         def decorator(func):
             async_callback = _make_async(func)
 
