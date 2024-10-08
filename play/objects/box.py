@@ -1,6 +1,8 @@
 """This module contains the Box class, which represents a box in the game."""
 
 import pygame
+from typing_extensions import override
+
 from .sprite import Sprite
 from ..io import convert_pos
 from ..utils import color_name_to_rgb as _color_name_to_rgb
@@ -36,13 +38,15 @@ class Box(Sprite):
 
     def update(self):
         """Update the box's position, size, angle, and transparency."""
-        self.image = pygame.Surface((self._width, self._height), pygame.SRCALPHA)
-        self.image.fill(_color_name_to_rgb(self._color))
-        self.image.set_alpha(self._transparency)
-        self.rect = self.image.get_rect()
-        pos = convert_pos(self.x, self.y)
-        self.rect.x = pos[0] - self._width // 2
-        self.rect.y = pos[1] - self._height // 2
+        if self._should_recompute:
+            self.image = pygame.Surface((self._width, self._height), pygame.SRCALPHA)
+            self.image.fill(_color_name_to_rgb(self._color))
+            self.image.set_alpha(self._transparency)
+            self.rect = self.image.get_rect()
+            pos = convert_pos(self.x, self.y)
+            self.rect.x = pos[0] - self._width // 2
+            self.rect.y = pos[1] - self._height // 2
+            super().update()
 
     ##### width #####
     @property

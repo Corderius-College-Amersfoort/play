@@ -51,20 +51,20 @@ class Line(Sprite):
 
     def update(self):
         """Update the line's position and appearance."""
-        # print(self.y1)
-        pos_begin = convert_pos(self.x, self.y)
-        pos_end = convert_pos(self.x1, self.y1)
-        # print(pos_begin, pos_end)
+        if self._should_recompute:
+            pos_begin = convert_pos(self.x, self.y)
+            pos_end = convert_pos(self.x1, self.y1)
 
-        self._image = pygame.Surface((screen.width, screen.height), pygame.SRCALPHA)
-        pygame.draw.line(
-            self._image,
-            _color_name_to_rgb(self._color),
-            pos_begin,
-            pos_end,
-            self._thickness,
-        )
-        self.rect = self._image.get_rect()
+            self._image = pygame.Surface((screen.width, screen.height), pygame.SRCALPHA)
+            pygame.draw.line(
+                self._image,
+                _color_name_to_rgb(self._color),
+                pos_begin,
+                pos_end,
+                self._thickness,
+            )
+            self.rect = self._image.get_rect()
+            super().update()
 
     def clone(self):
         """Return a clone of the line.

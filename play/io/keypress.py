@@ -1,7 +1,5 @@
 """This module contains functions and decorators for handling key presses."""
 
-import asyncio as _asyncio
-
 import pygame
 
 from ..utils.async_helpers import _make_async
@@ -12,9 +10,6 @@ _pressed_keys_subscriptions = {}
 _release_keys_subscriptions = {}
 
 _pressed_keys = []
-
-_loop = _asyncio.get_event_loop()
-_loop.set_debug(False)
 
 _keys_released_this_frame = []
 _keys_to_skip = (pygame.K_MODE,)

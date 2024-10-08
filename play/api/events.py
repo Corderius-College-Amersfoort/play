@@ -9,12 +9,12 @@ from play.core import (
     _when_program_starts_callbacks,
 )
 from ..io.keypress import (
-    _loop,
     when_key as _when_key,
     when_any_key as _when_any_key,
 )
 from ..io.mouse import mouse
 from ..utils.async_helpers import _make_async
+from ..loop import _loop
 
 
 # @decorator

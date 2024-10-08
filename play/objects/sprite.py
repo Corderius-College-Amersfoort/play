@@ -4,7 +4,9 @@ import math as _math
 import warnings as _warnings
 import pymunk as _pymunk
 import pygame
+from typing_extensions import override
 
+from ..loop import _loop
 from ..globals import sprites_group
 from ..io.exceptions import Oops, Hmm
 from ..physics import physics_space, _Physics
@@ -23,7 +25,10 @@ def _circle_touching_circle(a, b):
 
 
 def _sprite_touching_sprite(a, b):
-    return pygame.sprite.collide_mask(a, b) is not None
+    collide = pygame.sprite.collide_mask(a, b)
+    if collide is None or collide == (0, 0):
+        return False
+    return True
 
 
 def point_touching_sprite(point, sprite):
@@ -41,6 +46,7 @@ def point_touching_sprite(point, sprite):
 class Sprite(
     pygame.sprite.Sprite
 ):  # pylint: disable=attribute-defined-outside-init, too-many-public-methods
+    _when_touching_callbacks = []
     def __init__(self, image=None):
         self._size = None
         self._x = None
@@ -56,8 +62,23 @@ class Sprite(
 
         self._when_clicked_callbacks = []
 
-        pygame.sprite.Sprite.__init__(self)
+        super().__init__()
         sprites_group.add(self)
+        self._should_recompute = True
+
+    def __setattr__(self, name, value):
+        super().__setattr__(name, value)
+        if name == "_should_recompute":
+            return
+        self._should_recompute = True
+
+    def update(self):
+        if self._should_recompute:
+            # check if we are touching any other sprites
+            for callback, sprite in self._when_touching_callbacks:
+                if self.is_touching(sprite):
+                    _loop.create_task(callback())
+            self._should_recompute = False
 
     @property
     def is_clicked(self):
@@ -377,6 +398,26 @@ You might want to look in your code where you're setting transparency and make s
         wrapper.is_running = False
         self._when_clicked_callbacks.append(wrapper)
         return wrapper
+
+    def when_touching(self, *sprites):
+        """Run a function when the sprite is touching another sprite.
+        :param sprites: The sprites to check if they're touching.
+        """
+        def decorator(func):
+            async_callback = _make_async(func)
+
+            async def wrapper(*args, **kwargs):
+                wrapper.is_running = True
+                await async_callback(*args, **kwargs)
+                wrapper.is_running = False
+
+            wrapper.is_running = False
+
+            for sprite in sprites:
+                self._when_touching_callbacks.append((wrapper, sprite))
+            return wrapper
+
+        return decorator
 
     def _common_properties(self):
         # used with inheritance to clone

@@ -8,7 +8,6 @@ from ..globals import backdrop, FRAME_RATE, sprites_group
 from ..io import screen, PYGAME_DISPLAY
 from ..io.keypress import (
     key_num_to_name as _pygame_key_to_name,
-    _loop,
     _keys_released_this_frame,
     _keys_to_skip,
     _pressed_keys,
@@ -20,6 +19,7 @@ from ..objects.line import Line
 from ..objects.sprite import point_touching_sprite
 from ..physics import simulate_physics
 from ..utils import color_name_to_rgb as _color_name_to_rgb
+from play.loop import _loop
 
 _repeat_forever_callbacks = []
 _when_program_starts_callbacks = []

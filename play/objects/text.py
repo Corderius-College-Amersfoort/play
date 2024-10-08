@@ -44,15 +44,17 @@ class Text(Sprite):
 
     def update(self):
         """Update the text object."""
-        pos = convert_pos(self.x, self.y)
-        self._image = self._pygame_font.render(
-            self._words, True, _color_name_to_rgb(self._color)
-        )
-        self.rect = self.image.get_rect()
-        self.rect.topleft = (
-            pos[0] - self.rect.width // 2,
-            pos[1] - self.rect.height // 2,
-        )
+        if self._should_recompute:
+            pos = convert_pos(self.x, self.y)
+            self._image = self._pygame_font.render(
+                self._words, True, _color_name_to_rgb(self._color)
+            )
+            self.rect = self.image.get_rect()
+            self.rect.topleft = (
+                pos[0] - self.rect.width // 2,
+                pos[1] - self.rect.height // 2,
+            )
+            super().update()
 
     def clone(self):
         return self.__class__(
