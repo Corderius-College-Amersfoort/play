@@ -5,12 +5,13 @@ import logging as _logging
 
 import pygame  # pylint: disable=import-error
 
-from .events import _when_program_starts_callbacks, _game_loop, _loop
+from .events import _when_program_starts_callbacks, _game_loop
+from ..loop import loop as _loop
 from ..utils import color_name_to_rgb as _color_name_to_rgb
-from ..globals import backdrop as _backdrop
 from ..io.keypress import _pressed_keys
+from ..globals import backdrop as __backdrop
 
-BACKDROP = _backdrop
+_backdrop = __backdrop  # Work around for the global variable not being imported
 
 
 def start_program():
@@ -41,6 +42,9 @@ def stop_program():
 
 
 async def animate():
+    """
+    Wait for the next frame to be drawn.
+    """
     await _asyncio.sleep(0)
 
 
@@ -48,10 +52,10 @@ def set_backdrop(color_or_image_name):
     """Set the backdrop color or image for the game.
     :param color_or_image_name: The color or image to set as the backdrop.
     """
-    global BACKDROP
+    global _backdrop
     _color_name_to_rgb(color_or_image_name)
 
-    BACKDROP = color_or_image_name
+    _backdrop = color_or_image_name
 
 
 async def timer(seconds=1.0):
@@ -79,10 +83,6 @@ def key_is_pressed(*keys):
             if play.key_is_pressed('up', 'w'):
                 print('up or w pressed')
     """
-    # Called this function key_is_pressed instead of is_key_pressed so it will
-    # sound more english-like with if-statements:
-    #
-    #   if play.key_is_pressed('w', 'up'): ...
 
     for key in keys:
         if key in _pressed_keys.values():

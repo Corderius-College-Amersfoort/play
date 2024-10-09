@@ -1,7 +1,6 @@
 """A bunch of random math functions."""
 
-from ..globals import COLOR_NAMES
-from ..io.exceptions import Oops
+import pygame
 
 
 def _clamp(num, min_, max_):
@@ -54,10 +53,12 @@ def color_name_to_rgb(name):
         return name
 
     try:
-        return COLOR_NAMES[name.lower().strip().replace("-", "").replace(" ", "")]
+        return pygame.color.THECOLORS[
+            name.lower().strip().replace("-", "").replace(" ", "")
+        ]
     except KeyError as exception:
-        raise Oops(
+        raise ValueError(
             f"""You gave a color name we didn't understand: '{name}'
-If this our mistake, please let us know. Otherwise, try using the RGB number form of the color e.g. '(0, 255, 255)'.
+Try using the RGB number form of the color e.g. '(0, 255, 255)'.
 You can find the RGB form of a color on websites like this: https://www.rapidtables.com/web/color/RGB_Color.html\n"""
         ) from exception

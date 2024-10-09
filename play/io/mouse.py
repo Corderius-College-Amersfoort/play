@@ -16,18 +16,20 @@ class _Mouse:
 
     @property
     def is_clicked(self):
-        # this is a property instead of a method because if a new programmer does:
-        #    if play.mouse.is_clicked: # <-- forgetting parentheses causes bad behavior
-        #        ...
-        # and is_clicked is a method (they forgot the parens), then it will always
-        # return True. Better to eliminate the need for parens.
+        """Return whether the mouse is clicked.
+        :return: True if the mouse is clicked, False otherwise."""
         return self._is_clicked
 
     def is_touching(self, other):
+        """Check if the mouse is touching a sprite.
+        :param other: The sprite to check.
+        :return: True if the mouse is touching the sprite, False otherwise."""
         return point_touching_sprite(self, other)
 
     # @decorator
     def when_clicked(self, func):
+        """Run a function when the mouse is clicked.
+        :param func: The function to run."""
         async_callback = _make_async(func)
 
         async def wrapper():
@@ -38,6 +40,8 @@ class _Mouse:
 
     # @decorator
     def when_click_released(self, func):
+        """Run a function when the mouse click is released.
+        :param func: The function to run."""
         async_callback = _make_async(func)
 
         async def wrapper():
@@ -47,10 +51,14 @@ class _Mouse:
         return wrapper
 
     def distance_to(self, x=None, y=None):
+        """Get the distance from the mouse to a point.
+        :param x: The x-coordinate of the point.
+        :param y: The y-coordinate of the point.
+        :return: The distance from the mouse to the point."""
         assert x is not None
 
         try:
-            # x can either by a number or a sprite. If it's a sprite:
+            # x can either be a number or a sprite. If it's a sprite:
             x = x.x
             y = x.y
         except AttributeError:
@@ -60,16 +68,6 @@ class _Mouse:
         dy = self.y - y
 
         return _math.sqrt(dx**2 + dy**2)
-
-
-# @decorator
-def when_mouse_clicked(func):
-    return mouse.when_clicked(func)
-
-
-# @decorator
-def when_click_released(func):
-    return mouse.when_click_released(func)
 
 
 mouse = _Mouse()
