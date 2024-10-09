@@ -14,20 +14,12 @@ from ..io import screen
 from ..utils.async_helpers import _make_async
 
 
-def _circle_touching_circle(a, b):
-    # determine which is the circle and which is the sprite or if they're both circles
-    if hasattr(a, "_radius") and hasattr(b, "_radius"):
-        return a.distance_to(b) <= a.radius + b.radius
-    if hasattr(a, "_radius"):
-        return a.distance_to(b) <= a.radius
-    return b.distance_to(a) <= b.radius
-
-
 def _sprite_touching_sprite(a, b):
-    collide = pygame.sprite.collide_mask(a, b)
-    if collide is None or collide == (0, 0):
-        return False
-    return True
+    """Check if two sprites are touching.
+    :param a: The first sprite to check if it's touching the other sprite.
+    :param b: The second sprite to check if it's touching the other sprite.
+    :return: Whether the two sprites are touching."""
+    return a.rect.colliderect(b.rect)
 
 
 def point_touching_sprite(point, sprite):
@@ -35,17 +27,20 @@ def point_touching_sprite(point, sprite):
     :param point: The point to check if it's touching the sprite.
     :param sprite: The sprite to check if it's touching the point.
     :return: Whether the point is touching the sprite."""
-    # todo: custom code for circle, line, rotated rectangley sprites
-    return (
-        sprite.left <= point.x <= sprite.right
-        and sprite.bottom <= point.y <= sprite.top
-    )
+    return sprite.rect.collidepoint(point)
+
+
+_should_ignore_update = [
+    "_should_recompute",
+    "rect",
+]
 
 
 class Sprite(
     pygame.sprite.Sprite
 ):  # pylint: disable=attribute-defined-outside-init, too-many-public-methods
     _when_touching_callbacks = []
+    _dependent_sprites = []
 
     def __init__(self, image=None):
         self._size = None
@@ -54,30 +49,37 @@ class Sprite(
         self._angle = None
         self._transparency = None
 
-        self._should_recompute = False
         self._image = image
         self.physics = None
         self._is_clicked = False
         self._is_hidden = False
+        self._should_recompute = True
 
         self._when_clicked_callbacks = []
 
+        self.rect = None
+
         super().__init__()
         sprites_group.add(self)
-        self._should_recompute = True
 
     def __setattr__(self, name, value):
+        # ignore if it's in the ignored list or if the variable doesn't change
+        if name not in _should_ignore_update and getattr(self, name, value) != value:
+            self._should_recompute = True
+            for sprite in self._dependent_sprites:
+                sprite._should_recompute = True
         super().__setattr__(name, value)
-        if name == "_should_recompute":
-            return
-        self._should_recompute = True
 
     def update(self):
         """Update the sprite."""
-        if self._should_recompute:
+        if self._should_recompute and self._when_touching_callbacks:
             # check if we are touching any other sprites
-            for callback, sprite in self._when_touching_callbacks:
-                if self.is_touching(sprite):
+            for callback, b in self._when_touching_callbacks:
+                if (
+                    b == self
+                ):  # some weird bugs occurs where self is added to _when_touching_callbacks
+                    continue
+                if self.is_touching(b):
                     _loop.create_task(callback())
             self._should_recompute = False
 
@@ -181,7 +183,6 @@ You might want to look in your code where you're setting transparency and make s
         """Set the image of the sprite.
         :param image_filename: The filename of the image to set."""
         self._image = image_filename
-        self._should_recompute = True
 
     @property
     def angle(self):
@@ -254,7 +255,7 @@ You might want to look in your code where you're setting transparency and make s
         :param sprite_or_point: The sprite or point to check if it's touching.
         :return: Whether the sprite is touching the other sprite or point."""
         if isinstance(sprite_or_point, Sprite):
-            return _sprite_touching_sprite(sprite_or_point, self)
+            return _sprite_touching_sprite(self, sprite_or_point)
         return point_touching_sprite(sprite_or_point, self)
 
     def point_towards(self, x, y=None):
@@ -416,6 +417,7 @@ You might want to look in your code where you're setting transparency and make s
             wrapper.is_running = False
 
             for sprite in sprites:
+                sprite._dependent_sprites.append(self)
                 self._when_touching_callbacks.append((wrapper, sprite))
             return wrapper
 

@@ -80,7 +80,6 @@ class Circle(Sprite):
         """Set the color of the circle.
         :param _color: The color of the circle."""
         self._color = _color
-        self._should_recompute = True
 
     ##### radius #####
     @property
@@ -94,7 +93,6 @@ class Circle(Sprite):
         """Set the radius of the circle.
         :param _radius: The radius of the circle."""
         self._radius = _radius
-        self._should_recompute = True
         if self.physics:
             self.physics._pymunk_shape.unsafe_set_radius(self._radius)
 
@@ -110,7 +108,6 @@ class Circle(Sprite):
         """Set the color of the circle's border.
         :param _border_color: The color of the circle's border."""
         self._border_color = _border_color
-        self._should_recompute = True
 
     ##### border_width #####
     @property
@@ -124,4 +121,3 @@ class Circle(Sprite):
         """Set the width of the circle's border.
         :param _border_width: The width of the circle's border."""
         self._border_width = _border_width
-        self._should_recompute = True

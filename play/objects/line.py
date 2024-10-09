@@ -88,7 +88,6 @@ class Line(Sprite):
         """Set the color of the line.
         :param _color: The new color of the line."""
         self._color = _color
-        self._should_recompute = True
 
     ##### thickness #####
     @property
@@ -102,7 +101,6 @@ class Line(Sprite):
         """Set the thickness of the line.
         :param _thickness: The new thickness of the line."""
         self._thickness = _thickness
-        self._should_recompute = True
 
     def _calc_endpoint(self):
         radians = _math.radians(self._angle)
@@ -125,7 +123,6 @@ class Line(Sprite):
         :param _length: The new length of the line."""
         self._length = _length
         self._x1, self._y1 = self._calc_endpoint()
-        self._should_recompute = True
 
     ##### angle #####
     @property
@@ -163,7 +160,6 @@ class Line(Sprite):
         :param _x1: The new x-coordinate of the line's endpoint."""
         self._x1 = _x1
         self._length, self._angle = self._calc_length_angle()
-        self._should_recompute = True
 
     ##### y1 #####
     @property
@@ -178,4 +174,3 @@ class Line(Sprite):
         :param _y1: The new y-coordinate of the line's endpoint."""
         self._y1 = _y1
         self._length, self._angle = self._calc_length_angle()
-        self._should_recompute = True

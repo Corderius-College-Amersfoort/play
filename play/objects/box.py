@@ -59,7 +59,6 @@ class Box(Sprite):
         """Set the width of the box.
         :param _width: The new width of the box."""
         self._width = _width
-        self._should_recompute = True
 
     ##### height #####
     @property
@@ -73,7 +72,6 @@ class Box(Sprite):
         """Set the height of the box.
         :param _height: The new height of the box."""
         self._height = _height
-        self._should_recompute = True
 
     ##### color #####
     @property
@@ -87,7 +85,6 @@ class Box(Sprite):
         """Set the color of the box.
         :param _color: The new color of the box."""
         self._color = _color
-        self._should_recompute = True
 
     ##### border_color #####
     @property
@@ -101,7 +98,6 @@ class Box(Sprite):
         """Set the color of the box's border.
         :param _border_color: The new color of the box's border."""
         self._border_color = _border_color
-        self._should_recompute = True
 
     ##### border_width #####
     @property
@@ -115,7 +111,6 @@ class Box(Sprite):
         """Set the width of the box's border.
         :param _border_width: The new width of the box's border."""
         self._border_width = _border_width
-        self._should_recompute = True
 
     def clone(self):
         """Create a copy of the box.

@@ -159,7 +159,11 @@ def _update_sprites():
         # @sprite.when_clicked events
         #################################
         if mouse.is_clicked and not isinstance(sprite, Line):
-            if point_touching_sprite(mouse, sprite) and click_happened_this_frame:
+
+            if (
+                point_touching_sprite((mouse.x, mouse.y), sprite)
+                and click_happened_this_frame
+            ):
                 # only run sprite clicks on the frame the mouse was clicked
                 sprite._is_clicked = True
                 for callback in sprite._when_clicked_callbacks:

@@ -76,7 +76,6 @@ class Text(Sprite):
         """Set the words of the text object.
         :param string: The new words of the text object."""
         self._words = str(string)
-        self._should_recompute = True
 
     @property
     def font(self):
@@ -89,7 +88,6 @@ class Text(Sprite):
         """Set the font of the text object.
         :param font_name: The new font of the text object."""
         self._font = str(font_name)
-        self._should_recompute = True
 
     @property
     def font_size(self):
@@ -100,7 +98,6 @@ class Text(Sprite):
     @font_size.setter
     def font_size(self, size):
         self._font_size = size
-        self._should_recompute = True
 
     @property
     def color(self):
@@ -111,4 +108,3 @@ class Text(Sprite):
     @color.setter
     def color(self, color_):
         self._color = color_
-        self._should_recompute = True
