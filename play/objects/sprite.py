@@ -7,7 +7,6 @@ import pygame
 
 from ..loop import _loop
 from ..globals import sprites_group
-from ..io.exceptions import Oops, Hmm
 from ..physics import physics_space, _Physics
 from ..utils import _clamp
 from ..io import screen
@@ -158,7 +157,7 @@ class Sprite(
         """Set the transparency of the sprite.
         :param alpha: The transparency of the sprite."""
         if not isinstance(alpha, float) and not isinstance(alpha, int):
-            raise Oops(
+            raise ValueError(
                 f"""Looks like you're trying to set {self}'s transparency to '{alpha}', which isn't a number.
 Try looking in your code for where you're setting transparency for {self} and change it a number.
 """
@@ -167,7 +166,7 @@ Try looking in your code for where you're setting transparency for {self} and ch
             _warnings.warn(
                 f"""The transparency setting for {self} is being set to {alpha} and it should be between 0 and 100.
 You might want to look in your code where you're setting transparency and make sure it's between 0 and 100.  """,
-                Hmm,
+                Warning,
             )
 
         self._transparency = _clamp(alpha, 0, 100)

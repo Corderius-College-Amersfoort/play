@@ -2,8 +2,6 @@
 
 import pygame
 
-from ..io.exceptions import Oops
-
 
 def _clamp(num, min_, max_):
     if num < min_:
@@ -59,7 +57,7 @@ def color_name_to_rgb(name):
             name.lower().strip().replace("-", "").replace(" ", "")
         ]
     except KeyError as exception:
-        raise Oops(
+        raise ValueError(
             f"""You gave a color name we didn't understand: '{name}'
 Try using the RGB number form of the color e.g. '(0, 255, 255)'.
 You can find the RGB form of a color on websites like this: https://www.rapidtables.com/web/color/RGB_Color.html\n"""

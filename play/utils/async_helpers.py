@@ -2,7 +2,6 @@
 
 import asyncio as _asyncio
 import warnings as _warnings
-from ..io.exceptions import Oops
 
 
 def _raise_on_await_warning(func):
@@ -22,7 +21,7 @@ def _raise_on_await_warning(func):
                 if "was never awaited" in str_message:
                     unawaited_function_name = str_message.split("'")[1]
 
-                    raise Oops(
+                    raise AssertionError(
                         f"""Looks like you forgot to put "await" before play.{unawaited_function_name}"""
                         + """on line {warning.lineno} of file {warning.filename}."""
                         + """To fix this, just add the word 'await' before play.{unawaited_function_name} on line {

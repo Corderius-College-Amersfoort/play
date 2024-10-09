@@ -18,11 +18,6 @@ class _Mouse:
     def is_clicked(self):
         """Return whether the mouse is clicked.
         :return: True if the mouse is clicked, False otherwise."""
-        # this is a property instead of a method because if a new programmer does:
-        #    if play.mouse.is_clicked: # <-- forgetting parentheses causes bad behavior
-        #        ...
-        # and is_clicked is a method (they forgot the parens), then it will always
-        # return True. Better to eliminate the need for parens.
         return self._is_clicked
 
     def is_touching(self, other):
