@@ -19,7 +19,7 @@ from ..objects.line import Line
 from ..objects.sprite import point_touching_sprite
 from ..physics import simulate_physics
 from ..utils import color_name_to_rgb as _color_name_to_rgb
-from ..loop import _loop
+from ..loop import loop as _loop
 
 _repeat_forever_callbacks = []
 _when_program_starts_callbacks = []
@@ -158,7 +158,7 @@ def _update_sprites():
         #################################
         # @sprite.when_clicked events
         #################################
-        if mouse.is_clicked and not isinstance(sprite, Line):
+        if mouse.is_clicked:
 
             if (
                 point_touching_sprite((mouse.x, mouse.y), sprite)

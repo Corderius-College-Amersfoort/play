@@ -14,7 +14,7 @@ from ..io.keypress import (
 )
 from ..io.mouse import mouse
 from ..utils.async_helpers import _make_async
-from ..loop import _loop
+from ..loop import loop as _loop
 
 
 # @decorator

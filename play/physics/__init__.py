@@ -9,7 +9,7 @@ from ..utils import _clamp
 _SPEED_MULTIPLIER = 10
 
 
-class _Physics:
+class Physics:
 
     def __init__(  # pylint: disable=too-many-arguments
         self,

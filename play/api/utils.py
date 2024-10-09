@@ -5,7 +5,8 @@ import logging as _logging
 
 import pygame  # pylint: disable=import-error
 
-from .events import _when_program_starts_callbacks, _game_loop, _loop
+from .events import _when_program_starts_callbacks, _game_loop
+from ..loop import loop as _loop
 from ..utils import color_name_to_rgb as _color_name_to_rgb
 from ..io.keypress import _pressed_keys
 from ..globals import backdrop as __backdrop

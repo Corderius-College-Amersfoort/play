@@ -5,9 +5,9 @@ import warnings as _warnings
 import pymunk as _pymunk
 import pygame
 
-from ..loop import _loop
+from ..loop import loop as _loop
 from ..globals import sprites_group
-from ..physics import physics_space, _Physics
+from ..physics import physics_space, Physics as _Physics
 from ..utils import _clamp
 from ..io import screen
 from ..utils.async_helpers import _make_async
