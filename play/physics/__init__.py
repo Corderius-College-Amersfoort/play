@@ -2,12 +2,14 @@
 
 import math as _math
 import pymunk as _pymunk
+
+from ..globals import FRAME_RATE
 from ..utils import _clamp
 
 _SPEED_MULTIPLIER = 10
 
 
-class _Physics:
+class Physics:
 
     def __init__(  # pylint: disable=too-many-arguments
         self,
@@ -56,7 +58,7 @@ class _Physics:
     def _make_pymunk(self):  # pylint: disable=too-many-branches
         mass = self.mass if self.can_move else 0
 
-        # non-moving line shapes are platforms and it's easier to take care of them less-generically
+        # non-moving line shapes are platforms, and it's easier to take care of them less-generically
         if not self.can_move and self.sprite.__class__ == "Line":
             self._pymunk_body = physics_space.static_body.copy()
             self._pymunk_shape = _pymunk.Segment(
@@ -129,19 +131,28 @@ class _Physics:
         physics_space.add(self._pymunk_body, self._pymunk_shape)
 
     def clone(self, sprite):
-        # TODO: finish filling out params
+        """
+        Clone the physics object.
+        :param sprite: The sprite to clone.
+        """
         return self.__class__(  # pylint: disable=no-value-for-parameter
             sprite=sprite,
             can_move=self.can_move,
             x_speed=self.x_speed,
             y_speed=self.y_speed,
             obeys_gravity=self.obeys_gravity,
+            bounciness=self.bounciness,
+            mass=self.mass,
+            friction=self._friction,
+            stable=self.stable,
         )
 
     def pause(self):
+        """Pause the object."""
         self._remove()
 
     def unpause(self):
+        """Unpause the object."""
         if not self._pymunk_body and not self._pymunk_shape:
             physics_space.add(self._pymunk_body, self._pymunk_shape)
 
@@ -153,6 +164,8 @@ class _Physics:
 
     @property
     def can_move(self):
+        """Check if the object can move.
+        :return: True if the object can move, False otherwise."""
         return self._can_move
 
     @can_move.setter
@@ -165,6 +178,8 @@ class _Physics:
 
     @property
     def x_speed(self):
+        """Get the x-speed of the object.
+        :return: The x-speed of the object."""
         return self._x_speed / _SPEED_MULTIPLIER
 
     @x_speed.setter
@@ -174,6 +189,8 @@ class _Physics:
 
     @property
     def y_speed(self):
+        """Get the y-speed of the object.
+        :return: The y-speed of the object."""
         return self._y_speed / _SPEED_MULTIPLIER
 
     @y_speed.setter
@@ -183,6 +200,8 @@ class _Physics:
 
     @property
     def bounciness(self):
+        """Get the bounciness of the object.
+        :return: The bounciness of the object."""
         return self._bounciness
 
     @bounciness.setter
@@ -192,6 +211,8 @@ class _Physics:
 
     @property
     def stable(self):
+        """Check if the object is stable.
+        :return: True if the object is stable, False otherwise."""
         return self._stable
 
     @stable.setter
@@ -204,15 +225,21 @@ class _Physics:
 
     @property
     def mass(self):
+        """Get the mass of the object.
+        :return: The mass of the object."""
         return self._mass
 
     @mass.setter
     def mass(self, _mass):
+        """Set the mass of the object.
+        :param _mass: The mass of the object."""
         self._mass = _mass
         self._pymunk_body.mass = _mass
 
     @property
     def obeys_gravity(self):
+        """Check if the object obeys gravity.
+        :return: True if the object obeys gravity, False otherwise."""
         return self._obeys_gravity
 
     @obeys_gravity.setter
@@ -225,7 +252,10 @@ class _Physics:
 
 
 class _Gravity:  # pylint: disable=too-few-public-methods
-    # TODO: make this default to vertical if horizontal is 0?
+    """
+    The gravity of the game.
+    """
+
     vertical = -100 * _SPEED_MULTIPLIER
     horizontal = 0
 
@@ -240,6 +270,11 @@ physics_space.gravity = GRAVITY.horizontal, GRAVITY.vertical
 
 
 def set_gravity(vertical=-100, horizontal=None):
+    """
+    Set the gravity of the game.
+    :param vertical: The vertical gravity of the game.
+    :param horizontal: The horizontal gravity of the game.
+    """
     global GRAVITY  # pylint: disable=global-variable-not-assigned
     GRAVITY.vertical = vertical * _SPEED_MULTIPLIER
     if horizontal is not None:
@@ -252,7 +287,10 @@ _NUM_SIMULATION_STEPS = 3
 
 
 def simulate_physics():
+    """
+    Simulate the physics of the game
+    """
     # more steps means more accurate simulation, but more processing time
     for _ in range(_NUM_SIMULATION_STEPS):
         # the smaller the simulation step, the more accurate the simulation
-        physics_space.step(1 / (60.0 * _NUM_SIMULATION_STEPS))
+        physics_space.step(1 / (FRAME_RATE * _NUM_SIMULATION_STEPS))
