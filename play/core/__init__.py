@@ -112,7 +112,6 @@ def _handle_mouse_loop():
     ####################################
     if mouse._when_clicked_callbacks:
         for callback in mouse._when_clicked_callbacks:
-
             _loop.create_task(callback())
 
     ########################################

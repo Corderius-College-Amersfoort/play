@@ -29,24 +29,21 @@ def point_touching_sprite(point, sprite):
     return sprite.rect.collidepoint(point)
 
 
-_should_ignore_update = [
-    "_should_recompute",
-    "rect",
-]
+_should_ignore_update = ["_should_recompute", "rect", "_image", "image"]
 
 
 class Sprite(
     pygame.sprite.Sprite
 ):  # pylint: disable=attribute-defined-outside-init, too-many-public-methods
-    _when_touching_callbacks = []
-    _dependent_sprites = []
-
     def __init__(self, image=None):
         self._size = None
         self._x = None
         self._y = None
         self._angle = None
         self._transparency = None
+
+        self._when_touching_callbacks = []
+        self._dependent_sprites = []
 
         self._image = image
         self.physics = None
@@ -74,10 +71,6 @@ class Sprite(
         if self._should_recompute and self._when_touching_callbacks:
             # check if we are touching any other sprites
             for callback, b in self._when_touching_callbacks:
-                if (
-                    b == self
-                ):  # some weird bugs occurs where self is added to _when_touching_callbacks
-                    continue
                 if self.is_touching(b):
                     _loop.create_task(callback())
             self._should_recompute = False
@@ -416,8 +409,11 @@ You might want to look in your code where you're setting transparency and make s
             wrapper.is_running = False
 
             for sprite in sprites:
+                print(sprite)
                 sprite._dependent_sprites.append(self)
                 self._when_touching_callbacks.append((wrapper, sprite))
+            self._when_touching_callbacks = frozenset(self._when_touching_callbacks)
+            print(self._when_touching_callbacks)
             return wrapper
 
         return decorator
@@ -437,19 +433,6 @@ You might want to look in your code where you're setting transparency and make s
         :return: The cloned sprite."""
         # TODO: make work with physics
         return self.__class__(image=self.image)
-
-    # def __getattr__(self, key):
-    #     # TODO: use physics as a proxy object so users can do e.g. sprite.x_speed
-    #     if not self.physics:
-    #         return getattr(self, key)
-    #     else:
-    #         return getattr(self.physics, key)
-
-    # def __setattr__(self, name, value):
-    #     if not self.physics:
-    #         return setattr(self, name, value)
-    #     elif self.physics and name in :
-    #         return setattr(self.physics, name, value)
 
     def start_physics(  # pylint: disable=too-many-arguments
         self,
