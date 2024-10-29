@@ -44,6 +44,7 @@ class Sprite(
 
         self._when_touching_callbacks = []
         self._dependent_sprites = []
+        self._active_callbacks = []
 
         self._image = image
         self.physics = None
@@ -72,7 +73,11 @@ class Sprite(
             # check if we are touching any other sprites
             for callback, b in self._when_touching_callbacks:
                 if self.is_touching(b):
-                    _loop.create_task(callback())
+                    if callback not in self._active_callbacks:
+                        self._active_callbacks.append(callback)
+                else:
+                    if callback in self._active_callbacks:
+                        self._active_callbacks.remove(callback)
             self._should_recompute = False
 
     @property

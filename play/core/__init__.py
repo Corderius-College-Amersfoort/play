@@ -169,6 +169,13 @@ def _update_sprites():
                     if not callback.is_running:
                         _loop.create_task(callback())
 
+        #################################
+        # @sprite.when_touching events
+        #################################
+        if sprite._active_callbacks:
+            for cb in sprite._active_callbacks:
+                _loop.create_task(cb())
+
     sprites_group.update()
     sprites_group.draw(PYGAME_DISPLAY)
 
