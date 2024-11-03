@@ -26,10 +26,14 @@ class Screen:
 
     @property
     def width(self):
+        """Get the width of the screen.
+        :return: The width of the screen."""
         return self._width
 
     @width.setter
     def width(self, _width):
+        """Set the width of the screen.
+        :param _width: The new width of the screen."""
         global PYGAME_DISPLAY
         self._width = _width
 
@@ -43,10 +47,14 @@ class Screen:
 
     @property
     def height(self):
+        """Get the height of the screen.
+        :return: The height of the screen."""
         return self._height
 
     @height.setter
     def height(self, _height):
+        """Set the height of the screen.
+        :param _height: The new height of the screen."""
         global PYGAME_DISPLAY
         self._height = _height
 
@@ -60,25 +68,36 @@ class Screen:
 
     @property
     def top(self):
+        """Get the top side of the screen.
+        :return: The top side of the screen."""
         return self.height / 2
 
     @property
     def bottom(self):
+        """Get the bottom side of the screen.
+        :return: The bottom side of the screen."""
         return self.height / -2
 
     @property
     def left(self):
+        """Get the left side of the screen.
+        :return: The left side of the screen."""
         return self.width / -2
 
     @property
     def right(self):
+        """Get the right side of the screen.
+        :return: The right side of the screen."""
         return self.width / 2
 
     @property
     def size(self):
+        """Get the size of the screen.
+        :return: The size of the screen."""
         return self.width, self.height
 
     def enable_fullscreen(self):
+        """Enable fullscreen mode."""
         global PYGAME_DISPLAY
         if self._fullscreen:
             return
@@ -101,6 +120,7 @@ class Screen:
             )  # all flags are necessary
 
     def disable_fullscreen(self):
+        """Disable fullscreen mode."""
         global PYGAME_DISPLAY
         if not self._fullscreen:
             return
@@ -122,6 +142,7 @@ def _create_wall(a, b):
 
 
 def create_walls():
+    """Create walls around the screen."""
     _walls.append(
         _create_wall([screen.left, screen.top], [screen.right, screen.top])
     )  # top
@@ -137,8 +158,39 @@ def create_walls():
 
 
 def remove_walls():
+    """Remove the walls from the physics space."""
     physics_space.remove(_walls)
     _walls.clear()
 
 
+def remove_wall(index):
+    """Remove a wall from the physics space.
+    :param index: The index of the wall to remove. 0: top, 1: bottom, 2: left, 3: right.
+    """
+    physics_space.remove(_walls[index])
+    _walls.pop(index)
+
+
 create_walls()
+
+
+def convert_pos(x, y):
+    """
+    Convert from the Play coordinate system to the Pygame coordinate system.
+    :param x: The x-coordinate in the Play coordinate system.
+    :param y: The y-coordinate in the Play coordinate system.
+    """
+    x1 = screen.width / 2 + x
+    y1 = screen.height / 2 - y
+    return x1, y1
+
+
+def pos_convert(x, y):
+    """
+    Convert from the Pygame coordinate system to the Play coordinate system.
+    :param x: The x-coordinate in the Pygame coordinate system.
+    :param y: The y-coordinate in the Pygame coordinate system.
+    """
+    x1 = x - screen.width / 2
+    y1 = screen.height / 2 - y
+    return x1, y1

@@ -26,7 +26,9 @@ def random_color():
     return random_number(0, 255), random_number(0, 255), random_number(0, 255)
 
 
-def random_position():
+def random_position(
+    x_min=screen.left, x_max=screen.right, y_min=screen.bottom, y_max=screen.top
+):
     """
     Returns a random position on the screen. A position has an `x` and `y` e.g.:
         position = play.random_position()
@@ -37,6 +39,6 @@ def random_position():
         sprite.go_to(play.random_position())
     """
     return _Position(
-        random_number(screen.left, screen.right),
-        random_number(screen.bottom, screen.top),
+        random_number(x_min, x_max),
+        random_number(y_min, y_max),
     )

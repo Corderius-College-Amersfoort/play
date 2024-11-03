@@ -27,7 +27,7 @@ jobs:
 
     - name: Checking formatting with black
       run: |
-        black --check ./play
+        black --check ./play ./tests
 
     - name: Analysing the code with pylint
       run: |

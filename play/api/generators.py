@@ -1,10 +1,16 @@
 """Generators for creating new objects."""
 
-from ..objects import Box, Circle, Line, Text, Sprite
+from ..objects import (
+    Box as _Box,
+    Circle as _Circle,
+    Line as _Line,
+    Text as _Text,
+    Image as _Image,
+)
 
 
 def new_text(  # pylint: disable=too-many-arguments
-    words="hi :)",
+    words="",
     x=0,
     y=0,
     font=None,
@@ -26,7 +32,7 @@ def new_text(  # pylint: disable=too-many-arguments
     :param size: The size of the text.
     :return: A new text object.
     """
-    return Text(
+    return _Text(
         words=words,
         x=x,
         y=y,
@@ -64,7 +70,7 @@ def new_box(  # pylint: disable=too-many-arguments
     :param size: The size of the box.
     :return: A new box object.
     """
-    return Box(
+    return _Box(
         color=color,
         x=x,
         y=y,
@@ -101,7 +107,7 @@ def new_circle(  # pylint: disable=too-many-arguments
     :param angle: The angle of the circle.
     :return: A new circle object.
     """
-    return Circle(
+    return _Circle(
         color=color,
         x=x,
         y=y,
@@ -139,7 +145,7 @@ def new_line(  # pylint: disable=too-many-arguments
     :param size: The size of the line.
     :return: A new line object.
     """
-    return Line(
+    return _Line(
         color=color,
         x=x,
         y=y,
@@ -165,6 +171,6 @@ def new_image(
     :param transparency: The transparency of the image.
     :return: A new image object.
     """
-    return Sprite(
+    return _Image(
         image=image, x=x, y=y, size=size, angle=angle, transparency=transparency
     )

@@ -2,12 +2,12 @@
 
 import pygame
 from .sprite import Sprite
-from ..globals import all_sprites
+from ..io import convert_pos
 from ..utils import color_name_to_rgb as _color_name_to_rgb
 
 
 class Circle(Sprite):
-    def __init__(  # pylint: disable=too-many-arguments, super-init-not-called
+    def __init__(  # pylint: disable=too-many-arguments
         self,
         color="black",
         x=0,
@@ -19,6 +19,7 @@ class Circle(Sprite):
         size=100,
         angle=0,
     ):
+        super().__init__()
         self._x = x
         self._y = y
         self._color = color
@@ -35,11 +36,12 @@ class Circle(Sprite):
 
         self._when_clicked_callbacks = []
 
-        self._compute_primary_surface()
-
-        all_sprites.append(self)
+        self.rect = pygame.Rect(0, 0, 0, 0)
+        self.update()
 
     def clone(self):
+        """Create a copy of the circle.
+        :return: A copy of the circle."""
         return self.__class__(
             color=self.color,
             radius=self.radius,
@@ -48,79 +50,74 @@ class Circle(Sprite):
             **self._common_properties()
         )
 
-    def _compute_primary_surface(self):
-        total_diameter = (self.radius + self._border_width) * 2
-        self._primary_pygame_surface = pygame.Surface(
-            (total_diameter, total_diameter),
-            pygame.SRCALPHA,  # pylint: disable=no-member
-        )
-
-        center = self._radius + self._border_width
-
-        if self._border_width and self._border_color:
-            # draw border circle
+    def update(self):
+        """Update the circle's position, size, angle, and transparency."""
+        if self._should_recompute:
+            self._image = pygame.Surface(
+                (self._radius * 2, self._radius * 2), pygame.SRCALPHA
+            )
             pygame.draw.circle(
-                self._primary_pygame_surface,
-                _color_name_to_rgb(self._border_color),
-                (center, center),
+                self._image,
+                _color_name_to_rgb(self._color),
+                (self._radius, self._radius),
                 self._radius,
             )
-            # draw fill circle over border circle
-            pygame.draw.circle(
-                self._primary_pygame_surface,
-                _color_name_to_rgb(self._color),
-                (center, center),
-                self._radius - self._border_width,
-            )
-        else:
-            pygame.draw.circle(
-                self._primary_pygame_surface,
-                _color_name_to_rgb(self._color),
-                (center, center),
-                self._radius,
-            )
-
-        self._should_recompute_primary_surface = False
-        self._compute_secondary_surface(force=True)
+            self.rect = self._image.get_rect()
+            pos = convert_pos(self.x, self.y)
+            self.rect.x = pos[0] - self._radius
+            self.rect.y = pos[1] - self._radius
+            super().update()
 
     ##### color #####
     @property
     def color(self):
+        """The color of the circle.
+        :return: The color of the circle."""
         return self._color
 
     @color.setter
     def color(self, _color):
+        """Set the color of the circle.
+        :param _color: The color of the circle."""
         self._color = _color
-        self._should_recompute_primary_surface = True
 
     ##### radius #####
     @property
     def radius(self):
+        """The radius of the circle.
+        :return: The radius of the circle."""
         return self._radius
 
     @radius.setter
     def radius(self, _radius):
+        """Set the radius of the circle.
+        :param _radius: The radius of the circle."""
         self._radius = _radius
-        self._should_recompute_primary_surface = True
         if self.physics:
             self.physics._pymunk_shape.unsafe_set_radius(self._radius)
 
     ##### border_color #####
     @property
     def border_color(self):
+        """The color of the circle's border.
+        :return: The color of the circle's border."""
         return self._border_color
 
     @border_color.setter
     def border_color(self, _border_color):
+        """Set the color of the circle's border.
+        :param _border_color: The color of the circle's border."""
         self._border_color = _border_color
-        self._should_recompute_primary_surface = True
 
     ##### border_width #####
     @property
     def border_width(self):
+        """The width of the circle's border.
+        :return: The width of the circle's border."""
         return self._border_width
 
     @border_width.setter
     def border_width(self, _border_width):
+        """Set the width of the circle's border.
+        :param _border_width: The width of the circle's border."""
         self._border_width = _border_width
-        self._should_recompute_primary_surface = True
