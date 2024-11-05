@@ -3,6 +3,7 @@ import sys
 
 sys.path.append(".")
 
+
 def write_data():
     from play.db import get_data, set_data
 
