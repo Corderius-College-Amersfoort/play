@@ -78,7 +78,9 @@ class Sprite(
                 else:
                     if callback in self._active_callbacks:
                         self._active_callbacks.remove(callback)
-            self._should_recompute = False
+        if self._is_hidden:
+            self._image = pygame.Surface((0, 0), pygame.SRCALPHA)
+        self._should_recompute = False
 
     @property
     def is_clicked(self):

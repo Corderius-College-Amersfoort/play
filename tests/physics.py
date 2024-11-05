@@ -1,4 +1,7 @@
 import pytest
+import sys
+
+sys.path.append(".")
 
 y = 0
 screeny = 0

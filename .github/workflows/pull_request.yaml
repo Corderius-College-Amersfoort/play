@@ -32,3 +32,7 @@ jobs:
     - name: Analysing the code with pylint
       run: |
         pylint $(git ls-files 'play/*.py')
+
+    - name: Run tests
+      run: |
+        pytest ./tests/**
