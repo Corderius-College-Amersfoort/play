@@ -4,6 +4,7 @@ import math as _math
 
 from ..utils.async_helpers import _make_async
 from ..objects.sprite import point_touching_sprite
+from ..utils.callback_helpers import run_async_callback
 
 
 class _Mouse:
@@ -33,7 +34,10 @@ class _Mouse:
         async_callback = _make_async(func)
 
         async def wrapper():
-            await async_callback()
+            await run_async_callback(
+                async_callback,
+                "The callback function must not take in any arguments.",
+            )
 
         self._when_clicked_callbacks.append(wrapper)
         return wrapper
@@ -45,7 +49,10 @@ class _Mouse:
         async_callback = _make_async(func)
 
         async def wrapper():
-            await async_callback()
+            await run_async_callback(
+                async_callback,
+                "The callback function must not take in any arguments.",
+            )
 
         self._when_click_released_callbacks.append(wrapper)
         return wrapper

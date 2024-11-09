@@ -3,6 +3,7 @@
 import pygame
 
 from ..utils.async_helpers import _make_async
+from ..utils.callback_helpers import run_async_callback
 
 pygame.key.set_repeat(200, 16)
 
@@ -29,9 +30,13 @@ def when_any_key(func, released=False):
     """Run a function when any key is pressed or released."""
     async_callback = _make_async(func)
 
-    async def wrapper(*args, **kwargs):
+    async def wrapper(key):
         wrapper.is_running = True
-        await async_callback(*args, **kwargs)
+        await run_async_callback(
+            async_callback,
+            "The callback function must take in 1 argument: key.",
+            key
+        )
         wrapper.is_running = False
 
     wrapper.keys = None
@@ -61,9 +66,13 @@ def when_key(*keys, released=False):
     def decorator(func):
         async_callback = _make_async(func)
 
-        async def wrapper(*args, **kwargs):
+        async def wrapper(key):
             wrapper.is_running = True
-            await async_callback(*args, **kwargs)
+            await run_async_callback(
+                async_callback,
+                "The callback function must take in 1 argument: key.",
+                key
+            )
             wrapper.is_running = False
 
         wrapper.is_running = False

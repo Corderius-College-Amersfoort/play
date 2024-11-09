@@ -13,8 +13,10 @@ from ..io.keypress import (
     when_any_key as _when_any_key,
 )
 from ..io.mouse import mouse
+from ..io.controllers import controllers
 from ..utils.async_helpers import _make_async
 from ..loop import loop as _loop
+from ..utils.callback_helpers import run_callback
 
 
 # @decorator
@@ -32,8 +34,11 @@ def when_program_starts(func):
     """
     async_callback = _make_async(func)
 
-    async def wrapper(*args, **kwargs):
-        return await async_callback(*args, **kwargs)
+    async def wrapper():
+        return await run_callback(
+            async_callback,
+            "The callback function must not take in any arguments.",
+        )
 
     _when_program_starts_callbacks.append(wrapper)
     return func
@@ -57,23 +62,6 @@ def repeat(number_of_times):
     return range(1, number_of_times + 1)
 
 
-def start_program():
-    """
-    Calling this function starts your program running.
-
-    play.start_program() should almost certainly go at the very end of your program.
-    """
-    for func in _when_program_starts_callbacks:
-        _loop.create_task(func())
-
-    _loop.call_soon(_game_loop)
-    try:
-        _loop.run_forever()
-    finally:
-        _logging.getLogger("asyncio").setLevel(_logging.CRITICAL)
-        pygame.quit()  # pylint: disable=no-member
-
-
 # @decorator
 def repeat_forever(func):
     """
@@ -93,7 +81,10 @@ def repeat_forever(func):
 
     async def repeat_wrapper():
         repeat_wrapper.is_running = True
-        await async_callback()
+        await run_callback(
+            async_callback,
+            "The callback function must not take in any arguments.",
+        )
         repeat_wrapper.is_running = False
 
     repeat_wrapper.is_running = False

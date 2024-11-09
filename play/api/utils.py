@@ -6,13 +6,13 @@ import logging as _logging
 import pygame  # pylint: disable=import-error
 
 from .events import _when_program_starts_callbacks, _game_loop
+from ..utils.callback_helpers import run_callback
 from ..loop import loop as _loop
 from ..utils import color_name_to_rgb as _color_name_to_rgb
 from ..io.keypress import _pressed_keys
 from ..globals import backdrop as __backdrop
 
 _backdrop = __backdrop  # Work around for the global variable not being imported
-
 
 def start_program():
     """
@@ -21,7 +21,10 @@ def start_program():
     play.start_program() should almost certainly go at the very end of your program.
     """
     for func in _when_program_starts_callbacks:
-        _loop.create_task(func())
+        run_callback(
+            func,
+            "The callback function must not take in any arguments.",
+        )
 
     _loop.call_soon(_game_loop)
     try:
@@ -29,7 +32,6 @@ def start_program():
     finally:
         _logging.getLogger("asyncio").setLevel(_logging.CRITICAL)
         pygame.quit()  # pylint: disable=no-member
-
 
 def stop_program():
     """

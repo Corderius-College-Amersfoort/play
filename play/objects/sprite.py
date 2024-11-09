@@ -11,6 +11,7 @@ from ..physics import physics_space, Physics as _Physics
 from ..utils import _clamp
 from ..io import screen
 from ..utils.async_helpers import _make_async
+from ..utils.callback_helpers import run_async_callback
 
 
 def _sprite_touching_sprite(a, b):
@@ -391,9 +392,16 @@ You might want to look in your code where you're setting transparency and make s
         async def wrapper():
             wrapper.is_running = True
             if call_with_sprite:
-                await async_callback(self)
+                await run_async_callback(
+                    async_callback,
+                    "The callback function must take in 1 argument: sprite.",
+                    self,
+                )
             else:
-                await async_callback()
+                await run_async_callback(
+                    async_callback,
+                    "The callback function must not take in any arguments.",
+                )
             wrapper.is_running = False
 
         wrapper.is_running = False
@@ -408,9 +416,12 @@ You might want to look in your code where you're setting transparency and make s
         def decorator(func):
             async_callback = _make_async(func)
 
-            async def wrapper(*args, **kwargs):
+            async def wrapper():
                 wrapper.is_running = True
-                await async_callback(*args, **kwargs)
+                await run_async_callback(
+                    async_callback,
+                    "The callback function must not take in any arguments.",
+                )
                 wrapper.is_running = False
 
             wrapper.is_running = False

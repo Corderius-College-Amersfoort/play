@@ -4,6 +4,7 @@ import math as _math
 
 import pygame  # pylint: disable=import-error
 
+from ..utils.callback_helpers import run_callback
 from ..globals import backdrop, FRAME_RATE, sprites_group
 from ..io import screen, PYGAME_DISPLAY
 from ..io.keypress import (
@@ -20,6 +21,8 @@ from ..objects.sprite import point_touching_sprite
 from ..physics import simulate_physics
 from ..utils import color_name_to_rgb as _color_name_to_rgb
 from ..loop import loop as _loop
+from .controller_loop import controller_axis_moved, controller_button_pressed, controller_button_released, \
+    _handle_controller, _handle_controller_events
 
 _repeat_forever_callbacks = []
 _when_program_starts_callbacks = []
@@ -56,6 +59,7 @@ def _handle_pygame_events():
             mouse.x, mouse.y = (event.pos[0] - screen.width / 2.0), (
                 screen.height / 2.0 - event.pos[1]
             )
+        _handle_controller_events(event)
         if event.type == pygame.KEYDOWN:  # pylint: disable=no-member
             if event.key not in _keys_to_skip:
                 name = _pygame_key_to_name(event)
@@ -69,6 +73,9 @@ def _handle_pygame_events():
     return True
 
 
+
+
+
 # pylint: disable=too-many-branches
 def _handle_keyboard():
     """Handle keyboard events in the game loop."""
@@ -80,16 +87,28 @@ def _handle_keyboard():
             if key in _pressed_keys_subscriptions:
                 for callback in _pressed_keys_subscriptions[key]:
                     if not callback.is_running:
-                        _loop.create_task(callback(key))
+                        run_callback(
+                            callback,
+                            "The callback function must take in 1 argument: key",
+                            key,
+                        )
             if "any" in _pressed_keys_subscriptions:
                 for callback in _pressed_keys_subscriptions["any"]:
                     if not callback.is_running:
-                        _loop.create_task(callback(key))
+                        run_callback(
+                            callback,
+                            "The callback function must take in 1 argument: key",
+                            key,
+                        )
         keys_hash = hash(frozenset(_pressed_keys))
         if keys_hash in _pressed_keys_subscriptions:
             for callback in _pressed_keys_subscriptions[keys_hash]:
                 if not callback.is_running:
-                    _loop.create_task(callback(_pressed_keys))
+                    run_callback(
+                        callback,
+                        "The callback function must take in 1 argument: keys",
+                        _pressed_keys,
+                    )
 
     ############################################################
     # @when_any_key_released and @when_key_released callbacks
@@ -98,11 +117,19 @@ def _handle_keyboard():
         if key in _release_keys_subscriptions:
             for callback in _release_keys_subscriptions[key]:
                 if not callback.is_running:
-                    _loop.create_task(callback(key))
+                    run_callback(
+                        callback,
+                        "The callback function must take in 1 argument: key",
+                        key,
+                    )
         if "any" in _release_keys_subscriptions:
             for callback in _release_keys_subscriptions["any"]:
                 if not callback.is_running:
-                    _loop.create_task(callback(key))
+                    run_callback(
+                        callback,
+                        "The callback function must take in 1 argument: key",
+                        key,
+                    )
 
 
 def _handle_mouse_loop():
@@ -112,14 +139,20 @@ def _handle_mouse_loop():
     ####################################
     if mouse._when_clicked_callbacks:
         for callback in mouse._when_clicked_callbacks:
-            _loop.create_task(callback())
+            run_callback(
+                callback,
+                "The callback function must not take in any arguments.",
+            )
 
     ########################################
     # @mouse.when_click_released callbacks
     ########################################
     if mouse._when_click_released_callbacks:
         for callback in mouse._when_click_released_callbacks:
-            _loop.create_task(callback())
+            run_callback(
+                callback,
+                "The callback function must not take in any arguments.",
+            )
 
 
 def _update_sprites():
@@ -167,14 +200,20 @@ def _update_sprites():
                 sprite._is_clicked = True
                 for callback in sprite._when_clicked_callbacks:
                     if not callback.is_running:
-                        _loop.create_task(callback())
+                        run_callback(
+                            callback,
+                            "The callback function must not take in any arguments.",
+                        )
 
         #################################
         # @sprite.when_touching events
         #################################
         if sprite._active_callbacks:
             for cb in sprite._active_callbacks:
-                _loop.create_task(cb())
+                run_callback(
+                    cb,
+                    "The callback function must not take in any arguments.",
+                )
 
     sprites_group.update()
     sprites_group.draw(PYGAME_DISPLAY)
@@ -198,12 +237,17 @@ def game_loop():
     if click_happened_this_frame or click_release_happened_this_frame:
         _handle_mouse_loop()
 
+    _handle_controller()
+
     #############################
     # @repeat_forever callbacks
     #############################
     for callback in _repeat_forever_callbacks:
         if not callback.is_running:
-            _loop.create_task(callback())
+            run_callback(
+                callback,
+                "The callback function must not take in any arguments.",
+            )
 
     #############################
     # physics simulation
