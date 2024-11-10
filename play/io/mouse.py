@@ -2,9 +2,10 @@
 
 import math as _math
 
+from ..callback import callback_manager, CallbackType
 from ..utils.async_helpers import _make_async
 from ..objects.sprite import point_touching_sprite
-from ..utils.callback_helpers import run_async_callback
+from ..callback.callback_helpers import run_async_callback
 
 
 class _Mouse:
@@ -12,8 +13,6 @@ class _Mouse:
         self.x = 0
         self.y = 0
         self._is_clicked = False
-        self._when_clicked_callbacks = []
-        self._when_click_released_callbacks = []
 
     @property
     def is_clicked(self):
@@ -36,10 +35,14 @@ class _Mouse:
         async def wrapper():
             await run_async_callback(
                 async_callback,
-                "The callback function must not take in any arguments.",
+                [],
+                [],
             )
 
-        self._when_clicked_callbacks.append(wrapper)
+        callback_manager.add_callback(
+            CallbackType.WHEN_CLICKED,
+            wrapper,
+        )
         return wrapper
 
     # @decorator
@@ -51,10 +54,14 @@ class _Mouse:
         async def wrapper():
             await run_async_callback(
                 async_callback,
-                "The callback function must not take in any arguments.",
+                [],
+                [],
             )
 
-        self._when_click_released_callbacks.append(wrapper)
+        callback_manager.add_callback(
+            CallbackType.WHEN_CLICK_RELEASED,
+            wrapper,
+        )
         return wrapper
 
     def distance_to(self, x=None, y=None):

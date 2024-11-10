@@ -2,13 +2,11 @@
 
 import pygame
 
+from ..callback import callback_manager, CallbackType
 from ..utils.async_helpers import _make_async
-from ..utils.callback_helpers import run_async_callback
+from ..callback.callback_helpers import run_async_callback
 
 pygame.key.set_repeat(200, 16)
-
-_pressed_keys_subscriptions = {}
-_release_keys_subscriptions = {}
 
 _pressed_keys = []
 
@@ -32,23 +30,15 @@ def when_any_key(func, released=False):
 
     async def wrapper(key):
         wrapper.is_running = True
-        await run_async_callback(
-            async_callback,
-            "The callback function must take in 1 argument: key.",
-            key
-        )
+        await run_async_callback(async_callback, ["key"], [], key)
         wrapper.is_running = False
 
     wrapper.keys = None
     wrapper.is_running = False
     if released:
-        if "any" not in _release_keys_subscriptions:
-            _release_keys_subscriptions["any"] = []
-        _release_keys_subscriptions["any"].append(wrapper)
+        callback_manager.add_callback(CallbackType.RELEASED_KEYS, wrapper, "any")
     else:
-        if "any" not in _pressed_keys_subscriptions:
-            _pressed_keys_subscriptions["any"] = []
-        _pressed_keys_subscriptions["any"].append(wrapper)
+        callback_manager.add_callback(CallbackType.PRESSED_KEYS, wrapper, "any")
     return wrapper
 
 
@@ -56,7 +46,6 @@ def when_key(*keys, released=False):
     """Run a function when a key is pressed or released."""
     for key in keys:
         if not isinstance(key, str) and not (isinstance(key, list) and (not released)):
-            print(key)
             raise ValueError("Key must be a string or a list of strings.")
         if isinstance(key, list):
             for sub_key in key:
@@ -68,11 +57,7 @@ def when_key(*keys, released=False):
 
         async def wrapper(key):
             wrapper.is_running = True
-            await run_async_callback(
-                async_callback,
-                "The callback function must take in 1 argument: key.",
-                key
-            )
+            await run_async_callback(async_callback, ["key"], [], key)
             wrapper.is_running = False
 
         wrapper.is_running = False
@@ -81,13 +66,9 @@ def when_key(*keys, released=False):
             if isinstance(key, list):
                 key = hash(frozenset(key))
             if released:
-                if key not in _release_keys_subscriptions:
-                    _release_keys_subscriptions[key] = []
-                _release_keys_subscriptions[key].append(wrapper)
+                callback_manager.add_callback(CallbackType.RELEASED_KEYS, wrapper, key)
             else:
-                if key not in _pressed_keys_subscriptions:
-                    _pressed_keys_subscriptions[key] = []
-                _pressed_keys_subscriptions[key].append(wrapper)
+                callback_manager.add_callback(CallbackType.PRESSED_KEYS, wrapper, key)
         return wrapper
 
     return decorator
