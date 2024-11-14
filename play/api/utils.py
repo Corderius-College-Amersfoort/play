@@ -5,7 +5,9 @@ import logging as _logging
 
 import pygame  # pylint: disable=import-error
 
-from .events import _when_program_starts_callbacks, _game_loop
+from ..callback import callback_manager, CallbackType
+from ..core import game_loop as _game_loop
+from ..callback.callback_helpers import run_callback
 from ..loop import loop as _loop
 from ..utils import color_name_to_rgb as _color_name_to_rgb
 from ..io.keypress import _pressed_keys
@@ -20,14 +22,20 @@ def start_program():
 
     play.start_program() should almost certainly go at the very end of your program.
     """
-    for func in _when_program_starts_callbacks:
-        _loop.create_task(func())
+    if callback_manager.get_callbacks(CallbackType.WHEN_PROGRAM_START) is not None:
+        for func in callback_manager.get_callbacks(CallbackType.WHEN_PROGRAM_START):
+            run_callback(
+                func,
+                [],
+                [],
+            )
 
     _loop.call_soon(_game_loop)
     try:
         _loop.run_forever()
     finally:
-        _logging.getLogger("asyncio").setLevel(_logging.CRITICAL)
+        logger = _logging.getLogger("asyncio")
+        logger.setLevel(_logging.CRITICAL)
         pygame.quit()  # pylint: disable=no-member
 
 
@@ -60,11 +68,6 @@ def set_backdrop(color_or_image_name):
 
 async def timer(seconds=1.0):
     """Wait a number of seconds. Used with the await keyword like this:
-
-    @play.repeat_forever
-    async def do():
-        await play.timer(seconds=2)
-        print('hi')
     :param seconds: The number of seconds to wait.
     :return: True after the number of seconds has passed.
     """

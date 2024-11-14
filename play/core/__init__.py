@@ -4,15 +4,16 @@ import math as _math
 
 import pygame  # pylint: disable=import-error
 
+from .game_loop_wrapper import listen_to_failure
+from ..callback import callback_manager, CallbackType
+from ..callback.callback_helpers import run_callback
 from ..globals import backdrop, FRAME_RATE, sprites_group
-from ..io import screen, PYGAME_DISPLAY
+from ..io import screen, PYGAME_DISPLAY, convert_pos
 from ..io.keypress import (
     key_num_to_name as _pygame_key_to_name,
     _keys_released_this_frame,
     _keys_to_skip,
     _pressed_keys,
-    _pressed_keys_subscriptions,
-    _release_keys_subscriptions,
 )  # don't pollute user-facing namespace with library internals
 from ..io.mouse import mouse
 from ..objects.line import Line
@@ -20,9 +21,14 @@ from ..objects.sprite import point_touching_sprite
 from ..physics import simulate_physics
 from ..utils import color_name_to_rgb as _color_name_to_rgb
 from ..loop import loop as _loop
+from .controller_loop import (
+    controller_axis_moved,
+    controller_button_pressed,
+    controller_button_released,
+    _handle_controller,
+    _handle_controller_events,
+)
 
-_repeat_forever_callbacks = []
-_when_program_starts_callbacks = []
 _clock = pygame.time.Clock()
 
 click_happened_this_frame = False  # pylint: disable=invalid-name
@@ -56,6 +62,7 @@ def _handle_pygame_events():
             mouse.x, mouse.y = (event.pos[0] - screen.width / 2.0), (
                 screen.height / 2.0 - event.pos[1]
             )
+        _handle_controller_events(event)
         if event.type == pygame.KEYDOWN:  # pylint: disable=no-member
             if event.key not in _keys_to_skip:
                 name = _pygame_key_to_name(event)
@@ -75,34 +82,69 @@ def _handle_keyboard():
     ############################################################
     # @when_any_key_pressed and @when_key_pressed callbacks
     ############################################################
-    if _pressed_keys:
+    if (
+        _pressed_keys
+        and callback_manager.get_callbacks(CallbackType.PRESSED_KEYS) is not None
+    ):
+        press_subscription = callback_manager.get_callbacks(CallbackType.PRESSED_KEYS)
         for key in _pressed_keys:
-            if key in _pressed_keys_subscriptions:
-                for callback in _pressed_keys_subscriptions[key]:
+            if key in callback_manager.get_callbacks(CallbackType.PRESSED_KEYS):
+                for callback in press_subscription[key]:
                     if not callback.is_running:
-                        _loop.create_task(callback(key))
-            if "any" in _pressed_keys_subscriptions:
-                for callback in _pressed_keys_subscriptions["any"]:
+                        run_callback(
+                            callback,
+                            ["key"],
+                            [],
+                            key,
+                        )
+            if "any" in press_subscription:
+                for callback in press_subscription["any"]:
                     if not callback.is_running:
-                        _loop.create_task(callback(key))
+                        run_callback(
+                            callback,
+                            ["key"],
+                            [],
+                            key,
+                        )
         keys_hash = hash(frozenset(_pressed_keys))
-        if keys_hash in _pressed_keys_subscriptions:
-            for callback in _pressed_keys_subscriptions[keys_hash]:
+        if keys_hash in press_subscription:
+            for callback in press_subscription[keys_hash]:
                 if not callback.is_running:
-                    _loop.create_task(callback(_pressed_keys))
+                    run_callback(
+                        callback,
+                        ["key"],
+                        [],
+                        _pressed_keys,
+                    )
 
     ############################################################
     # @when_any_key_released and @when_key_released callbacks
     ############################################################
-    for key in _keys_released_this_frame:
-        if key in _release_keys_subscriptions:
-            for callback in _release_keys_subscriptions[key]:
-                if not callback.is_running:
-                    _loop.create_task(callback(key))
-        if "any" in _release_keys_subscriptions:
-            for callback in _release_keys_subscriptions["any"]:
-                if not callback.is_running:
-                    _loop.create_task(callback(key))
+    if _keys_released_this_frame and callback_manager.get_callbacks(
+        CallbackType.RELEASED_KEYS
+    ):
+        release_subscriptions = callback_manager.get_callbacks(
+            CallbackType.RELEASED_KEYS
+        )
+        for key in _keys_released_this_frame:
+            if key in release_subscriptions:
+                for callback in release_subscriptions[key]:
+                    if not callback.is_running:
+                        run_callback(
+                            callback,
+                            ["key"],
+                            [],
+                            key,
+                        )
+            if "any" in release_subscriptions:
+                for callback in release_subscriptions["any"]:
+                    if not callback.is_running:
+                        run_callback(
+                            callback,
+                            ["key"],
+                            [],
+                            key,
+                        )
 
 
 def _handle_mouse_loop():
@@ -110,16 +152,26 @@ def _handle_mouse_loop():
     ####################################
     # @mouse.when_clicked callbacks
     ####################################
-    if mouse._when_clicked_callbacks:
-        for callback in mouse._when_clicked_callbacks:
-            _loop.create_task(callback())
+    if callback_manager.get_callbacks(CallbackType.WHEN_CLICKED) is not None:
+        for callback in callback_manager.get_callbacks(CallbackType.WHEN_CLICKED):
+            run_callback(
+                callback,
+                [],
+                [],
+            )
 
     ########################################
     # @mouse.when_click_released callbacks
     ########################################
-    if mouse._when_click_released_callbacks:
-        for callback in mouse._when_click_released_callbacks:
-            _loop.create_task(callback())
+    if callback_manager.get_callbacks(CallbackType.WHEN_CLICK_RELEASED) is not None:
+        for callback in callback_manager.get_callbacks(
+            CallbackType.WHEN_CLICK_RELEASED
+        ):
+            run_callback(
+                callback,
+                [],
+                [],
+            )
 
 
 def _update_sprites():
@@ -158,29 +210,39 @@ def _update_sprites():
         # @sprite.when_clicked events
         #################################
         if mouse.is_clicked:
-
             if (
-                point_touching_sprite((mouse.x, mouse.y), sprite)
+                point_touching_sprite(convert_pos(mouse.x, mouse.y), sprite)
                 and click_happened_this_frame
             ):
                 # only run sprite clicks on the frame the mouse was clicked
                 sprite._is_clicked = True
-                for callback in sprite._when_clicked_callbacks:
+                for callback in callback_manager.get_callback(
+                    CallbackType.WHEN_CLICKED_SPRITE, id(sprite)
+                ):
                     if not callback.is_running:
-                        _loop.create_task(callback())
+                        run_callback(
+                            callback,
+                            [],
+                            [],
+                        )
 
         #################################
         # @sprite.when_touching events
         #################################
         if sprite._active_callbacks:
             for cb in sprite._active_callbacks:
-                _loop.create_task(cb())
+                run_callback(
+                    cb,
+                    [],
+                    [],
+                )
 
     sprites_group.update()
     sprites_group.draw(PYGAME_DISPLAY)
 
 
 # pylint: disable=too-many-branches, too-many-statements
+@listen_to_failure()
 def game_loop():
     """The main game loop."""
     _keys_released_this_frame.clear()
@@ -198,12 +260,19 @@ def game_loop():
     if click_happened_this_frame or click_release_happened_this_frame:
         _handle_mouse_loop()
 
+    _handle_controller()
+
     #############################
     # @repeat_forever callbacks
     #############################
-    for callback in _repeat_forever_callbacks:
-        if not callback.is_running:
-            _loop.create_task(callback())
+    if callback_manager.get_callbacks(CallbackType.REPEAT_FOREVER) is not None:
+        for callback in callback_manager.get_callbacks(CallbackType.REPEAT_FOREVER):
+            if not callback.is_running:
+                run_callback(
+                    callback,
+                    [],
+                    [],
+                )
 
     #############################
     # physics simulation
@@ -214,6 +283,6 @@ def game_loop():
 
     _update_sprites()
 
-    pygame.display.flip()
     _loop.call_soon(game_loop)
+    pygame.display.flip()
     return True

@@ -5,12 +5,13 @@ import warnings as _warnings
 import pymunk as _pymunk
 import pygame
 
-from ..loop import loop as _loop
+from ..callback import callback_manager, CallbackType
 from ..globals import sprites_group
 from ..physics import physics_space, Physics as _Physics
 from ..utils import _clamp
 from ..io import screen
 from ..utils.async_helpers import _make_async
+from ..callback.callback_helpers import run_async_callback
 
 
 def _sprite_touching_sprite(a, b):
@@ -42,7 +43,6 @@ class Sprite(
         self._angle = None
         self._transparency = None
 
-        self._when_touching_callbacks = []
         self._dependent_sprites = []
         self._active_callbacks = []
 
@@ -51,8 +51,6 @@ class Sprite(
         self._is_clicked = False
         self._is_hidden = False
         self._should_recompute = True
-
-        self._when_clicked_callbacks = []
 
         self.rect = None
 
@@ -69,9 +67,13 @@ class Sprite(
 
     def update(self):
         """Update the sprite."""
-        if self._should_recompute and self._when_touching_callbacks:
+        if self._should_recompute and callback_manager.get_callback(
+            CallbackType.WHEN_TOUCHING, id(self)
+        ):
             # check if we are touching any other sprites
-            for callback, b in self._when_touching_callbacks:
+            for callback, b in callback_manager.get_callback(
+                CallbackType.WHEN_TOUCHING, id(self)
+            ):
                 if self.is_touching(b):
                     if callback not in self._active_callbacks:
                         self._active_callbacks.append(callback)
@@ -391,13 +393,24 @@ You might want to look in your code where you're setting transparency and make s
         async def wrapper():
             wrapper.is_running = True
             if call_with_sprite:
-                await async_callback(self)
+                await run_async_callback(
+                    async_callback,
+                    ["sprite"],
+                    [],
+                    self,
+                )
             else:
-                await async_callback()
+                await run_async_callback(
+                    async_callback,
+                    [],
+                    [],
+                )
             wrapper.is_running = False
 
         wrapper.is_running = False
-        self._when_clicked_callbacks.append(wrapper)
+        callback_manager.add_callback(
+            CallbackType.WHEN_CLICKED_SPRITE, wrapper, id(self)
+        )
         return wrapper
 
     def when_touching(self, *sprites):
@@ -408,19 +421,22 @@ You might want to look in your code where you're setting transparency and make s
         def decorator(func):
             async_callback = _make_async(func)
 
-            async def wrapper(*args, **kwargs):
+            async def wrapper():
                 wrapper.is_running = True
-                await async_callback(*args, **kwargs)
+                await run_async_callback(
+                    async_callback,
+                    [],
+                    [],
+                )
                 wrapper.is_running = False
 
             wrapper.is_running = False
 
             for sprite in sprites:
-                print(sprite)
                 sprite._dependent_sprites.append(self)
-                self._when_touching_callbacks.append((wrapper, sprite))
-            self._when_touching_callbacks = frozenset(self._when_touching_callbacks)
-            print(self._when_touching_callbacks)
+                callback_manager.add_callback(
+                    CallbackType.WHEN_TOUCHING, (wrapper, sprite), id(self)
+                )
             return wrapper
 
         return decorator
