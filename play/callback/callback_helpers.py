@@ -31,8 +31,8 @@ def run_callback(callback, required_args, optional_args, *args, **kwargs):
         if len(required_args) == 0:
             raise ValueError("The callback function must not take in any arguments.")
         raise ValueError(
-            f"The callback function must take in {len(required_args)} argument(s): "
-            f"Required: {required_args}"
+            f"The callback function must take in {len(required_args)} argument(s):\n"
+            f"Required: {required_args}\n"
             f"{len(optional_args)} optional argument(s): {optional_args}"
         )
 
@@ -64,7 +64,7 @@ async def run_async_callback(callback, required_args, optional_args, *args, **kw
         if len(required_args) == 0:
             raise ValueError("The callback function must not take in any arguments.")
         raise ValueError(
-            f"The callback function must take in {len(required_args)} argument(s): "
-            f"Required: {required_args}"
+            f"The callback function must take in {len(required_args)} argument(s):\n"
+            f"Required: {required_args}\n"
             f"{len(optional_args)} optional argument(s): {optional_args}"
         )
