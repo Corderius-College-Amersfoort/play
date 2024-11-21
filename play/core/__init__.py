@@ -216,15 +216,16 @@ def _update_sprites():
             ):
                 # only run sprite clicks on the frame the mouse was clicked
                 sprite._is_clicked = True
-                for callback in callback_manager.get_callback(
-                    CallbackType.WHEN_CLICKED_SPRITE, id(sprite)
-                ):
-                    if not callback.is_running:
-                        run_callback(
-                            callback,
-                            [],
-                            [],
-                        )
+                if callback_manager.get_callback(CallbackType.WHEN_CLICKED_SPRITE, id(sprite)):
+                    for callback in callback_manager.get_callback(
+                        CallbackType.WHEN_CLICKED_SPRITE, id(sprite)
+                    ):
+                        if not callback.is_running:
+                            run_callback(
+                                callback,
+                                [],
+                                [],
+                            )
 
         #################################
         # @sprite.when_touching events
