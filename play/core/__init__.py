@@ -175,6 +175,7 @@ def _handle_mouse_loop():
 
 
 def _update_sprites():
+    # pylint: disable=too-many-nested-blocks
     for sprite in sprites_group.sprites():
         sprite._is_clicked = False
         if sprite.is_hidden:
@@ -216,7 +217,9 @@ def _update_sprites():
             ):
                 # only run sprite clicks on the frame the mouse was clicked
                 sprite._is_clicked = True
-                if callback_manager.get_callback(CallbackType.WHEN_CLICKED_SPRITE, id(sprite)):
+                if callback_manager.get_callback(
+                    CallbackType.WHEN_CLICKED_SPRITE, id(sprite)
+                ):
                     for callback in callback_manager.get_callback(
                         CallbackType.WHEN_CLICKED_SPRITE, id(sprite)
                     ):

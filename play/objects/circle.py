@@ -62,6 +62,7 @@ class Circle(Sprite):
                 (self._radius, self._radius),
                 self._radius,
             )
+            self.image.set_alpha(self._transparency * 2.55)
             self.rect = self._image.get_rect()
             pos = convert_pos(self.x, self.y)
             self.rect.x = pos[0] - self._radius

@@ -39,8 +39,12 @@ class Box(Sprite):
         """Update the box's position, size, angle, and transparency."""
         if self._should_recompute:
             self.image = pygame.Surface((self._width, self._height), pygame.SRCALPHA)
-            self.image.fill(_color_name_to_rgb(self._color))
-            self.image.set_alpha(self._transparency)
+            pygame.draw.rect(
+                self.image,
+                _color_name_to_rgb(self._color),
+                (0, 0, self._width, self._height),
+            )
+            self.image.set_alpha(self._transparency * 2.55)
             self.rect = self.image.get_rect()
             pos = convert_pos(self.x, self.y)
             self.rect.x = pos[0] - self._width // 2
