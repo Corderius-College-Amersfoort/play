@@ -17,6 +17,7 @@ class Box(Sprite):
         height=200,
         border_color="light blue",
         border_width=0,
+        border_radius=0,
         transparency=100,
         size=100,
         angle=0,
@@ -29,6 +30,7 @@ class Box(Sprite):
         self._height = height
         self._border_color = border_color
         self._border_width = border_width
+        self._border_radius = border_radius
         self._transparency = transparency
         self._size = size
         self._angle = angle
@@ -36,20 +38,37 @@ class Box(Sprite):
         self.update()
 
     def update(self):
-        """Update the box's position, size, angle, and transparency."""
+        """Update the box's position, size, angle, transparency, and border."""
         if self._should_recompute:
             self.image = pygame.Surface((self._width, self._height), pygame.SRCALPHA)
+
+            if self._border_width > 0:
+                pygame.draw.rect(
+                    self.image,
+                    _color_name_to_rgb(self._border_color),
+                    (0, 0, self._width, self._height), 
+                    self._border_width, 
+                    border_radius=self._border_radius
+                )
+            
+
             pygame.draw.rect(
                 self.image,
                 _color_name_to_rgb(self._color),
-                (0, 0, self._width, self._height),
+                (self._border_width, self._border_width, 
+                self._width - 2 * self._border_width,  
+                self._height - 2 * self._border_width),  
             )
+            
+
             self.image.set_alpha(self._transparency * 2.55)
+
             self.rect = self.image.get_rect()
             pos = convert_pos(self.x, self.y)
             self.rect.x = pos[0] - self._width // 2
             self.rect.y = pos[1] - self._height // 2
             super().update()
+
 
     ##### width #####
     @property
@@ -115,6 +134,20 @@ class Box(Sprite):
         """Set the width of the box's border.
         :param _border_width: The new width of the box's border."""
         self._border_width = _border_width
+
+    ##### border_radius #####
+    @property
+    def border_radius(self):
+        """The radius of the box's border.
+        :return: The radius of the box's border."""
+        return self._border_radius
+
+    @border_radius.setter
+    def border_radius(self, _border_radius):
+        """Set the radius of the box's border.
+        :param _border_radius: The new radius of the box's border."""
+        self._border_radius = _border_radius
+
 
     def clone(self):
         """Create a copy of the box.
