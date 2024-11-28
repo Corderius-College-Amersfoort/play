@@ -13,7 +13,7 @@ def new_text(  # pylint: disable=too-many-arguments
     words: str = "",
     x: int = 0,
     y: int = 0,
-    font = None,
+    font: str = "C:/location/to/font_file.ttf",
     font_size: int = 50,
     color: str = "black",
     angle: int = 0,
@@ -166,7 +166,7 @@ def new_line(  # pylint: disable=too-many-arguments
 
 
 def new_image(
-    image = None,
+    image: str = "C:/location/to/image.png",
     x: int = 0,
     y: int = 0,
     size: int = 100,
