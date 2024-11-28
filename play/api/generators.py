@@ -10,16 +10,16 @@ from ..objects import (
 
 
 def new_text(  # pylint: disable=too-many-arguments
-    words="",
-    x=0,
-    y=0,
-    font=None,
-    font_size=50,
-    color="black",
-    angle=0,
-    transparency=100,
-    size=100,
-):
+    words: str = "",
+    x: int = 0,
+    y: int = 0,
+    font = None,
+    font_size: int = 50,
+    color: str = "black",
+    angle: int = 0,
+    transparency: int = 100,
+    size: int = 100,
+) -> object:
     """Make a new text object.
     :param words: The text to display.
     :param x: The x-coordinate of the text.
@@ -32,6 +32,9 @@ def new_text(  # pylint: disable=too-many-arguments
     :param size: The size of the text.
     :return: A new text object.
     """
+    if not isinstance(words, str):
+        raise TypeError("words for a text object must be a string")
+    
     return _Text(
         words=words,
         x=x,
@@ -46,18 +49,18 @@ def new_text(  # pylint: disable=too-many-arguments
 
 
 def new_box(  # pylint: disable=too-many-arguments
-    color="black",
-    x=0,
-    y=0,
-    width=100,
-    height=200,
-    border_color="light blue",
-    border_width=0,
-    border_radius=0,
-    angle=0,
-    transparency=100,
-    size=100,
-):
+    color: str = "black",
+    x: int = 0,
+    y: int = 0,
+    width: int = 100,
+    height: int = 200,
+    border_color: str = "light blue",
+    border_width: int = 0,
+    border_radius: int = 0,
+    angle: int = 0,
+    transparency: int = 100,
+    size: int = 100,
+) -> object:
     """Make a new box object.
     :param color: The color of the box.
     :param x: The x-coordinate of the box.
@@ -88,16 +91,16 @@ def new_box(  # pylint: disable=too-many-arguments
 
 
 def new_circle(  # pylint: disable=too-many-arguments
-    color="black",
-    x=0,
-    y=0,
-    radius=100,
-    border_color="light blue",
-    border_width=0,
-    transparency=100,
-    size=100,
-    angle=0,
-):
+    color: str = "black",
+    x: int = 0,
+    y: int = 0,
+    radius: int = 100,
+    border_color: str = "light blue",
+    border_width: int = 0,
+    transparency: int = 100,
+    size: int = 100,
+    angle: int = 0,
+) -> object:
     """Make a new circle object.
     :param color: The color of the circle.
     :param x: The x-coordinate of the circle.
@@ -124,17 +127,17 @@ def new_circle(  # pylint: disable=too-many-arguments
 
 
 def new_line(  # pylint: disable=too-many-arguments
-    color="black",
-    x=0,
-    y=0,
-    length=None,
-    angle=None,
-    thickness=1,
-    x1=None,
-    y1=None,
-    transparency=100,
-    size=100,
-):
+    color: str = "black",
+    x: int = 0,
+    y: int = 0,
+    length = None,
+    angle = None,
+    thickness: int = 1,
+    x1 = None,
+    y1 = None,
+    transparency: int = 100,
+    size: int = 100,
+) -> object:
     """Make a new line object.
     :param color: The color of the line.
     :param x: The x-coordinate of the line.
@@ -163,8 +166,13 @@ def new_line(  # pylint: disable=too-many-arguments
 
 
 def new_image(
-    image=None, x=0, y=0, size=100, angle=0, transparency=100
-):  # pylint: disable=too-many-arguments
+    image = None,
+    x: int = 0,
+    y: int = 0,
+    size: int = 100,
+    angle: int = 0, 
+    transparency: int = 100
+) -> object:  # pylint: disable=too-many-arguments
     """Make a new image object.
     :param image: The image to display.
     :param x: The x-coordinate of the image.
