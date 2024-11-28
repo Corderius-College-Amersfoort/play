@@ -13,13 +13,13 @@ def new_text(  # pylint: disable=too-many-arguments
     words: str = "",
     x: int = 0,
     y: int = 0,
-    font: str = "C:/location/to/font_file.ttf",
+    font: str = "/path/to/font",
     font_size: int = 50,
     color: str = "black",
     angle: int = 0,
     transparency: int = 100,
     size: int = 100,
-) -> object:
+) -> _Text:
     """Make a new text object.
     :param words: The text to display.
     :param x: The x-coordinate of the text.
@@ -60,7 +60,7 @@ def new_box(  # pylint: disable=too-many-arguments
     angle: int = 0,
     transparency: int = 100,
     size: int = 100,
-) -> object:
+) -> _Box:
     """Make a new box object.
     :param color: The color of the box.
     :param x: The x-coordinate of the box.
@@ -100,7 +100,7 @@ def new_circle(  # pylint: disable=too-many-arguments
     transparency: int = 100,
     size: int = 100,
     angle: int = 0,
-) -> object:
+) -> _Circle:
     """Make a new circle object.
     :param color: The color of the circle.
     :param x: The x-coordinate of the circle.
@@ -137,7 +137,7 @@ def new_line(  # pylint: disable=too-many-arguments
     y1 = None,
     transparency: int = 100,
     size: int = 100,
-) -> object:
+) -> _Line:
     """Make a new line object.
     :param color: The color of the line.
     :param x: The x-coordinate of the line.
@@ -166,13 +166,13 @@ def new_line(  # pylint: disable=too-many-arguments
 
 
 def new_image(
-    image: str = "C:/location/to/image.png",
+    image: str = "/path/to/image",
     x: int = 0,
     y: int = 0,
     size: int = 100,
     angle: int = 0, 
     transparency: int = 100
-) -> object:  # pylint: disable=too-many-arguments
+) -> _Image:  # pylint: disable=too-many-arguments
     """Make a new image object.
     :param image: The image to display.
     :param x: The x-coordinate of the image.
