@@ -53,6 +53,7 @@ def new_box(  # pylint: disable=too-many-arguments
     height=200,
     border_color="light blue",
     border_width=0,
+    border_radius=0,
     angle=0,
     transparency=100,
     size=100,
@@ -65,6 +66,7 @@ def new_box(  # pylint: disable=too-many-arguments
     :param height: The height of the box.
     :param border_color: The color of the border of the box.
     :param border_width: The width of the border of the box.
+    :param border_radius: The radius of the border (rounding).
     :param angle: The angle of the box.
     :param transparency: The transparency of the box.
     :param size: The size of the box.
@@ -78,6 +80,7 @@ def new_box(  # pylint: disable=too-many-arguments
         height=height,
         border_color=border_color,
         border_width=border_width,
+        border_radius=border_radius,
         angle=angle,
         transparency=transparency,
         size=size,
