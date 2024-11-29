@@ -165,14 +165,14 @@ def new_line(  # pylint: disable=too-many-arguments
     )
 
 
-def new_image(
+def new_image(  # pylint: disable=too-many-arguments
     image: str = "/path/to/image",
     x: int = 0,
     y: int = 0,
     size: int = 100,
     angle: int = 0,
     transparency: int = 100,
-) -> _Image:  # pylint: disable=too-many-arguments
+) -> _Image:
     """Make a new image object.
     :param image: The image to display.
     :param x: The x-coordinate of the image.

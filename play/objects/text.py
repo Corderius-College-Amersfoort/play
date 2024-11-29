@@ -1,5 +1,7 @@
-import pygame
+"""This module contains the Text class, which is a text string in the game."""
+
 import os
+import pygame
 from .sprite import Sprite
 from ..io import convert_pos
 from ..utils import color_name_to_rgb as _color_name_to_rgb
@@ -111,13 +113,12 @@ class Text(Sprite):
         """Helper method to load a font, either from a file or system."""
         if os.path.isfile(font_name):
             return pygame.font.Font(font_name, font_size)
-        else:
-            play_logger.warning(
-                "File to font doesnt exist, Using default font", exc_info=True
+        play_logger.warning(
+            "File to font doesnt exist, Using default font", exc_info=True
+        )
+        try:
+            return pygame.font.Font(pygame.font.get_default_font(), font_size)
+        except Exception:
+            play_logger.critical(
+                "No default font could be found or loaded", exc_info=True
             )
-            try:
-                return pygame.font.Font(pygame.font.get_default_font(), font_size)
-            except Exception:
-                play_logger.critical(
-                    "No default font could be found or loaded", exc_info=True
-                )
