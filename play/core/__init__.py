@@ -176,6 +176,7 @@ def _handle_mouse_loop():
 
 def _update_sprites():
     # pylint: disable=too-many-nested-blocks
+    sprites_group.update()
     for sprite in sprites_group.sprites():
         sprite._is_clicked = False
         if sprite.is_hidden:
@@ -241,7 +242,6 @@ def _update_sprites():
                     [],
                 )
 
-    sprites_group.update()
     sprites_group.draw(PYGAME_DISPLAY)
 
 
