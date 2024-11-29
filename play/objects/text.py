@@ -116,9 +116,4 @@ class Text(Sprite):
         play_logger.warning(
             "File to font doesnt exist, Using default font", exc_info=True
         )
-        try:
-            return pygame.font.Font(pygame.font.get_default_font(), font_size)
-        except Exception:
-            play_logger.critical(
-                "No default font could be found or loaded", exc_info=True
-            )
+        return pygame.font.Font(pygame.font.get_default_font(), font_size)
