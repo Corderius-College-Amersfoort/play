@@ -34,7 +34,7 @@ def new_text(  # pylint: disable=too-many-arguments
     """
     if not isinstance(words, str):
         raise TypeError("words for a text object must be a string")
-    
+
     return _Text(
         words=words,
         x=x,
@@ -130,11 +130,11 @@ def new_line(  # pylint: disable=too-many-arguments
     color: str = "black",
     x: int = 0,
     y: int = 0,
-    length = None,
-    angle = None,
+    length=None,
+    angle=None,
     thickness: int = 1,
-    x1 = None,
-    y1 = None,
+    x1=None,
+    y1=None,
     transparency: int = 100,
     size: int = 100,
 ) -> _Line:
@@ -170,8 +170,8 @@ def new_image(
     x: int = 0,
     y: int = 0,
     size: int = 100,
-    angle: int = 0, 
-    transparency: int = 100
+    angle: int = 0,
+    transparency: int = 100,
 ) -> _Image:  # pylint: disable=too-many-arguments
     """Make a new image object.
     :param image: The image to display.

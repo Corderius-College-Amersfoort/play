@@ -49,6 +49,7 @@ class Circle(Sprite):
             border_width=self.border_width,
             **self._common_properties()
         )
+
     def update(self):
         """Update the circle's position, size, angle, transparency, and border."""
         if self._should_recompute:
@@ -60,25 +61,24 @@ class Circle(Sprite):
                 pygame.draw.circle(
                     self._image,
                     _color_name_to_rgb(self._border_color),
-                    (self._radius, self._radius),  
+                    (self._radius, self._radius),
                     self._radius,
                 )
-            
+
             pygame.draw.circle(
                 self._image,
                 _color_name_to_rgb(self._color),
-                (self._radius, self._radius), 
-                self._radius - self._border_width, 
+                (self._radius, self._radius),
+                self._radius - self._border_width,
             )
 
             self._image.set_alpha(self._transparency * 2.55)
-            
+
             self.rect = self._image.get_rect()
             pos = convert_pos(self.x, self.y)
             self.rect.x = pos[0] - self._radius
             self.rect.y = pos[1] - self._radius
             super().update()
-
 
     ##### color #####
     @property

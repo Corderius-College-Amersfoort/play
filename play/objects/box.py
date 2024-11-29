@@ -46,20 +46,21 @@ class Box(Sprite):
                 pygame.draw.rect(
                     self.image,
                     _color_name_to_rgb(self._border_color),
-                    (0, 0, self._width, self._height), 
-                    self._border_width, 
-                    border_radius=self._border_radius
+                    (0, 0, self._width, self._height),
+                    self._border_width,
+                    border_radius=self._border_radius,
                 )
-            
 
             pygame.draw.rect(
                 self.image,
                 _color_name_to_rgb(self._color),
-                (self._border_width, self._border_width, 
-                self._width - 2 * self._border_width,  
-                self._height - 2 * self._border_width),  
+                (
+                    self._border_width,
+                    self._border_width,
+                    self._width - 2 * self._border_width,
+                    self._height - 2 * self._border_width,
+                ),
             )
-            
 
             self.image.set_alpha(self._transparency * 2.55)
 
@@ -68,7 +69,6 @@ class Box(Sprite):
             self.rect.x = pos[0] - self._width // 2
             self.rect.y = pos[1] - self._height // 2
             super().update()
-
 
     ##### width #####
     @property
@@ -147,7 +147,6 @@ class Box(Sprite):
         """Set the radius of the box's border.
         :param _border_radius: The new radius of the box's border."""
         self._border_radius = _border_radius
-
 
     def clone(self):
         """Create a copy of the box.

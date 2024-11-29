@@ -1,4 +1,5 @@
 """This module contains the Image class, which is a subclass of the Sprite class."""
+
 import pygame
 import os
 
