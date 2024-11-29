@@ -1,7 +1,7 @@
 """This module contains the Box class, which represents a box in the game."""
 
+import math as _math
 import pygame
-
 from .sprite import Sprite
 from ..io import convert_pos
 from ..utils import color_name_to_rgb as _color_name_to_rgb
@@ -40,11 +40,11 @@ class Box(Sprite):
     def update(self):
         """Update the box's position, size, angle, transparency, and border."""
         if self._should_recompute:
-            self.image = pygame.Surface((self._width, self._height), pygame.SRCALPHA)
+            self.original_image = pygame.Surface((self._width, self._height), pygame.SRCALPHA)
 
             if self._border_width > 0:
                 pygame.draw.rect(
-                    self.image,
+                    self.original_image,
                     _color_name_to_rgb(self._border_color),
                     (0, 0, self._width, self._height),
                     self._border_width,
@@ -52,7 +52,7 @@ class Box(Sprite):
                 )
 
             pygame.draw.rect(
-                self.image,
+                self.original_image,
                 _color_name_to_rgb(self._color),
                 (
                     self._border_width,
@@ -60,15 +60,25 @@ class Box(Sprite):
                     self._width - 2 * self._border_width,
                     self._height - 2 * self._border_width,
                 ),
+                border_radius=max(self._border_radius - self._border_width, 0),
             )
 
-            self.image.set_alpha(self._transparency * 2.55)
+            self.original_image.set_alpha(self._transparency * 2.55)
 
-            self.rect = self.image.get_rect()
+            self.rect = self.original_image.get_rect()
             pos = convert_pos(self.x, self.y)
             self.rect.x = pos[0] - self._width // 2
             self.rect.y = pos[1] - self._height // 2
-            super().update()
+
+        if self.physics:
+            angle_deg = -_math.degrees(self.physics._pymunk_body.angle)
+            self.image = pygame.transform.rotate(self.original_image, angle_deg)
+            self.rect = self.image.get_rect(center=self.rect.center)
+        else:
+            self.image = self.original_image
+
+        super().update()
+
 
     ##### width #####
     @property
