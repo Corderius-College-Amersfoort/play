@@ -3,6 +3,10 @@ import os
 from .sprite import Sprite
 from ..io import convert_pos
 from ..utils import color_name_to_rgb as _color_name_to_rgb
+from ..io.logging import play_logger
+
+
+
 
 class Text(Sprite):
     def __init__(  # pylint: disable=too-many-arguments
@@ -110,8 +114,9 @@ class Text(Sprite):
         if os.path.isfile(font_name):
             return pygame.font.Font(font_name, font_size)
         else:
-            print("File to font doesnt exist, Using default font")
+            play_logger.warning("File to font doesnt exist, Using default font", exc_info=True)
             try:
                 return pygame.font.Font(pygame.font.get_default_font(), font_size)
-            except Exception as e:
-                raise ValueError(f"Font {font_name} could not be found or loaded. Error: {e}")
+            except Exception:
+                play_logger.critical("No default font could be found or loaded", exc_info=True)
+            
