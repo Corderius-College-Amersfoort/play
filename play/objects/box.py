@@ -40,7 +40,9 @@ class Box(Sprite):
     def update(self):
         """Update the box's position, size, angle, transparency, and border."""
         if self._should_recompute:
-            self.original_image = pygame.Surface((self._width, self._height), pygame.SRCALPHA)
+            self.original_image = pygame.Surface(
+                (self._width, self._height), pygame.SRCALPHA
+            )
 
             if self._border_width > 0:
                 pygame.draw.rect(
@@ -78,7 +80,6 @@ class Box(Sprite):
             self.image = self.original_image
 
         super().update()
-
 
     ##### width #####
     @property
