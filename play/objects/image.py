@@ -1,5 +1,6 @@
 """This module contains the Image class, which is a subclass of the Sprite class."""
 
+import os
 import pygame
 
 from .sprite import Sprite
@@ -12,6 +13,8 @@ class Image(Sprite):
     ):  # pylint: disable=too-many-arguments
         super().__init__()
         if isinstance(image, str):
+            if not os.path.isfile(image):
+                raise FileNotFoundError(f"Image file '{image}' not found.")
             image = pygame.image.load(image)
         self._image = image
         self._x = x

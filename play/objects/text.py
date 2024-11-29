@@ -1,9 +1,11 @@
-"""This module contains the Text class, which is used to create text objects in the game."""
+"""This module contains the Text class, which is a text string in the game."""
 
+import os
 import pygame
 from .sprite import Sprite
 from ..io import convert_pos
 from ..utils import color_name_to_rgb as _color_name_to_rgb
+from ..io.logging import play_logger
 
 
 class Text(Sprite):
@@ -12,7 +14,7 @@ class Text(Sprite):
         words="hi :)",
         x=0,
         y=0,
-        font=None,
+        font="arial.ttf",
         font_size=50,
         color="black",
         angle=0,
@@ -22,7 +24,7 @@ class Text(Sprite):
         super().__init__()
         self._font = font
         self._font_size = font_size
-        self._pygame_font = pygame.font.Font(font, font_size)
+        self._pygame_font = self._load_font(font, font_size)
         self._words = words
         self._color = color
 
@@ -67,44 +69,51 @@ class Text(Sprite):
 
     @property
     def words(self):
-        """Get the words of the text object.
-        :return: The words of the text object."""
+        """Get the words of the text object."""
         return self._words
 
     @words.setter
     def words(self, string):
-        """Set the words of the text object.
-        :param string: The new words of the text object."""
+        """Set the words of the text object."""
         self._words = str(string)
 
     @property
     def font(self):
-        """Get the font of the text object.
-        :return: The font of the text object."""
+        """Get the font of the text object."""
         return self._font
 
     @font.setter
     def font(self, font_name):
-        """Set the font of the text object.
-        :param font_name: The new font of the text object."""
-        self._font = str(font_name)
+        """Set the font of the text object. This will load the font dynamically."""
+        self._font = font_name
+        self._pygame_font = self._load_font(font_name, self._font_size)
 
     @property
     def font_size(self):
-        """Get the font size of the text object.
-        :return: The font size of the text object."""
+        """Get the font size of the text object."""
         return self._font_size
 
     @font_size.setter
     def font_size(self, size):
+        """Set the font size of the text object."""
         self._font_size = size
+        self._pygame_font = self._load_font(self._font, size)
 
     @property
     def color(self):
-        """Get the color of the text object.
-        :return: The color of the text object."""
+        """Get the color of the text object."""
         return self._color
 
     @color.setter
     def color(self, color_):
+        """Set the color of the text object."""
         self._color = color_
+
+    def _load_font(self, font_name, font_size):
+        """Helper method to load a font, either from a file or system."""
+        if os.path.isfile(font_name):
+            return pygame.font.Font(font_name, font_size)
+        play_logger.warning(
+            "File to font doesnt exist, Using default font", exc_info=True
+        )
+        return pygame.font.Font(pygame.font.get_default_font(), font_size)
