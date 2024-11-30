@@ -10,3 +10,5 @@ _walls = []
 backdrop = (255, 255, 255)
 
 FRAME_RATE = 60
+WIDTH = 800
+HEIGHT = 600

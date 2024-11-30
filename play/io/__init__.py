@@ -3,19 +3,21 @@
 from sys import platform
 
 import pygame
+from screeninfo import get_monitors
 import pymunk as _pymunk
 from pygame._sdl2.video import Window  # pylint: disable=no-name-in-module
 from pygame.locals import *
 
-from ..globals import _walls
+from ..globals import _walls, WIDTH, HEIGHT
 from ..physics import physics_space
 
 PYGAME_DISPLAY = None
 
 
 class Screen:
-    def __init__(self, width=800, height=600):
+    def __init__(self, width=WIDTH, height=HEIGHT):
         global PYGAME_DISPLAY
+
         self._width = width
         self._height = height
         PYGAME_DISPLAY = pygame.display.set_mode(
@@ -102,22 +104,26 @@ class Screen:
         if self._fullscreen:
             return
         self._fullscreen = True
-        window = Window.from_display_module()
-        full_screen_size = (
-            pygame.display.Info().current_w,
-            pygame.display.Info().current_h,
-        )
+
+        width = get_monitors()[0].width
+        height = get_monitors()[0].height
+
+        self._width = width
+        self._height = height
+
+        remove_walls()
+        create_walls()
+
         if platform != "linux":
-            pygame.display.toggle_fullscreen()  # works for entering and exiting fullscreen, except in linux
-            window.position = (
-                full_screen_size[i] / 2 - window.size[i] / 2 for i in range(2)
-            )  # reset X and Y position of the window to original instead of top left
+            PYGAME_DISPLAY = pygame.display.set_mode((width, height), pygame.FULLSCREEN)
+            window = Window.from_display_module()
+            window.position = (0, 0)
         else:
             PYGAME_DISPLAY = pygame.display.set_mode(
-                (self.width, self.height),
+                (width, height),
                 SCALED + NOFRAME + FULLSCREEN,  # pylint: disable=undefined-variable
                 32,  # pylint: disable=undefined-variable
-            )  # all flags are necessary
+            )
 
     def disable_fullscreen(self):
         """Disable fullscreen mode."""
@@ -159,7 +165,8 @@ def create_walls():
 
 def remove_walls():
     """Remove the walls from the physics space."""
-    physics_space.remove(_walls)
+    for wall in _walls:
+        physics_space.remove(wall)
     _walls.clear()
 
 

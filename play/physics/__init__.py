@@ -283,7 +283,7 @@ def set_gravity(vertical=-100, horizontal=None):
     physics_space.gravity = GRAVITY.horizontal, GRAVITY.vertical
 
 
-_NUM_SIMULATION_STEPS = 3
+_NUM_SIMULATION_STEPS = 10
 
 
 def simulate_physics():
