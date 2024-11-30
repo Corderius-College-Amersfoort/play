@@ -93,6 +93,7 @@ def key_is_pressed(*keys):
             return True
     return False
 
+
 def set_physics_simulation_steps(num_steps: int) -> None:
     """
     Set the number of simulation steps for the physics engine.
