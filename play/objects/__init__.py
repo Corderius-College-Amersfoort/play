@@ -11,3 +11,4 @@ from .line import Line
 from .sprite import Sprite
 from .text import Text
 from .image import Image
+from .sound import Sound

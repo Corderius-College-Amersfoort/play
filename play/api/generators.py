@@ -6,6 +6,7 @@ from ..objects import (
     Line as _Line,
     Text as _Text,
     Image as _Image,
+    Sound as _Sound,
 )
 
 
@@ -185,3 +186,18 @@ def new_image(  # pylint: disable=too-many-arguments
     return _Image(
         image=image, x=x, y=y, size=size, angle=angle, transparency=transparency
     )
+
+
+def new_sound(  # pylint: disable=too-many-arguments
+    file_name: str = "file.mp3",
+    volume: float = 1.0,
+    loops: int = 0,
+) -> _Sound:
+    """
+    Initialize the Sound object.
+    :param file_name: The sound file to load (file path if not in the same directory as the .py).
+    :param volume: The initial volume (0.0 to 1.0).
+    :param loops: Number of times to loop the sound (-1 for infinite, 0 for no loop).
+    """
+
+    return _Sound(file_name=file_name, volume=volume, loops=loops)
