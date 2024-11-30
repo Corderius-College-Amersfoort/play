@@ -2,12 +2,13 @@ import pytest
 
 y = 0
 screeny = 0
-RADIUS = 100
+radius = 100
 
 
-def test_physics(radius):
+def test_physics():
     import play
 
+    global radius
     sprite = play.new_circle(color="gray", radius=radius)
     sprite.start_physics(obeys_gravity=True, bounciness=0, stable=True, friction=0)
 
@@ -36,4 +37,4 @@ def test_physics(radius):
 # create a pytest for test_physics
 
 if __name__ == "__main__":
-    test_physics(RADIUS)
+    test_physics()
