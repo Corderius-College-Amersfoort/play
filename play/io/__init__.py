@@ -117,7 +117,7 @@ class Screen:
         if platform != "linux":
             PYGAME_DISPLAY = pygame.display.set_mode((width, height), pygame.FULLSCREEN)
             window = Window.from_display_module()
-            window.position = (0, 0) 
+            window.position = (0, 0)
         else:
             PYGAME_DISPLAY = pygame.display.set_mode(
                 (width, height),
