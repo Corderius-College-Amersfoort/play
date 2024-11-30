@@ -1,16 +1,14 @@
-import sys
 import pytest
-
-sys.path.append(".")
 
 y = 0
 screeny = 0
+RADIUS = 100
 
 
-def test_physics(size=100):
+def test_physics(RADIUS):
     import play
 
-    sprite = play.new_circle(color="gray", size=size)
+    sprite = play.new_circle(color="gray", radius=RADIUS)
     sprite.start_physics(obeys_gravity=True, bounciness=0, stable=True, friction=0)
 
     @play.when_program_starts
@@ -29,13 +27,13 @@ def test_physics(size=100):
     global y
     global screeny
     print(round(y))
-    print(round((screeny / 2 * -1) + size))
+    print(round((screeny / 2 * -1) + RADIUS))
     # check if the y is within 1% of ((screeny /2 * -1) + size):
-    if round(y) != round((screeny / 2 * -1) + size):
+    if round(y) != round((screeny / 2 * -1) + RADIUS):
         pytest.fail("The sprite should have fallen to the ground.")
 
 
 # create a pytest for test_physics
 
 if __name__ == "__main__":
-    test_physics()
+    test_physics(RADIUS)
