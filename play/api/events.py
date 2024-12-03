@@ -17,6 +17,15 @@ _ = controllers  # Work around for the global variable not being imported
 def when_program_starts(func):
     """
     Call code right when the program starts.
+
+    Example:
+
+        text = play.new_text(words='hi there!')
+
+        @play.when_program_starts
+        def show():
+            text.words = 'started'
+
     :param func: The function to call when the program starts.
     :return: The decorator function.
     """
@@ -50,11 +59,13 @@ def repeat_forever(func):
 
     Example:
 
-        text = play.new_text(words='hi there!', x=0, y=0, font='Arial.ttf', font_size=20, color='black')
+        text = play.new_text(words='hi there!')
 
         @play.repeat_forever
-        async def do():
-            text.turn(degrees=15)
+        def turn():
+            print("this is printing every single frame")
+
+
     :param func: The function to call repeatedly.
     :return: The decorator function.
     """
@@ -77,6 +88,15 @@ def repeat_forever(func):
 # @decorator
 def when_sprite_clicked(*sprites):
     """A decorator that runs a function when a sprite is clicked.
+
+    Example:
+
+        text = play.new_text(words='hi there!')
+
+        @play.when_sprite_clicked(text)
+        def show(sprite):
+            text.words = 'clicked!'
+
     :param sprites: The sprites to run the function on.
     :return: The function to run.
     """
@@ -93,6 +113,14 @@ def when_sprite_clicked(*sprites):
 def when_any_key_pressed(func):
     """
     Calls the given function when any key is pressed.
+
+    Example:
+
+        text = play.new_text(words='hi there!')
+
+        @play.when_any_key_pressed
+        def show(key):
+            text.words = key
     """
     if not callable(func):
         raise ValueError("""@play.when_any_key_pressed doesn't use a list of keys.""")
@@ -103,6 +131,14 @@ def when_any_key_pressed(func):
 def when_key_pressed(*keys):
     """
     Calls the given function when any of the specified keys are pressed.
+
+    Example:
+
+        text = play.new_text(words='hi there!')
+
+        @play.when_key_pressed('a')
+        def show(key):
+            text.words = key
     """
     return _when_key(*keys, released=False)
 
@@ -111,6 +147,14 @@ def when_key_pressed(*keys):
 def when_any_key_released(func):
     """
     Calls the given function when any key is released.
+
+    Example:
+
+        text = play.new_text(words='hi there!')
+
+        @play.when_any_key_released
+        def show(key):
+            text.words = key
     """
     if not callable(func):
         raise ValueError("""@play.when_any_key_released doesn't use a list of keys.""")
@@ -121,6 +165,14 @@ def when_any_key_released(func):
 def when_key_released(*keys):
     """
     Calls the given function when any of the specified keys are released.
+
+    Example:
+
+        text = play.new_text(words='hi there!')
+
+        @play.when_key_released('a')
+        def show(key):
+            text.words = key
     """
     return _when_key(*keys, released=True)
 
@@ -129,6 +181,13 @@ def when_key_released(*keys):
 def when_mouse_clicked(func):
     """
     Calls the given function when the mouse is clicked.
+
+    Example:
+        text = play.new_text(words='hi there!')
+
+        @play.when_mouse_clicked
+        def show():
+            text.words = 'mouse click'
     """
     return mouse.when_clicked(func)
 
@@ -137,5 +196,12 @@ def when_mouse_clicked(func):
 def when_click_released(func):
     """
     Calls the given function when the mouse click is released.
+
+    Example:
+        text = play.new_text(words='hi there!')
+
+        @play.when_click_released
+        def show():
+            text.words = 'mouse click released'
     """
     return mouse.when_click_released(func)
