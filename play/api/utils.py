@@ -12,6 +12,7 @@ from ..loop import loop as _loop
 from ..utils import color_name_to_rgb as _color_name_to_rgb
 from ..io.keypress import _pressed_keys
 from ..globals import backdrop as __backdrop
+from ..physics import set_physics_simulation_steps as _set_physics_simulation_steps
 
 _backdrop = __backdrop  # Work around for the global variable not being imported
 
@@ -91,3 +92,11 @@ def key_is_pressed(*keys):
         if key in _pressed_keys.values():
             return True
     return False
+
+
+def set_physics_simulation_steps(num_steps: int) -> None:
+    """
+    Set the number of simulation steps for the physics engine.
+    :param num_steps: The number of simulation steps.
+    """
+    _set_physics_simulation_steps(num_steps)

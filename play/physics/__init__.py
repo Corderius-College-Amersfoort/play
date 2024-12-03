@@ -286,6 +286,15 @@ def set_gravity(vertical=-100, horizontal=None):
 _NUM_SIMULATION_STEPS = 10
 
 
+def set_physics_simulation_steps(num_steps: int) -> None:
+    """
+    Set the number of simulation steps for the physics engine.
+    :param num_steps: The number of simulation steps.
+    """
+    global _NUM_SIMULATION_STEPS
+    _NUM_SIMULATION_STEPS = num_steps
+
+
 def simulate_physics():
     """
     Simulate the physics of the game
