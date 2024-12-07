@@ -428,8 +428,8 @@ You might want to look in your code where you're setting transparency and make s
                     [],
                 )
 
-
             for sprite in sprites:
+
                 async def wrapper_func():
                     await wrapper()
 
