@@ -73,10 +73,11 @@ class Sprite(
                 return True
         return False
 
-    def update(self): # pylint: disable=too-many-nested-blocks, too-many-branches
+    def update(self):  # pylint: disable=too-many-nested-blocks, too-many-branches
         """Update the sprite."""
-        if self._should_recompute and callback_manager.get_callback( # pylint: disable=too-many-nested-blocks
-            CallbackType.WHEN_TOUCHING, id(self)
+        if (  # pylint: disable=too-many-nested-blocks
+            self._should_recompute
+            and callback_manager.get_callback(CallbackType.WHEN_TOUCHING, id(self))
         ):
             # check if we are touching any other sprites
             for callback, b in callback_manager.get_callback(
@@ -101,7 +102,9 @@ class Sprite(
                     if callback in self._active_callbacks:
                         self._active_callbacks.remove(callback)
 
-        if callback_manager.get_callback(CallbackType.WHEN_TOUCHING_WALL, id(self)): # pylint: disable=too-many-nested-blocks
+        if callback_manager.get_callback(  # pylint: disable=too-many-nested-blocks
+            CallbackType.WHEN_TOUCHING_WALL, id(self)
+        ):
             for callback in callback_manager.get_callback(
                 CallbackType.WHEN_TOUCHING_WALL, id(self)
             ):

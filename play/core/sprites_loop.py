@@ -13,7 +13,7 @@ from ..objects.line import Line
 from ..objects.sprite import point_touching_sprite
 
 
-def _update_sprites(skip_user_events=False): # pylint: disable=too-many-branches
+def _update_sprites(skip_user_events=False):  # pylint: disable=too-many-branches
     # pylint: disable=too-many-nested-blocks
     sprites_group.update()
 

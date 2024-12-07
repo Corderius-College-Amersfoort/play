@@ -3,9 +3,11 @@
 from ..callback.callback_helpers import run_callback
 from ..callback import callback_manager, CallbackType
 
-class MouseState: # pylint: disable=too-few-public-methods
+
+class MouseState:  # pylint: disable=too-few-public-methods
     click_happened_this_frame = False  # pylint: disable=invalid-name
     click_release_happened_this_frame = False  # pylint: disable=invalid-name
+
 
 mouse_state = MouseState()
 

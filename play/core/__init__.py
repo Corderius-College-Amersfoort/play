@@ -138,6 +138,7 @@ def _handle_keyboard():
                             key,
                         )
 
+
 # pylint: disable=too-many-branches, too-many-statements
 @listen_to_failure()
 def game_loop():
@@ -153,7 +154,10 @@ def game_loop():
 
     _handle_keyboard()
 
-    if mouse_state.click_happened_this_frame or mouse_state.click_release_happened_this_frame:
+    if (
+        mouse_state.click_happened_this_frame
+        or mouse_state.click_release_happened_this_frame
+    ):
         _handle_mouse_loop()
 
     _handle_controller()
