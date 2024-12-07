@@ -38,3 +38,16 @@ class Image(Sprite):
             pos = convert_pos(self.x, self.y)
             self.rect.center = pos
             super().update()
+
+    @property
+    def image(self):
+        """Return the image."""
+        return self._image
+
+    @image.setter
+    def image(self, image: str):
+        """Set the image."""
+        if not os.path.isfile(image):
+            raise FileNotFoundError(f"Image file '{image}' not found.")
+        self._image = pygame.image.load(image)
+        self.update()
