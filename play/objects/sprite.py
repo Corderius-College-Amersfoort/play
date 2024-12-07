@@ -422,20 +422,20 @@ You might want to look in your code where you're setting transparency and make s
             async_callback = _make_async(func)
 
             async def wrapper():
-                wrapper.is_running = True
                 await run_async_callback(
                     async_callback,
                     [],
                     [],
                 )
-                wrapper.is_running = False
-
-            wrapper.is_running = False
 
             for sprite in sprites:
+
+                async def wrapper_func():
+                    await wrapper()
+
                 sprite._dependent_sprites.append(self)
                 callback_manager.add_callback(
-                    CallbackType.WHEN_TOUCHING, (wrapper, sprite), id(self)
+                    CallbackType.WHEN_TOUCHING, (wrapper_func, sprite), id(self)
                 )
             return wrapper
 
