@@ -3,7 +3,6 @@
 import math as _math
 import pymunk as _pymunk
 
-from ..globals import FRAME_RATE
 from ..utils import _clamp
 
 _SPEED_MULTIPLIER = 10
@@ -293,13 +292,3 @@ def set_physics_simulation_steps(num_steps: int) -> None:
     """
     global _NUM_SIMULATION_STEPS
     _NUM_SIMULATION_STEPS = num_steps
-
-
-def simulate_physics():
-    """
-    Simulate the physics of the game
-    """
-    # more steps means more accurate simulation, but more processing time
-    for _ in range(_NUM_SIMULATION_STEPS):
-        # the smaller the simulation step, the more accurate the simulation
-        physics_space.step(1 / (FRAME_RATE * _NUM_SIMULATION_STEPS))
