@@ -152,7 +152,10 @@ def _handle_mouse_loop():
     ####################################
     # @mouse.when_clicked callbacks
     ####################################
-    if callback_manager.get_callbacks(CallbackType.WHEN_CLICKED) is not None:
+    if (
+        click_happened_this_frame
+        and callback_manager.get_callbacks(CallbackType.WHEN_CLICKED) is not None
+    ):
         for callback in callback_manager.get_callbacks(CallbackType.WHEN_CLICKED):
             run_callback(
                 callback,
@@ -163,7 +166,10 @@ def _handle_mouse_loop():
     ########################################
     # @mouse.when_click_released callbacks
     ########################################
-    if callback_manager.get_callbacks(CallbackType.WHEN_CLICK_RELEASED) is not None:
+    if (
+        click_release_happened_this_frame
+        and callback_manager.get_callbacks(CallbackType.WHEN_CLICK_RELEASED) is not None
+    ):
         for callback in callback_manager.get_callbacks(
             CallbackType.WHEN_CLICK_RELEASED
         ):
