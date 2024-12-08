@@ -113,7 +113,7 @@ class Text(Sprite):
         """Helper method to load a font, either from a file or system."""
         if font_name == "default":
             return pygame.font.Font(pygame.font.get_default_font(), font_size)
-        
+
         if os.path.isfile(font_name):
             return pygame.font.Font(font_name, font_size)
         play_logger.warning(
