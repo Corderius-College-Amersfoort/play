@@ -14,7 +14,7 @@ class Text(Sprite):
         words="hi :)",
         x=0,
         y=0,
-        font="arial.ttf",
+        font="default",
         font_size=50,
         color="black",
         angle=0,
@@ -111,6 +111,9 @@ class Text(Sprite):
 
     def _load_font(self, font_name, font_size):
         """Helper method to load a font, either from a file or system."""
+        if font_name == "default":
+            return pygame.font.Font(pygame.font.get_default_font(), font_size)
+
         if os.path.isfile(font_name):
             return pygame.font.Font(font_name, font_size)
         play_logger.warning(
