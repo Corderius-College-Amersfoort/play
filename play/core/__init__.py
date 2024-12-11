@@ -184,15 +184,5 @@ def game_loop():
     _update_sprites()
 
     _loop.call_soon(game_loop)
-    for wall in _walls:
-        actual_rect = [*convert_pos(*wall.a), *convert_pos(*wall.b)]
-
-        actual_rect = pygame.Rect(
-            min(actual_rect[0], actual_rect[2]) - 2,
-            min(actual_rect[1], actual_rect[3]) - 2,
-            abs(actual_rect[0] - actual_rect[2]) + 6,
-            abs(actual_rect[1] - actual_rect[3]) + 6,
-        )
-        pygame.draw.rect(PYGAME_DISPLAY, (0, 0, 0), actual_rect, 2)
     pygame.display.flip()
     return True
