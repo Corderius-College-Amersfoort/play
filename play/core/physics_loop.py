@@ -13,4 +13,4 @@ def simulate_physics():
     for _ in range(_NUM_SIMULATION_STEPS):
         # the smaller the simulation step, the more accurate the simulation
         physics_space.step(1 / (FRAME_RATE * _NUM_SIMULATION_STEPS))
-        _update_sprites()
+        _update_sprites(True)
