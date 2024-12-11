@@ -18,28 +18,11 @@ def _update_sprites(skip_user_events=False):  # pylint: disable=too-many-branche
     sprites_group.update()
 
     for sprite in sprites_group.sprites():
-        #################################
-        # @sprite.when_touching events
-        #################################
-        if sprite._active_callbacks:
-            for cb in sprite._active_callbacks:
-                run_callback(
-                    cb,
-                    [],
-                    [],
-                )
-        if skip_user_events:
-            continue
-
-        sprite._is_clicked = False
-        if sprite.is_hidden:
-            continue
 
         ######################################################
         # update sprites with results of physics simulation
         ######################################################
         if sprite.physics and sprite.physics.can_move:
-
             body = sprite.physics._pymunk_body
             angle = _math.degrees(body.angle)
             if isinstance(sprite, Line):
@@ -60,6 +43,23 @@ def _update_sprites(skip_user_events=False):  # pylint: disable=too-many-branche
                 angle  # needs to be .angle, not ._angle so surface gets recalculated
             )
             sprite.physics._x_speed, sprite.physics._y_speed = body.velocity
+        if skip_user_events:
+            continue
+
+        #################################
+        # @sprite.when_touching events
+        #################################
+        if sprite._active_callbacks:
+            for cb in sprite._active_callbacks:
+                run_callback(
+                    cb,
+                    [],
+                    [],
+                )
+
+        sprite._is_clicked = False
+        if sprite.is_hidden:
+            continue
 
         #################################
         # @sprite.when_clicked events
