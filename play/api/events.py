@@ -42,16 +42,6 @@ def when_program_starts(func):
     return func
 
 
-def repeat(number_of_times):
-    """
-    Repeat a set of commands a certain number of times.
-    Equivalent to `range(1, number_of_times+1)`.
-    :param number_of_times: The number of times to repeat the commands.
-    :return: A range object that can be iterated over.
-    """
-    return range(1, number_of_times + 1)
-
-
 # @decorator
 def repeat_forever(func):
     """

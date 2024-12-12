@@ -28,10 +28,26 @@ class Image(Sprite):
     def update(self):
         """Update the image's position, size, angle, and transparency."""
         if self._should_recompute:
-            self._image = pygame.transform.scale(self._image, (self.width, self.height))
+            self._image = pygame.transform.scale(
+                self._image,
+                (self.width * self.size // 100, self.height * self.size // 100),
+            )
             self._image = pygame.transform.rotate(self._image, self.angle)
-            self._image.set_alpha(self.transparency)
+            self._image.set_alpha(self.transparency * 2.55)
             self.rect = self._image.get_rect()
             pos = convert_pos(self.x, self.y)
             self.rect.center = pos
             super().update()
+
+    @property
+    def image(self):
+        """Return the image."""
+        return self._image
+
+    @image.setter
+    def image(self, image: str):
+        """Set the image."""
+        if not os.path.isfile(image):
+            raise FileNotFoundError(f"Image file '{image}' not found.")
+        self._image = pygame.image.load(image)
+        self.update()
