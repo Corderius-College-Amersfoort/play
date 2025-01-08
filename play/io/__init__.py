@@ -8,14 +8,14 @@ import pymunk as _pymunk
 from pygame._sdl2.video import Window  # pylint: disable=no-name-in-module
 from pygame.locals import *
 
-from ..globals import _walls, WIDTH, HEIGHT
+from ..globals import globals_list
 from ..physics import physics_space
 
 PYGAME_DISPLAY = None
 
 
 class Screen:
-    def __init__(self, width=WIDTH, height=HEIGHT):
+    def __init__(self, width=globals_list.WIDTH, height=globals_list.HEIGHT):
         global PYGAME_DISPLAY
 
         self._width = width
@@ -149,33 +149,33 @@ def _create_wall(a, b):
 
 def create_walls():
     """Create walls around the screen."""
-    _walls.append(
+    globals_list.walls.append(
         _create_wall([screen.left, screen.top], [screen.right, screen.top])
     )  # top
-    _walls.append(
+    globals_list.walls.append(
         _create_wall([screen.left, screen.bottom], [screen.right, screen.bottom])
     )  # bottom
-    _walls.append(
+    globals_list.walls.append(
         _create_wall([screen.left, screen.bottom], [screen.left, screen.top])
     )  # left
-    _walls.append(
+    globals_list.walls.append(
         _create_wall([screen.right, screen.bottom], [screen.right, screen.top])
     )  # right
 
 
 def remove_walls():
     """Remove the walls from the physics space."""
-    for wall in _walls:
+    for wall in globals_list.walls:
         physics_space.remove(wall)
-    _walls.clear()
+    globals_list.walls.clear()
 
 
 def remove_wall(index):
     """Remove a wall from the physics space.
     :param index: The index of the wall to remove. 0: top, 1: bottom, 2: left, 3: right.
     """
-    physics_space.remove(_walls[index])
-    _walls.pop(index)
+    physics_space.remove(globals_list.walls[index])
+    globals_list.walls.pop(index)
 
 
 create_walls()
