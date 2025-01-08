@@ -7,7 +7,7 @@ from .mouse_loop import _handle_mouse_loop, mouse_state
 from .sprites_loop import _update_sprites
 from ..callback import callback_manager, CallbackType
 from ..callback.callback_helpers import run_callback
-from ..globals import backdrop, FRAME_RATE, _walls
+from ..globals import globals_list
 from ..io import screen, PYGAME_DISPLAY, convert_pos
 from ..io.keypress import (
     key_num_to_name as _pygame_key_to_name,
@@ -147,7 +147,7 @@ def game_loop():
     mouse_state.click_happened_this_frame = False
     mouse_state.click_release_happened_this_frame = False
 
-    _clock.tick(FRAME_RATE)
+    _clock.tick(globals_list.FRAME_RATE)
 
     if not _handle_pygame_events():
         return False
@@ -179,7 +179,15 @@ def game_loop():
     #############################
     _loop.call_soon(simulate_physics)
 
-    PYGAME_DISPLAY.fill(_color_name_to_rgb(backdrop))
+    if globals_list.backdrop_type == "color":
+        PYGAME_DISPLAY.fill(globals_list.backdrop)
+    elif globals_list.backdrop_type == "image":
+        PYGAME_DISPLAY.blit(
+            globals_list.backdrop,
+            (0, 0),
+        )
+    else:
+        PYGAME_DISPLAY.fill((255, 255, 255))
 
     _update_sprites()
 

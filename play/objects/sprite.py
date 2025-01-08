@@ -6,7 +6,7 @@ import pymunk as _pymunk
 import pygame
 
 from ..callback import callback_manager, CallbackType
-from ..globals import sprites_group, _walls
+from ..globals import globals_list
 from ..physics import physics_space, Physics as _Physics
 from ..utils import _clamp
 from ..io import screen
@@ -55,7 +55,7 @@ class Sprite(
         self.rect = None
 
         super().__init__()
-        sprites_group.add(self)
+        globals_list.sprites_group.add(self)
 
     def __setattr__(self, name, value):
         # ignore if it's in the ignored list or if the variable doesn't change
@@ -68,7 +68,7 @@ class Sprite(
     def is_touching_wall(self) -> bool:
         """Check if the sprite is touching the edge of the screen.
         :return: Whether the sprite is touching the edge of the screen."""
-        for wall in _walls:
+        for wall in globals_list.walls:
             if self.physics._pymunk_shape.shapes_collide(wall).points:
                 return True
         return False
@@ -358,7 +358,7 @@ You might want to look in your code where you're setting transparency and make s
         """Remove the sprite from the screen."""
         if self.physics:
             self.physics._remove()
-        sprites_group.remove(self)
+        globals_list.sprites_group.remove(self)
 
     @property
     def width(self):

@@ -2,7 +2,7 @@
 
 import math as _math
 
-from play.globals import sprites_group
+from play.globals import globals_list
 from .mouse_loop import mouse_state
 from ..callback import callback_manager, CallbackType
 from ..callback.callback_helpers import run_callback
@@ -15,9 +15,9 @@ from ..objects.sprite import point_touching_sprite
 
 def _update_sprites(skip_user_events=False):  # pylint: disable=too-many-branches
     # pylint: disable=too-many-nested-blocks
-    sprites_group.update()
+    globals_list.sprites_group.update()
 
-    for sprite in sprites_group.sprites():
+    for sprite in globals_list.sprites_group.sprites():
 
         ######################################################
         # update sprites with results of physics simulation
@@ -84,4 +84,4 @@ def _update_sprites(skip_user_events=False):  # pylint: disable=too-many-branche
                                 [],
                             )
 
-    sprites_group.draw(PYGAME_DISPLAY)
+    globals_list.sprites_group.draw(PYGAME_DISPLAY)

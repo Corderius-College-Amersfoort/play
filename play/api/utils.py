@@ -11,10 +11,8 @@ from ..callback.callback_helpers import run_callback
 from ..loop import loop as _loop
 from ..utils import color_name_to_rgb as _color_name_to_rgb
 from ..io.keypress import _pressed_keys
-from ..globals import backdrop as __backdrop
+from ..globals import globals_list
 from ..physics import set_physics_simulation_steps as _set_physics_simulation_steps
-
-_backdrop = __backdrop  # Work around for the global variable not being imported
 
 
 def start_program():
@@ -57,14 +55,19 @@ async def animate():
     await _asyncio.sleep(0)
 
 
-def set_backdrop(color_or_image_name):
+def set_backdrop(color):
     """Set the backdrop color or image for the game.
-    :param color_or_image_name: The color or image to set as the backdrop.
+    :param color: The color or image to set as the backdrop.
     """
-    global _backdrop
-    _color_name_to_rgb(color_or_image_name)
+    globals_list.backdrop = _color_name_to_rgb(color)
 
-    _backdrop = color_or_image_name
+
+def set_backdrop_image(image):
+    """Set the backdrop image for the game.
+    :param image: The image to set as the backdrop.
+    """
+    globals_list.backdrop = pygame.image.load(image)
+    globals_list.backdrop_type = "image"
 
 
 async def timer(seconds=1.0):
