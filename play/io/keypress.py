@@ -57,7 +57,7 @@ def when_key(*keys, released=False):
 
         async def wrapper(key):
             wrapper.is_running = True
-            await run_async_callback(async_callback, ["key"], [], key)
+            await run_async_callback(async_callback, [], ["key"], key)
             wrapper.is_running = False
 
         wrapper.is_running = False
