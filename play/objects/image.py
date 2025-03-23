@@ -17,6 +17,9 @@ class Image(Sprite):
                 raise FileNotFoundError(f"Image file '{image}' not found.")
             image = pygame.image.load(image)
         self._image = image
+        self._original_image = image
+        self._original_width = self._image.get_width()
+        self._original_height = self._image.get_height()
         self._x = x
         self._y = y
         self._angle = angle
@@ -29,8 +32,11 @@ class Image(Sprite):
         """Update the image's position, size, angle, and transparency."""
         if self._should_recompute:
             self._image = pygame.transform.scale(
-                self._image,
-                (self.width * self.size // 100, self.height * self.size // 100),
+                self._original_image,
+                (
+                    self._original_width * self._size // 100,
+                    self._original_height * self._size // 100,
+                ),
             )
             self._image = pygame.transform.rotate(self._image, self.angle)
             self._image.set_alpha(self.transparency * 2.55)
