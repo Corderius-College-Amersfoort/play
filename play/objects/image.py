@@ -33,7 +33,10 @@ class Image(Sprite):
         if self._should_recompute:
             self._image = pygame.transform.scale(
                 self._original_image,
-                (self._original_width * self._size // 100, self._original_height * self._size // 100),
+                (
+                    self._original_width * self._size // 100,
+                    self._original_height * self._size // 100,
+                ),
             )
             self._image = pygame.transform.rotate(self._image, self.angle)
             self._image.set_alpha(self.transparency * 2.55)
