@@ -2,23 +2,6 @@
 
 import pygame  # pylint: disable=import-error
 
-from .game_loop_wrapper import listen_to_failure
-from .mouse_loop import _handle_mouse_loop, mouse_state
-from .sprites_loop import _update_sprites
-from ..callback import callback_manager, CallbackType
-from ..callback.callback_helpers import run_callback
-from ..globals import globals_list
-from ..io import screen, PYGAME_DISPLAY, convert_pos
-from ..io.keypress import (
-    key_num_to_name as _pygame_key_to_name,
-    _keys_released_this_frame,
-    _keys_to_skip,
-    _pressed_keys,
-)  # don't pollute user-facing namespace with library internals
-from ..io.mouse import mouse
-from .physics_loop import simulate_physics
-from ..utils import color_name_to_rgb as _color_name_to_rgb
-from ..loop import loop as _loop
 from .controller_loop import (
     controller_axis_moved,
     controller_button_pressed,
@@ -26,6 +9,22 @@ from .controller_loop import (
     _handle_controller,
     _handle_controller_events,
 )
+from .game_loop_wrapper import listen_to_failure
+from .mouse_loop import _handle_mouse_loop, mouse_state
+from .physics_loop import simulate_physics
+from .sprites_loop import _update_sprites
+from ..callback import callback_manager, CallbackType
+from ..callback.callback_helpers import run_callback
+from ..globals import globals_list
+from ..io import screen, PYGAME_DISPLAY
+from ..io.keypress import (
+    key_num_to_name as _pygame_key_to_name,
+    _keys_released_this_frame,
+    _keys_to_skip,
+    _pressed_keys,
+)  # don't pollute user-facing namespace with library internals
+from ..io.mouse import mouse
+from ..loop import loop as _loop
 
 _clock = pygame.time.Clock()
 

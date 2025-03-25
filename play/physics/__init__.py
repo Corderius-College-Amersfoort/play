@@ -1,6 +1,7 @@
 """This handles the physics of the game."""
 
 import math as _math
+
 import pymunk as _pymunk
 
 from ..utils import _clamp
@@ -59,8 +60,8 @@ class Physics:
 
         # non-moving line shapes are platforms, and it's easier to take care of them less-generically
         if not self.can_move and self.sprite.__class__ == "Line":
-            self._pymunk_body = physics_space.static_body.copy()
-            self._pymunk_shape = _pymunk.Segment(
+            self._pymunk_body : _pymunk.Body  = physics_space.static_body.copy()
+            self._pymunk_shape : _pymunk.Segment = _pymunk.Segment(
                 self._pymunk_body,
                 (self.sprite.x, self.sprite.y),
                 (self.sprite.x1, self.sprite.y1),
