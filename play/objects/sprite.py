@@ -467,7 +467,7 @@ You might want to look in your code where you're setting transparency and make s
         sprite.physics._pymunk_shape.collision_type = id(sprite)
         self.physics._pymunk_shape.collision_type = id(self)
 
-        def collision_handler(arbiter, space, data): # pylint: disable=unused-argument
+        def collision_handler(arbiter, space, data):  # pylint: disable=unused-argument
             async def run_event(cb):
                 await run_async_callback(cb, [], [])
 
@@ -493,7 +493,7 @@ You might want to look in your code where you're setting transparency and make s
         wall.collision_type = id(wall)
         self.physics._pymunk_shape.collision_type = id(self)
 
-        def collision_handler(arbiter, space, data): # pylint: disable=unused-argument
+        def collision_handler(arbiter, space, data):  # pylint: disable=unused-argument
             async def run_event(cb):
                 await run_async_callback(cb, [], [])
 
