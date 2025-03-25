@@ -10,7 +10,7 @@ from ..objects import (
 )
 
 
-def new_text(  # pylint: disable=too-many-arguments
+def new_text(  # pylint: disable=too-many-arguments,too-many-positional-arguments
     words: str = "",
     x: int = 0,
     y: int = 0,
@@ -49,7 +49,7 @@ def new_text(  # pylint: disable=too-many-arguments
     )
 
 
-def new_box(  # pylint: disable=too-many-arguments
+def new_box(  # pylint: disable=too-many-arguments,too-many-positional-arguments
     color: str = "black",
     x: int = 0,
     y: int = 0,
@@ -91,7 +91,7 @@ def new_box(  # pylint: disable=too-many-arguments
     )
 
 
-def new_circle(  # pylint: disable=too-many-arguments
+def new_circle(  # pylint: disable=too-many-arguments,too-many-positional-arguments
     color: str = "black",
     x: int = 0,
     y: int = 0,
@@ -127,7 +127,7 @@ def new_circle(  # pylint: disable=too-many-arguments
     )
 
 
-def new_line(  # pylint: disable=too-many-arguments
+def new_line(  # pylint: disable=too-many-arguments,too-many-positional-arguments
     color: str = "black",
     x: int = 0,
     y: int = 0,
@@ -166,7 +166,7 @@ def new_line(  # pylint: disable=too-many-arguments
     )
 
 
-def new_image(  # pylint: disable=too-many-arguments
+def new_image(  # pylint: disable=too-many-arguments,too-many-positional-arguments
     image: str = "/path/to/image",
     x: int = 0,
     y: int = 0,
@@ -188,7 +188,7 @@ def new_image(  # pylint: disable=too-many-arguments
     )
 
 
-def new_sound(  # pylint: disable=too-many-arguments
+def new_sound(  # pylint: disable=too-many-arguments,too-many-positional-arguments
     file_name: str = "file.mp3",
     volume: float = 1.0,
     loops: int = 0,

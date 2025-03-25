@@ -460,13 +460,14 @@ You might want to look in your code where you're setting transparency and make s
         return wrapper
 
     def register_pymunk_collision(self, sprite, callback, begin=True):
+        """Register a collision with another sprite."""
         if not sprite.physics or not self.physics:
             return
 
         sprite.physics._pymunk_shape.collision_type = id(sprite)
         self.physics._pymunk_shape.collision_type = id(self)
 
-        def collision_handler(arbiter, space, data):
+        def collision_handler(arbiter, space, data): # pylint: disable=unused-argument
             async def run_event(cb):
                 await run_async_callback(cb, [], [])
 
@@ -485,13 +486,14 @@ You might want to look in your code where you're setting transparency and make s
     def register_pymunk_collision_with_wall(
         self, wall: _pymunk.Segment, callback, begin=True
     ):
+        """Register a collision with a wall."""
         if not self.physics:
             return
 
         wall.collision_type = id(wall)
         self.physics._pymunk_shape.collision_type = id(self)
 
-        def collision_handler(arbiter, space, data):
+        def collision_handler(arbiter, space, data): # pylint: disable=unused-argument
             async def run_event(cb):
                 await run_async_callback(cb, [], [])
 

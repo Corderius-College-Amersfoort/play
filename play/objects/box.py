@@ -8,7 +8,7 @@ from ..utils import color_name_to_rgb as _color_name_to_rgb
 
 
 class Box(Sprite):
-    def __init__(  # pylint: disable=too-many-arguments
+    def __init__(
         self,
         color="black",
         x=0,
@@ -21,7 +21,7 @@ class Box(Sprite):
         transparency=100,
         size=100,
         angle=0,
-    ):
+    ): # pylint: disable=too-many-arguments,too-many-positional-arguments
         super().__init__(self)
         self._color = color
         self._x = x
