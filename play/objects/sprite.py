@@ -1,4 +1,5 @@
 """This module contains the base sprite class for all objects in the game."""
+
 import asyncio
 import math as _math
 import warnings as _warnings
@@ -13,6 +14,7 @@ from ..io import screen
 from ..utils.async_helpers import _make_async
 from ..callback.callback_helpers import run_async_callback, run_callback
 from ..loop import loop as _loop
+
 
 def _sprite_touching_sprite(a, b):
     """Check if two sprites are touching.
@@ -47,7 +49,7 @@ class Sprite(
         self._active_callbacks = []
 
         self._image = image
-        self.physics : _Physics | None = None
+        self.physics: _Physics | None = None
         self._is_clicked = False
         self._is_hidden = False
         self._should_recompute = True
@@ -467,6 +469,7 @@ You might want to look in your code where you're setting transparency and make s
         def collision_handler(arbiter, space, data):
             async def run_event(cb):
                 await run_async_callback(cb, [], [])
+
             asyncio.ensure_future(run_event(callback), loop=_loop)
             return True
 
@@ -479,7 +482,9 @@ You might want to look in your code where you're setting transparency and make s
         else:
             handler.separate = collision_handler
 
-    def register_pymunk_collision_with_wall(self, wall: _pymunk.Segment, callback, begin=True):
+    def register_pymunk_collision_with_wall(
+        self, wall: _pymunk.Segment, callback, begin=True
+    ):
         if not self.physics:
             return
 
@@ -489,6 +494,7 @@ You might want to look in your code where you're setting transparency and make s
         def collision_handler(arbiter, space, data):
             async def run_event(cb):
                 await run_async_callback(cb, [], [])
+
             asyncio.ensure_future(run_event(callback), loop=_loop)
             return True
 
@@ -500,7 +506,6 @@ You might want to look in your code where you're setting transparency and make s
             handler.begin = collision_handler
         else:
             handler.separate = collision_handler
-
 
     def when_touching(self, *sprites):
         """Run a function when the sprite is touching another sprite.
@@ -522,6 +527,7 @@ You might want to look in your code where you're setting transparency and make s
                 )
 
             for sprite in sprites:
+
                 async def wrapper_func():
                     await wrapper()
 
@@ -595,7 +601,9 @@ You might want to look in your code where you're setting transparency and make s
 
         if self.physics:
             for wall in globals_list.walls:
-                self.register_pymunk_collision_with_wall(wall, async_callback, begin=False)
+                self.register_pymunk_collision_with_wall(
+                    wall, async_callback, begin=False
+                )
 
         async def wrapper():
             await run_async_callback(
@@ -660,10 +668,26 @@ You might want to look in your code where you're setting transparency and make s
             )
 
             # Get all the current callbacks and add them to the new physics object
-            when_touching = callback_manager.get_callback(CallbackType.WHEN_TOUCHING, id(self)) or []
-            when_touching_wall = callback_manager.get_callback(CallbackType.WHEN_TOUCHING_WALL, id(self)) or []
-            when_stopped_touching = callback_manager.get_callback(CallbackType.WHEN_STOPPED_TOUCHING, id(self)) or []
-            when_stopped_touching_wall = callback_manager.get_callback(CallbackType.WHEN_STOPPED_TOUCHING_WALL, id(self)) or []
+            when_touching = (
+                callback_manager.get_callback(CallbackType.WHEN_TOUCHING, id(self))
+                or []
+            )
+            when_touching_wall = (
+                callback_manager.get_callback(CallbackType.WHEN_TOUCHING_WALL, id(self))
+                or []
+            )
+            when_stopped_touching = (
+                callback_manager.get_callback(
+                    CallbackType.WHEN_STOPPED_TOUCHING, id(self)
+                )
+                or []
+            )
+            when_stopped_touching_wall = (
+                callback_manager.get_callback(
+                    CallbackType.WHEN_STOPPED_TOUCHING_WALL, id(self)
+                )
+                or []
+            )
             for callback, sprite in when_touching:
                 self.when_touching(sprite)(callback)
             for callback in when_touching_wall:
