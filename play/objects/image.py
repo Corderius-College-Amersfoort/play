@@ -10,7 +10,7 @@ from ..io import convert_pos
 class Image(Sprite):
     def __init__(
         self, image, x=0, y=0, angle=0, size=100, transparency=100
-    ):  # pylint: disable=too-many-arguments,too-many-positional-arguments
+    ):
         super().__init__()
         if isinstance(image, str):
             if not os.path.isfile(image):

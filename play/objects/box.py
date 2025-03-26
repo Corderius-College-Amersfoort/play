@@ -21,7 +21,7 @@ class Box(Sprite):
         transparency=100,
         size=100,
         angle=0,
-    ):  # pylint: disable=too-many-arguments,too-many-positional-arguments
+    ):
         super().__init__(self)
         self._color = color
         self._x = x
