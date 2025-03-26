@@ -1,5 +1,6 @@
 """This module contains the base sprite class for all objects in the game."""
 
+import asyncio
 import math as _math
 import warnings as _warnings
 import pymunk as _pymunk
@@ -12,6 +13,7 @@ from ..utils import _clamp
 from ..io import screen
 from ..utils.async_helpers import _make_async
 from ..callback.callback_helpers import run_async_callback, run_callback
+from ..loop import loop as _loop
 
 
 def _sprite_touching_sprite(a, b):
@@ -47,7 +49,7 @@ class Sprite(
         self._active_callbacks = []
 
         self._image = image
-        self.physics = None
+        self.physics: _Physics | None = None
         self._is_clicked = False
         self._is_hidden = False
         self._should_recompute = True
@@ -457,6 +459,56 @@ You might want to look in your code where you're setting transparency and make s
         )
         return wrapper
 
+    def register_pymunk_collision(self, sprite, callback, begin=True):
+        """Register a collision with another sprite."""
+        if not sprite.physics or not self.physics:
+            return
+
+        sprite.physics._pymunk_shape.collision_type = id(sprite)
+        self.physics._pymunk_shape.collision_type = id(self)
+
+        def collision_handler(arbiter, space, data):  # pylint: disable=unused-argument
+            async def run_event(cb):
+                await run_async_callback(cb, [], [])
+
+            asyncio.ensure_future(run_event(callback), loop=_loop)
+            return True
+
+        handler = physics_space.add_collision_handler(
+            id(sprite),
+            id(self),
+        )
+        if begin:
+            handler.begin = collision_handler
+        else:
+            handler.separate = collision_handler
+
+    def register_pymunk_collision_with_wall(
+        self, wall: _pymunk.Segment, callback, begin=True
+    ):
+        """Register a collision with a wall."""
+        if not self.physics:
+            return
+
+        wall.collision_type = id(wall)
+        self.physics._pymunk_shape.collision_type = id(self)
+
+        def collision_handler(arbiter, space, data):  # pylint: disable=unused-argument
+            async def run_event(cb):
+                await run_async_callback(cb, [], [])
+
+            asyncio.ensure_future(run_event(callback), loop=_loop)
+            return True
+
+        handler = physics_space.add_collision_handler(
+            id(wall),
+            id(self),
+        )
+        if begin:
+            handler.begin = collision_handler
+        else:
+            handler.separate = collision_handler
+
     def when_touching(self, *sprites):
         """Run a function when the sprite is touching another sprite.
         :param sprites: The sprites to check if they're touching.
@@ -464,6 +516,10 @@ You might want to look in your code where you're setting transparency and make s
 
         def decorator(func):
             async_callback = _make_async(func)
+
+            if self.physics:
+                for sprite in sprites:
+                    self.register_pymunk_collision(sprite, async_callback)
 
             async def wrapper():
                 await run_async_callback(
@@ -493,6 +549,10 @@ You might want to look in your code where you're setting transparency and make s
         def decorator(func):
             async_callback = _make_async(func)
 
+            if self.physics:
+                for sprite in sprites:
+                    self.register_pymunk_collision(sprite, async_callback, begin=False)
+
             async def wrapper():
                 await run_async_callback(
                     async_callback,
@@ -519,6 +579,10 @@ You might want to look in your code where you're setting transparency and make s
         """
         async_callback = _make_async(callback)
 
+        if self.physics:
+            for wall in globals_list.walls:
+                self.register_pymunk_collision_with_wall(wall, async_callback)
+
         async def wrapper():
             await run_async_callback(
                 async_callback,
@@ -536,6 +600,12 @@ You might want to look in your code where you're setting transparency and make s
         :param callback: The function to run.
         """
         async_callback = _make_async(callback)
+
+        if self.physics:
+            for wall in globals_list.walls:
+                self.register_pymunk_collision_with_wall(
+                    wall, async_callback, begin=False
+                )
 
         async def wrapper():
             await run_async_callback(
@@ -598,6 +668,36 @@ You might want to look in your code where you're setting transparency and make s
                 mass,
                 friction,
             )
+
+            # Get all the current callbacks and add them to the new physics object
+            when_touching = (
+                callback_manager.get_callback(CallbackType.WHEN_TOUCHING, id(self))
+                or []
+            )
+            when_touching_wall = (
+                callback_manager.get_callback(CallbackType.WHEN_TOUCHING_WALL, id(self))
+                or []
+            )
+            when_stopped_touching = (
+                callback_manager.get_callback(
+                    CallbackType.WHEN_STOPPED_TOUCHING, id(self)
+                )
+                or []
+            )
+            when_stopped_touching_wall = (
+                callback_manager.get_callback(
+                    CallbackType.WHEN_STOPPED_TOUCHING_WALL, id(self)
+                )
+                or []
+            )
+            for callback, sprite in when_touching:
+                self.when_touching(sprite)(callback)
+            for callback in when_touching_wall:
+                self.when_touching_wall(callback)
+            for callback, sprite in when_stopped_touching:
+                self.when_stopped_touching(sprite)(callback)
+            for callback in when_stopped_touching_wall:
+                self.when_stopped_touching_wall(callback)
 
     def stop_physics(self):
         """Stop the physics simulation for this sprite."""

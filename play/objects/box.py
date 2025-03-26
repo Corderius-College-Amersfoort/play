@@ -8,7 +8,7 @@ from ..utils import color_name_to_rgb as _color_name_to_rgb
 
 
 class Box(Sprite):
-    def __init__(  # pylint: disable=too-many-arguments
+    def __init__(
         self,
         color="black",
         x=0,
