@@ -51,7 +51,6 @@ def _update_sprites(skip_user_events=False):  # pylint: disable=too-many-branche
         #################################
         if sprite._active_callbacks:
             for cb in sprite._active_callbacks:
-                print("cb", cb)
                 run_callback(
                     cb,
                     [],
