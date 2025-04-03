@@ -19,7 +19,7 @@ class Circle(Sprite):
         transparency=100,
         size=100,
         angle=0,
-    ):  # pylint: disable=too-many-arguments,too-many-positional-arguments
+    ):
         super().__init__()
         self._x = x
         self._y = y
