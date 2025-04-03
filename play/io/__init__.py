@@ -142,7 +142,7 @@ screen = Screen()
 def _create_wall(a, b):
     segment = _pymunk.Segment(physics_space.static_body, a, b, 0.0)
     segment.elasticity = 1.0
-    segment.friction = 0.1
+    segment.friction = 0.0
     physics_space.add(segment)
     return segment
 

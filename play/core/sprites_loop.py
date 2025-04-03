@@ -47,7 +47,7 @@ def _update_sprites(skip_user_events=False):  # pylint: disable=too-many-branche
             continue
 
         #################################
-        # @sprite.when_touching events
+        # All @sprite.when_touching events
         #################################
         if sprite._active_callbacks:
             for cb in sprite._active_callbacks:
