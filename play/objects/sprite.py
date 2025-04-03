@@ -1,19 +1,18 @@
 """This module contains the base sprite class for all objects in the game."""
 
-import asyncio
 import math as _math
 import warnings as _warnings
-import pymunk as _pymunk
+
 import pygame
+import pymunk as _pymunk
 
 from ..callback import callback_manager, CallbackType
+from ..callback.callback_helpers import run_async_callback, run_callback
 from ..globals import globals_list
+from ..io import screen
 from ..physics import physics_space, Physics as _Physics
 from ..utils import _clamp
-from ..io import screen
 from ..utils.async_helpers import _make_async
-from ..callback.callback_helpers import run_async_callback, run_callback
-from ..loop import loop as _loop
 
 
 def _sprite_touching_sprite(a, b):
@@ -466,8 +465,10 @@ You might want to look in your code where you're setting transparency and make s
         self.physics._pymunk_shape.collision_type = id(self)
 
         if not begin:
+
             async def wrapper():
                 pass
+
             callback = wrapper
 
         def collision_handler(arbiter, space, data):  # pylint: disable=unused-argument
@@ -475,7 +476,9 @@ You might want to look in your code where you're setting transparency and make s
                 self._active_callbacks.append(callback)
             return True
 
-        def collision_separate_handler(arbiter, space, data):  # pylint: disable=unused-argument
+        def collision_separate_handler(
+            arbiter, space, data
+        ):  # pylint: disable=unused-argument
             if callback in self._active_callbacks:
                 self._active_callbacks.remove(callback)
             return True
@@ -499,8 +502,10 @@ You might want to look in your code where you're setting transparency and make s
         self.physics._pymunk_shape.collision_type = id(self)
 
         if not begin:
+
             async def wrapper():
                 pass
+
             callback = wrapper
 
         def collision_handler(arbiter, space, data):  # pylint: disable=unused-argument
@@ -508,7 +513,9 @@ You might want to look in your code where you're setting transparency and make s
                 self._active_callbacks.append(callback)
             return True
 
-        def collision_separate_handler(arbiter, space, data):  # pylint: disable=unused-argument
+        def collision_separate_handler(
+            arbiter, space, data
+        ):  # pylint: disable=unused-argument
             if callback in self._active_callbacks:
                 self._active_callbacks.remove(callback)
             return True
@@ -622,9 +629,7 @@ You might want to look in your code where you're setting transparency and make s
 
         if self.physics:
             for wall in globals_list.walls:
-                self.register_pymunk_collision_with_wall(
-                    wall, wrapper, begin=False
-                )
+                self.register_pymunk_collision_with_wall(wall, wrapper, begin=False)
 
         callback_manager.add_callback(
             CallbackType.WHEN_STOPPED_TOUCHING_WALL, wrapper, id(self)
