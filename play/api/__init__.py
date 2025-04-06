@@ -4,14 +4,7 @@ This module contains the API for the game.
 
 from pygame import init  # pylint: disable=no-name-in-module,import-error
 
-from .generators import (
-    new_text,
-    new_box,
-    new_circle,
-    new_line,
-    new_image,
-    new_sound
-)
+from .generators import new_text, new_box, new_circle, new_line, new_image, new_sound
 from .events import (
     when_program_starts,
     repeat_forever,
@@ -31,12 +24,8 @@ from .utils import (
     set_backdrop_image,
     timer,
     key_is_pressed,
-    set_physics_simulation_steps
+    set_physics_simulation_steps,
 )
-from .random import (
-    random_number,
-    random_color,
-    random_position
-)
+from .random import random_number, random_color, random_position
 
 init()
