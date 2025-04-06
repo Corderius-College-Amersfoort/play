@@ -154,16 +154,9 @@ class Sprite(
     def x(self, _x):
         """Set the x-coordinate of the sprite.
         :param _x: The x-coordinate of the sprite."""
-        prev_x = self._x
         self._x = _x
         if self.physics:
             self.physics._pymunk_body.position = self._x, self._y
-            if prev_x != _x:
-                # setting velocity makes the simulation more realistic usually
-                self.physics._pymunk_body.velocity = (
-                    _x - prev_x,
-                    self.physics._pymunk_body.velocity.y,
-                )
             if self.physics._pymunk_body.body_type == _pymunk.Body.STATIC:
                 physics_space.reindex_static()
 
@@ -177,16 +170,9 @@ class Sprite(
     def y(self, _y):
         """Set the y-coordinate of the sprite.
         :param _y: The y-coordinate of the sprite."""
-        prev_y = self._y
         self._y = _y
         if self.physics:
             self.physics._pymunk_body.position = self._x, self._y
-            if prev_y != _y:
-                # setting velocity makes the simulation more realistic usually
-                self.physics._pymunk_body.velocity = (
-                    self.physics._pymunk_body.velocity.x,
-                    _y - prev_y,
-                )
             if self.physics._pymunk_body.body_type == _pymunk.Body.STATIC:
                 physics_space.reindex_static()
 

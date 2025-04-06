@@ -55,6 +55,7 @@ def _handle_controller():  # pylint: disable=too-many-branches
                     if controllers.get_button(callback.controller, button) == 1:
                         run_callback(callback, ["button_number"], [], [], button)
         controller_button_pressed = False
+
     ############################################################
     # @controller.when_button_released
     ############################################################

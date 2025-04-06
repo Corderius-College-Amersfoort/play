@@ -6,8 +6,6 @@ import pymunk as _pymunk
 
 from ..utils import _clamp
 
-_SPEED_MULTIPLIER = 10
-
 
 class Physics:
 
@@ -46,8 +44,8 @@ class Physics:
         self.sprite = sprite
         self._can_move = can_move
         self._stable = stable
-        self._x_speed = x_speed * _SPEED_MULTIPLIER
-        self._y_speed = y_speed * _SPEED_MULTIPLIER
+        self._x_speed = x_speed
+        self._y_speed = y_speed
         self._obeys_gravity = obeys_gravity
         self._bounciness = bounciness
         self._mass = mass
@@ -180,22 +178,22 @@ class Physics:
     def x_speed(self):
         """Get the x-speed of the object.
         :return: The x-speed of the object."""
-        return self._x_speed / _SPEED_MULTIPLIER
+        return self._x_speed
 
     @x_speed.setter
     def x_speed(self, _x_speed):
-        self._x_speed = _x_speed * _SPEED_MULTIPLIER
+        self._x_speed = _x_speed
         self._pymunk_body.velocity = self._x_speed, self._pymunk_body.velocity[1]
 
     @property
     def y_speed(self):
         """Get the y-speed of the object.
         :return: The y-speed of the object."""
-        return self._y_speed / _SPEED_MULTIPLIER
+        return self._y_speed
 
     @y_speed.setter
     def y_speed(self, _y_speed):
-        self._y_speed = _y_speed * _SPEED_MULTIPLIER
+        self._y_speed = _y_speed
         self._pymunk_body.velocity = self._pymunk_body.velocity[0], self._y_speed
 
     @property
@@ -256,7 +254,7 @@ class _Gravity:  # pylint: disable=too-few-public-methods
     The gravity of the game.
     """
 
-    vertical = -100 * _SPEED_MULTIPLIER
+    vertical = -100
     horizontal = 0
 
 
@@ -276,9 +274,9 @@ def set_gravity(vertical=-100, horizontal=None):
     :param horizontal: The horizontal gravity of the game.
     """
     global GRAVITY  # pylint: disable=global-variable-not-assigned
-    GRAVITY.vertical = vertical * _SPEED_MULTIPLIER
+    GRAVITY.vertical = vertical
     if horizontal is not None:
-        GRAVITY.horizontal = horizontal * _SPEED_MULTIPLIER
+        GRAVITY.horizontal = horizontal
 
     physics_space.gravity = GRAVITY.horizontal, GRAVITY.vertical
 

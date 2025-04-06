@@ -18,7 +18,6 @@ def _update_sprites():  # pylint: disable=too-many-branches
     globals_list.sprites_group.update()
 
     for sprite in globals_list.sprites_group.sprites():
-
         ######################################################
         # update sprites with results of physics simulation
         ######################################################
@@ -44,16 +43,16 @@ def _update_sprites():  # pylint: disable=too-many-branches
             )
             sprite.physics._x_speed, sprite.physics._y_speed = body.velocity
 
+        sprite._is_clicked = False
+        if sprite.is_hidden:
+            continue
+
         #################################
         # All @sprite.when_touching events
         #################################
         if sprite._active_callbacks:
             for cb in sprite._active_callbacks:
                 run_callback(cb, [], [])
-
-        sprite._is_clicked = False
-        if sprite.is_hidden:
-            continue
 
         #################################
         # @sprite.when_clicked events
@@ -78,4 +77,5 @@ def _update_sprites():  # pylint: disable=too-many-branches
                                 [],
                             )
 
+    globals_list.sprites_group.update()
     globals_list.sprites_group.draw(PYGAME_DISPLAY)
