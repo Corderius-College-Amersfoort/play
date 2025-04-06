@@ -7,6 +7,7 @@ radius = 100
 
 def test_physics():
     import play
+    from play.io import screen
 
     global radius
     sprite = play.new_circle(color="gray", radius=radius)
@@ -15,14 +16,14 @@ def test_physics():
     @play.when_program_starts
     async def start():
         global screeny
-        screeny = play.screen.height
+        screeny = screen.height
         print("Starting program")
         # wait for 2 seconds
-        await play.timer(seconds=2)
+        await play.timer(seconds=4)
         global y
         y = sprite.y
         play.stop_program()
-        await play.timer(seconds=2)
+        await play.timer(seconds=4)
 
     play.start_program()
     global y
