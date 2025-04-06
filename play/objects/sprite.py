@@ -458,14 +458,13 @@ You might want to look in your code where you're setting transparency and make s
 
     def register_pymunk_collision(self, sprite, callback, begin=True):
         """Register a collision with another sprite."""
-        if not self.physics:
+        if not self.physics or not sprite.physics:
             return
 
-        sprite.collision_type = id(sprite)
+        sprite.physics._pymunk_shape.collision_type = id(sprite)
         self.physics._pymunk_shape.collision_type = id(self)
 
         if not begin:
-
             async def wrapper():
                 pass
 
