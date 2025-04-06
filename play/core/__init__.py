@@ -149,7 +149,7 @@ def game_loop():
     _clock.tick(globals_list.FRAME_RATE)
 
     if not _handle_pygame_events():
-        return False
+        return
 
     _handle_keyboard()
 
@@ -167,16 +167,12 @@ def game_loop():
     if callback_manager.get_callbacks(CallbackType.REPEAT_FOREVER) is not None:
         for callback in callback_manager.get_callbacks(CallbackType.REPEAT_FOREVER):
             if not callback.is_running:
-                run_callback(
-                    callback,
-                    [],
-                    [],
-                )
+                run_callback(callback, [], [])
 
     #############################
     # physics simulation
     #############################
-    _loop.call_soon(simulate_physics)
+    simulate_physics()
 
     if globals_list.backdrop_type == "color":
         PYGAME_DISPLAY.fill(globals_list.backdrop)
@@ -190,6 +186,5 @@ def game_loop():
 
     _update_sprites()
 
-    _loop.call_soon(game_loop)
     pygame.display.flip()
-    return True
+    _loop.call_soon(game_loop)

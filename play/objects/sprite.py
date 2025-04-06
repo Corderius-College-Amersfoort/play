@@ -465,6 +465,7 @@ You might want to look in your code where you're setting transparency and make s
         self.physics._pymunk_shape.collision_type = id(self)
 
         if not begin:
+
             async def wrapper():
                 pass
 
@@ -508,6 +509,7 @@ You might want to look in your code where you're setting transparency and make s
             callback = wrapper
 
         def collision_handler(arbiter, space, data):  # pylint: disable=unused-argument
+            print("A")
             if callback not in self._active_callbacks:
                 self._active_callbacks.append(callback)
             return True

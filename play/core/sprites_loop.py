@@ -13,7 +13,7 @@ from ..objects.line import Line
 from ..objects.sprite import point_touching_sprite
 
 
-def _update_sprites(skip_user_events=False):  # pylint: disable=too-many-branches
+def _update_sprites():  # pylint: disable=too-many-branches
     # pylint: disable=too-many-nested-blocks
     globals_list.sprites_group.update()
 
@@ -43,19 +43,13 @@ def _update_sprites(skip_user_events=False):  # pylint: disable=too-many-branche
                 angle  # needs to be .angle, not ._angle so surface gets recalculated
             )
             sprite.physics._x_speed, sprite.physics._y_speed = body.velocity
-        if skip_user_events:
-            continue
 
         #################################
         # All @sprite.when_touching events
         #################################
         if sprite._active_callbacks:
             for cb in sprite._active_callbacks:
-                run_callback(
-                    cb,
-                    [],
-                    [],
-                )
+                run_callback(cb, [], [])
 
         sprite._is_clicked = False
         if sprite.is_hidden:
