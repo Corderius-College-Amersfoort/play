@@ -77,32 +77,31 @@ class Sprite(
 
     def update(self):  # pylint: disable=too-many-nested-blocks, too-many-branches
         """Update the sprite."""
-        if (  # pylint: disable=too-many-nested-blocks
-            self._should_recompute
-            and callback_manager.get_callback(CallbackType.WHEN_TOUCHING, id(self))
-        ):
-            # check if we are touching any other sprites
+        if not self._should_recompute:
+            return
+
+        if callback_manager.get_callback(CallbackType.WHEN_TOUCHING, id(self)):
+            # Check if we are touching any other sprites
             for callback, b in callback_manager.get_callback(
                 CallbackType.WHEN_TOUCHING, id(self)
             ):
                 if self.is_touching(b):
                     if callback not in self._touching_callback:
-                        self._touching_callback.append(callback)
-                else:
-                    if callback_manager.get_callback(
+                        self._touching_callback[CollisionType.SPRITE] = callback
+                    continue
+                if callback_manager.get_callback(
+                    CallbackType.WHEN_STOPPED_TOUCHING, id(self)
+                ):
+                    for (
+                        stopped_callback,
+                        stopped_b,
+                    ) in callback_manager.get_callback(
                         CallbackType.WHEN_STOPPED_TOUCHING, id(self)
                     ):
-                        for (
-                            stopped_callback,
-                            stopped_b,
-                        ) in callback_manager.get_callback(
-                            CallbackType.WHEN_STOPPED_TOUCHING, id(self)
-                        ):
-                            if stopped_b == b:
-                                if callback in self._touching_callback:
-                                    run_callback(stopped_callback, [], [])
-                    if callback in self._touching_callback:
-                        self._touching_callback.remove(callback)
+                        if stopped_b == b and callback in self._touching_callback:
+                            run_callback(stopped_callback, [], [])
+                if callback in self._touching_callback:
+                    self._touching_callback[CollisionType.SPRITE] = None
 
         if callback_manager.get_callback(  # pylint: disable=too-many-nested-blocks
             CallbackType.WHEN_TOUCHING_WALL, id(self)
@@ -112,7 +111,7 @@ class Sprite(
             ):
                 if self.is_touching_wall():
                     if callback not in self._touching_callback:
-                        self._touching_callback.append(callback)
+                        self._touching_callback[CollisionType.WALL] = callback
                 elif callback in self._touching_callback:
                     if callback_manager.get_callback(
                         CallbackType.WHEN_STOPPED_TOUCHING_WALL, id(self)
@@ -121,7 +120,7 @@ class Sprite(
                             CallbackType.WHEN_STOPPED_TOUCHING_WALL, id(self)
                         ):
                             run_callback(stopped_callback, [], [])
-                    self._touching_callback.remove(callback)
+                    self._touching_callback[CollisionType.WALL] = None
 
         if self._is_hidden:
             self._image = pygame.Surface((0, 0), pygame.SRCALPHA)
@@ -453,6 +452,8 @@ You might want to look in your code where you're setting transparency and make s
 
             if self.physics:
                 for sprite in sprites:
+                    if not sprite.physics:
+                        continue
                     collision_registry.register(
                         self,
                         self.physics._pymunk_shape,
@@ -491,6 +492,8 @@ You might want to look in your code where you're setting transparency and make s
 
             if self.physics:
                 for sprite in sprites:
+                    if not sprite.physics:
+                        continue
                     collision_registry.register(
                         self,
                         self.physics._pymunk_shape,
