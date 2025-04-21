@@ -2,7 +2,9 @@
 
 import math as _math
 
-from play.globals import globals_list
+import pygame
+
+from ..globals import globals_list
 from .mouse_loop import mouse_state
 from ..callback import callback_manager, CallbackType
 from ..callback.callback_helpers import run_callback
@@ -13,7 +15,7 @@ from ..objects.line import Line
 from ..objects.sprite import point_touching_sprite
 
 
-def _update_sprites():  # pylint: disable=too-many-branches
+def _update_sprites(do_events: bool = True):  # pylint: disable=too-many-branches
     # pylint: disable=too-many-nested-blocks
     globals_list.sprites_group.update()
 
@@ -47,12 +49,16 @@ def _update_sprites():  # pylint: disable=too-many-branches
         if sprite.is_hidden:
             continue
 
+        if not do_events:
+            continue
+
         #################################
         # All @sprite.when_touching events
         #################################
-        if sprite._active_callbacks:
-            for cb in sprite._active_callbacks:
-                run_callback(cb, [], [])
+        if sprite._touching_callback[0]:
+            run_callback(sprite._touching_callback[0], [], [])
+        if sprite._touching_callback[1]:
+            run_callback(sprite._touching_callback[1], [], [])
 
         #################################
         # @sprite.when_clicked events
