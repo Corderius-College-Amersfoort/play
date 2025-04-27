@@ -1,5 +1,7 @@
 """A bunch of random math functions."""
 
+from typing import Sequence
+
 import pygame
 
 
@@ -39,7 +41,9 @@ class _Position:
             raise IndexError()
 
 
-def color_name_to_rgb(name):
+def color_name_to_rgb(
+    name: str, transparency: int = 255
+) -> tuple[int, int, int, int] | str:
     """
     Turn an English color name into an RGB value.
 
@@ -51,11 +55,13 @@ def color_name_to_rgb(name):
     """
     if isinstance(name, tuple):
         return name
-
     try:
-        return pygame.color.THECOLORS[
+        color = pygame.color.THECOLORS[
             name.lower().strip().replace("-", "").replace(" ", "")
         ]
+        # Make the last item of the tuple the transparency value
+        color = (color[0], color[1], color[2], transparency)
+        return color
     except KeyError as exception:
         raise ValueError(
             f"""You gave a color name we didn't understand: '{name}'

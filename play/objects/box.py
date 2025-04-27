@@ -66,6 +66,9 @@ class Box(Sprite):
             )
 
             self.original_image.set_alpha(self._transparency * 2.55)
+            self.original_image = pygame.transform.rotate(
+                self.original_image, self._angle
+            )
 
             self.rect = self.original_image.get_rect()
             pos = convert_pos(self.x, self.y)
