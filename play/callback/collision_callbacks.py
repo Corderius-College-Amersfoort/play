@@ -13,7 +13,7 @@ class CollisionType(EnumType):
     WALL = 1
 
 
-class CollisionCallbackRegistry:  # pylint: disable=too-few-public-methods
+class CollisionCallbackRegistry: # pylint: disable=too-few-public-methods
     """
     A registry for collision callbacks.
     """

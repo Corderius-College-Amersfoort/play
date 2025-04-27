@@ -86,7 +86,7 @@ class Sprite(
                 CallbackType.WHEN_TOUCHING, id(self)
             ):
                 if self.is_touching(b):
-                    if callback not in self._touching_callback:
+                    if self._touching_callback[CollisionType.SPRITE] is None:
                         self._touching_callback[CollisionType.SPRITE] = callback
                     continue
                 if callback_manager.get_callback(
@@ -110,7 +110,7 @@ class Sprite(
                 CallbackType.WHEN_TOUCHING_WALL, id(self)
             ):
                 if self.is_touching_wall():
-                    if callback not in self._touching_callback:
+                    if self._touching_callback[CollisionType.WALL] is None:
                         self._touching_callback[CollisionType.WALL] = callback
                 elif callback in self._touching_callback:
                     if callback_manager.get_callback(
