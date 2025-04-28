@@ -2,15 +2,12 @@
 
 import math as _math
 
-import pygame
-
-from ..globals import globals_list
 from .mouse_loop import mouse_state
 from ..callback import callback_manager, CallbackType
 from ..callback.callback_helpers import run_callback
+from ..globals import globals_list
 from ..io import convert_pos, PYGAME_DISPLAY
 from ..io.mouse import mouse
-
 from ..objects.line import Line
 from ..objects.sprite import point_touching_sprite
 
