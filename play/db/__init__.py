@@ -23,7 +23,7 @@ def get_data(key):
     keys = key.split(":")
     value = JSON_DATA
     for k in keys:
-        value = value[k]
+        value = value.get(k, None)
     return value
 
 
