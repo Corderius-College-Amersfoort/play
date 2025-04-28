@@ -58,10 +58,8 @@ def _update_sprites(do_events: bool = True):  # pylint: disable=too-many-branche
         # All @sprite.when_touching events
         #################################
         if sprite._touching_callback[0]:
-            print(pygame.time.get_ticks())
             run_callback(sprite._touching_callback[0], [], [])
         if sprite._touching_callback[1]:
-            print(pygame.time.get_ticks())
             run_callback(sprite._touching_callback[1], [], [])
 
         #################################
