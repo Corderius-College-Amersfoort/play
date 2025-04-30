@@ -37,7 +37,6 @@ class CollisionCallbackRegistry:  # pylint: disable=too-few-public-methods
                     self.shape_registry[shape_b.collision_type]._touching_callback[
                         shape_b.actual_collision_type
                     ] = callback
-
         return True
 
     def _handle_end_collision(self, arbiter, _, __):

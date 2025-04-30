@@ -5,7 +5,7 @@ from ..globals import globals_list
 from ..physics import physics_space, _NUM_SIMULATION_STEPS
 
 
-def simulate_physics():
+async def simulate_physics():
     """
     Simulate the physics of the game
     """
@@ -13,4 +13,4 @@ def simulate_physics():
     for _ in range(_NUM_SIMULATION_STEPS):
         physics_space.step(1 / (globals_list.FRAME_RATE * _NUM_SIMULATION_STEPS))
         if not _ == _NUM_SIMULATION_STEPS - 1:
-            _update_sprites(False)
+            await _update_sprites(False)
