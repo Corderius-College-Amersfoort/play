@@ -48,12 +48,16 @@ async def _handle_controller():  # pylint: disable=too-many-branches
                         )
                         == 1
                     ):
-                        await run_async_callback(callback, ["button_number"], [], button)
+                        await run_async_callback(
+                            callback, ["button_number"], [], button
+                        )
         for button, callbacks in controller_button_callbacks.items():
             if button != "any":
                 for callback in callbacks:
                     if controllers.get_button(callback.controller, button) == 1:
-                        await run_async_callback(callback, ["button_number"], [], [], button)
+                        await run_async_callback(
+                            callback, ["button_number"], [], [], button
+                        )
         controller_button_pressed = False
 
     ############################################################
@@ -74,7 +78,9 @@ async def _handle_controller():  # pylint: disable=too-many-branches
                         )
                         == 0
                     ):
-                        await run_async_callback(callback, ["button_number"], [], button)
+                        await run_async_callback(
+                            callback, ["button_number"], [], button
+                        )
         for button, callbacks in released_callbacks.items():
             for callback in callbacks:
                 if controllers.get_button(callback.controller, button) == 0:

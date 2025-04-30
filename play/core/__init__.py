@@ -187,5 +187,4 @@ async def game_loop():
     await _update_sprites()
 
     pygame.display.flip()
-    _loop.create_task(game_loop()) # Call self again
-
+    _loop.create_task(game_loop())  # Call self again
