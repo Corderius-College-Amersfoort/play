@@ -87,6 +87,7 @@ def get_data(key, filename:str):
     :param key: The key to get the value from, for which the : is a delimiter for nested values.
     :param filename: The name of the file to set the data to
     """
+
     try:
         filename = correct_filename(filename)
         keys = key.split(":")
@@ -97,7 +98,6 @@ def get_data(key, filename:str):
     except Exception as e:
         play_logger.error(f"An error occured\nError e: {e}", exc_info=True)
         return None
-
 
 def set_data(key, value):
     """Set a value in the database.

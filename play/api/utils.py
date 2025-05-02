@@ -29,7 +29,7 @@ def start_program():
                 [],
             )
 
-    _loop.call_soon(_game_loop)
+    _loop.create_task(_game_loop())
     try:
         _loop.run_forever()
     finally:

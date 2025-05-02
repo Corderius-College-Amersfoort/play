@@ -104,6 +104,7 @@ def new_box(  # pylint: disable=too-many-arguments
     )
 
 def new_circle(  # pylint: disable=too-many-arguments
+
     color: str = "black",
     x: int = 0,
     y: int = 0,
@@ -137,6 +138,7 @@ def new_circle(  # pylint: disable=too-many-arguments
         size=size,
         angle=angle,
     )
+ 
 
 def new_line(  # pylint: disable=too-many-arguments
     color: str = "black",
@@ -176,6 +178,7 @@ def new_line(  # pylint: disable=too-many-arguments
         size=size,
     )
 
+
 def new_image(  # pylint: disable=too-many-arguments
     image: str = "/path/to/image",
     x: int = 0,
@@ -196,6 +199,7 @@ def new_image(  # pylint: disable=too-many-arguments
     return _Image(
         image=image, x=x, y=y, size=size, angle=angle, transparency=transparency
     )
+
 
 def new_sound(  # pylint: disable=too-many-arguments
     file_name: str = "file.mp3",
