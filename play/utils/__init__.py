@@ -44,7 +44,7 @@ def search_file(start_directory, filename):
     Search for a specified file from the start directory and return its full path.
     :param start_directory: The path to the starting directory from which the search starts
     :param filename: The name of the file to search for, also takes file name without file extension (e.g., "example.txt" or "example").
-    :return: The absolute path of the file if found, otherwise None.
+    :return: a list with either all filepaths which match exactly to the filename or a list with filepaths which match at least partially, and a dict with key:value pairs of filepath:filename where the filename either exactly matches the searched filename or partially matches the searched filename
     """
     partial_matching_fileslist = []
     partial_matching_filesdict = {}
