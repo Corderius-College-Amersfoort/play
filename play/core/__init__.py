@@ -14,9 +14,10 @@ from .mouse_loop import _handle_mouse_loop, mouse_state
 from .physics_loop import simulate_physics
 from .sprites_loop import _update_sprites
 from ..callback import callback_manager, CallbackType
+
 from ..callback.callback_helpers import run_async_callback, run_callback
-from ..globals import globals_list
-from ..io import screen, PYGAME_DISPLAY
+from ..globals import Globals
+from ..io import screen, PYGAME_DISPLAY, convert_pos
 from ..io.keypress import (
     key_num_to_name as _pygame_key_to_name,
     _keys_released_this_frame,
@@ -26,8 +27,10 @@ from ..io.keypress import (
 from ..io.mouse import mouse
 from ..loop import loop as _loop
 
+from ..utils.__init__ import remove_files
+from ..objects.text import used_fonts_pathlist
 _clock = pygame.time.Clock()
-
+import os
 
 def _handle_pygame_events():
     """Handle pygame events in the game loop."""
@@ -43,27 +46,28 @@ def _handle_pygame_events():
             # quitting by clicking window's close button or pressing ctrl+q / command+q
             _loop.stop()
             return False
-        if event.type == pygame.MOUSEBUTTONDOWN:  # pylint: disable=no-member
-            mouse_state.click_happened_this_frame = True
-            mouse._is_clicked = True
-        if event.type == pygame.MOUSEBUTTONUP:  # pylint: disable=no-member
-            mouse_state.click_release_happened_this_frame = True
-            mouse._is_clicked = False
-        if event.type == pygame.MOUSEMOTION:  # pylint: disable=no-member
-            mouse.x, mouse.y = (event.pos[0] - screen.width / 2.0), (
-                screen.height / 2.0 - event.pos[1]
-            )
-        _handle_controller_events(event)
-        if event.type == pygame.KEYDOWN:  # pylint: disable=no-member
-            if event.key not in _keys_to_skip:
+        else:
+            if event.type == pygame.MOUSEBUTTONDOWN:  # pylint: disable=no-member
+                mouse_state.click_happened_this_frame = True
+                mouse._is_clicked = True
+            if event.type == pygame.MOUSEBUTTONUP:  # pylint: disable=no-member
+                mouse_state.click_release_happened_this_frame = True
+                mouse._is_clicked = False
+            if event.type == pygame.MOUSEMOTION:  # pylint: disable=no-member
+                mouse.x, mouse.y = (event.pos[0] - screen.width / 2.0), (
+                    screen.height / 2.0 - event.pos[1]
+                )
+            _handle_controller_events(event)
+            if event.type == pygame.KEYDOWN:  # pylint: disable=no-member
+                if event.key not in _keys_to_skip:
+                    name = _pygame_key_to_name(event)
+                    if name not in _pressed_keys:
+                        _pressed_keys.append(name)
+            if event.type == pygame.KEYUP:  # pylint: disable=no-member
                 name = _pygame_key_to_name(event)
-                if name not in _pressed_keys:
-                    _pressed_keys.append(name)
-        if event.type == pygame.KEYUP:  # pylint: disable=no-member
-            name = _pygame_key_to_name(event)
-            if not (event.key in _keys_to_skip) and name in _pressed_keys:
-                _keys_released_this_frame.append(name)
-                _pressed_keys.remove(name)
+                if not (event.key in _keys_to_skip) and name in _pressed_keys:
+                    _keys_released_this_frame.append(name)
+                    _pressed_keys.remove(name)
     return True
 
 
@@ -146,7 +150,7 @@ async def game_loop():
     mouse_state.click_happened_this_frame = False
     mouse_state.click_release_happened_this_frame = False
 
-    _clock.tick(globals_list.FRAME_RATE)
+    _clock.tick(Globals.FRAME_RATE)
 
     if not _handle_pygame_events():
         return
@@ -174,11 +178,11 @@ async def game_loop():
     #############################
     await simulate_physics()
 
-    if globals_list.backdrop_type == "color":
-        PYGAME_DISPLAY.fill(globals_list.backdrop)
-    elif globals_list.backdrop_type == "image":
+    if Globals.backdrop_type == "color":
+        PYGAME_DISPLAY.fill(Globals.backdrop)
+    elif Globals.backdrop_type == "image":
         PYGAME_DISPLAY.blit(
-            globals_list.backdrop,
+            Globals.backdrop,
             (0, 0),
         )
     else:

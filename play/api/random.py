@@ -42,3 +42,7 @@ def random_position(
         random_number(x_min, x_max),
         random_number(y_min, y_max),
     )
+
+def random_bool():
+    """Returns boolean True or False"""
+    return bool(random_number(0,1))
