@@ -24,6 +24,8 @@ jobs:
         with:
           path: docs/
   
+  # Deploy the artifact to GitHub pages.
+  # This is a separate job so that only actions/deploy-pages has the necessary permissions.
   deploy-pages:
     permissions:
       pages: write
@@ -54,7 +56,6 @@ jobs:
     - name: Build package
       run: python -m build
     
-    # Deploy default package
     - name: Publish package
       uses: pypa/gh-action-pypi-publish@27b31702a0e7fc50959f5ad993c78deac1bdfc29
       with:
