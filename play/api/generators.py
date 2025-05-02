@@ -9,7 +9,6 @@ from ..objects import (
     Sound as _Sound,
 )
 
-
 def new_text(  # pylint: disable=too-many-arguments
     words: str = "",
     x: int = 0,
@@ -20,17 +19,27 @@ def new_text(  # pylint: disable=too-many-arguments
     angle: int = 0,
     transparency: int = 100,
     size: int = 100,
+    bold: bool = False,
+    italic: bool = False,
+    underlined: bool = False,
+    strikethrough: bool = False,
+    git_token: bool|str = False
 ) -> _Text:
     """Make a new text object.
     :param words: The text to display.
     :param x: The x-coordinate of the text.
     :param y: The y-coordinate of the text.
-    :param font: The font to use.
+    :param font: The font to use. either a local path or a font name.
     :param font_size: The size of the font.
     :param color: The color of the text.
     :param angle: The angle of the text.
     :param transparency: The transparency of the text.
     :param size: The size of the text.
+    :param bold: Whether the object is bold or not.
+    :param italic: Whether the object is in italics or not.
+    :param underlined: Whether the object is underlined or not.
+    :param strikethrough: Whether the object is struck through or not.
+    :param git_token: When planning to use a lot of different fonts not yet downloaded, generate a Github Token and input here. If not, leave False.
     :return: A new text object.
     """
     if not isinstance(words, str):
@@ -46,8 +55,12 @@ def new_text(  # pylint: disable=too-many-arguments
         angle=angle,
         transparency=transparency,
         size=size,
+        bold=bold,
+        italic=italic,
+        underlined=underlined,
+        strikethrough=strikethrough,
+        git_token=git_token
     )
-
 
 def new_box(  # pylint: disable=too-many-arguments
     color: str = "black",
@@ -90,7 +103,6 @@ def new_box(  # pylint: disable=too-many-arguments
         size=size,
     )
 
-
 def new_circle(  # pylint: disable=too-many-arguments
     color: str = "black",
     x: int = 0,
@@ -125,7 +137,6 @@ def new_circle(  # pylint: disable=too-many-arguments
         size=size,
         angle=angle,
     )
-
 
 def new_line(  # pylint: disable=too-many-arguments
     color: str = "black",
@@ -165,7 +176,6 @@ def new_line(  # pylint: disable=too-many-arguments
         size=size,
     )
 
-
 def new_image(  # pylint: disable=too-many-arguments
     image: str = "/path/to/image",
     x: int = 0,
@@ -186,7 +196,6 @@ def new_image(  # pylint: disable=too-many-arguments
     return _Image(
         image=image, x=x, y=y, size=size, angle=angle, transparency=transparency
     )
-
 
 def new_sound(  # pylint: disable=too-many-arguments
     file_name: str = "file.mp3",
