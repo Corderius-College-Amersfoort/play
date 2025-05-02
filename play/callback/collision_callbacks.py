@@ -3,7 +3,9 @@
 try:
     from enum import EnumType
 except ImportError:
-    from enum import EnumMeta as EnumType # In Python 3.10 the alias for EnumMeta doesn't yet exist
+    from enum import (
+        EnumMeta as EnumType,
+    )  # In Python 3.10 the alias for EnumMeta doesn't yet exist
 from pymunk import CollisionHandler
 
 from play.callback.callback_helpers import run_callback
