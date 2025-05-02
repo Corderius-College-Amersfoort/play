@@ -34,7 +34,7 @@ def _raise_on_await_warning(func):
                         warning.lineno,
                         warning.filename,
                         func.__name__,
-                    )  # pylint: disable=logging-not-lazy
+                    )
                 play_logger.warning(warning.message)
 
     raise_on_warning.original_function = func

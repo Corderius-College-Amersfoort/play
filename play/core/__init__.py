@@ -2,23 +2,6 @@
 
 import pygame  # pylint: disable=import-error
 
-from .game_loop_wrapper import listen_to_failure
-from .mouse_loop import _handle_mouse_loop, mouse_state
-from .sprites_loop import _update_sprites
-from ..callback import callback_manager, CallbackType
-from ..callback.callback_helpers import run_callback
-from ..globals import globals_list
-from ..io import screen, PYGAME_DISPLAY, convert_pos
-from ..io.keypress import (
-    key_num_to_name as _pygame_key_to_name,
-    _keys_released_this_frame,
-    _keys_to_skip,
-    _pressed_keys,
-)  # don't pollute user-facing namespace with library internals
-from ..io.mouse import mouse
-from .physics_loop import simulate_physics
-from ..utils import color_name_to_rgb as _color_name_to_rgb
-from ..loop import loop as _loop
 from .controller_loop import (
     controller_axis_moved,
     controller_button_pressed,
@@ -26,6 +9,22 @@ from .controller_loop import (
     _handle_controller,
     _handle_controller_events,
 )
+from .game_loop_wrapper import listen_to_failure
+from .mouse_loop import _handle_mouse_loop, mouse_state
+from .physics_loop import simulate_physics
+from .sprites_loop import _update_sprites
+from ..callback import callback_manager, CallbackType
+from ..callback.callback_helpers import run_async_callback, run_callback
+from ..globals import globals_list
+from ..io import screen, PYGAME_DISPLAY
+from ..io.keypress import (
+    key_num_to_name as _pygame_key_to_name,
+    _keys_released_this_frame,
+    _keys_to_skip,
+    _pressed_keys,
+)  # don't pollute user-facing namespace with library internals
+from ..io.mouse import mouse
+from ..loop import loop as _loop
 
 _clock = pygame.time.Clock()
 
@@ -69,7 +68,7 @@ def _handle_pygame_events():
 
 
 # pylint: disable=too-many-branches
-def _handle_keyboard():
+async def _handle_keyboard():
     """Handle keyboard events in the game loop."""
     ############################################################
     # @when_any_key_pressed and @when_key_pressed callbacks
@@ -83,7 +82,7 @@ def _handle_keyboard():
             if key in callback_manager.get_callbacks(CallbackType.PRESSED_KEYS):
                 for callback in press_subscription[key]:
                     if not callback.is_running:
-                        run_callback(
+                        await run_async_callback(
                             callback,
                             ["key"],
                             [],
@@ -92,7 +91,7 @@ def _handle_keyboard():
             if "any" in press_subscription:
                 for callback in press_subscription["any"]:
                     if not callback.is_running:
-                        run_callback(
+                        await run_async_callback(
                             callback,
                             ["key"],
                             [],
@@ -102,7 +101,7 @@ def _handle_keyboard():
         if keys_hash in press_subscription:
             for callback in press_subscription[keys_hash]:
                 if not callback.is_running:
-                    run_callback(
+                    await run_async_callback(
                         callback,
                         ["key"],
                         [],
@@ -122,7 +121,7 @@ def _handle_keyboard():
             if key in release_subscriptions:
                 for callback in release_subscriptions[key]:
                     if not callback.is_running:
-                        run_callback(
+                        await run_async_callback(
                             callback,
                             ["key"],
                             [],
@@ -131,7 +130,7 @@ def _handle_keyboard():
             if "any" in release_subscriptions:
                 for callback in release_subscriptions["any"]:
                     if not callback.is_running:
-                        run_callback(
+                        await run_async_callback(
                             callback,
                             ["key"],
                             [],
@@ -141,7 +140,7 @@ def _handle_keyboard():
 
 # pylint: disable=too-many-branches, too-many-statements
 @listen_to_failure()
-def game_loop():
+async def game_loop():
     """The main game loop."""
     _keys_released_this_frame.clear()
     mouse_state.click_happened_this_frame = False
@@ -150,17 +149,17 @@ def game_loop():
     _clock.tick(globals_list.FRAME_RATE)
 
     if not _handle_pygame_events():
-        return False
+        return
 
-    _handle_keyboard()
+    await _handle_keyboard()
 
     if (
         mouse_state.click_happened_this_frame
         or mouse_state.click_release_happened_this_frame
     ):
-        _handle_mouse_loop()
+        await _handle_mouse_loop()
 
-    _handle_controller()
+    await _handle_controller()
 
     #############################
     # @repeat_forever callbacks
@@ -168,16 +167,12 @@ def game_loop():
     if callback_manager.get_callbacks(CallbackType.REPEAT_FOREVER) is not None:
         for callback in callback_manager.get_callbacks(CallbackType.REPEAT_FOREVER):
             if not callback.is_running:
-                run_callback(
-                    callback,
-                    [],
-                    [],
-                )
+                run_callback(callback, [], [])
 
     #############################
     # physics simulation
     #############################
-    _loop.call_soon(simulate_physics)
+    await simulate_physics()
 
     if globals_list.backdrop_type == "color":
         PYGAME_DISPLAY.fill(globals_list.backdrop)
@@ -189,8 +184,7 @@ def game_loop():
     else:
         PYGAME_DISPLAY.fill((255, 255, 255))
 
-    _update_sprites()
+    await _update_sprites()
 
-    _loop.call_soon(game_loop)
     pygame.display.flip()
-    return True
+    _loop.create_task(game_loop())  # Call self again
