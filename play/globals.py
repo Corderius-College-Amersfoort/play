@@ -17,4 +17,5 @@ class Globals:  # pylint: disable=too-few-public-methods
     HEIGHT = 600
 
 
+
 globals_list = Globals()
