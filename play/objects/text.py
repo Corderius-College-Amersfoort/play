@@ -10,7 +10,7 @@ from ..utils import (
     )
 from ..io.logging import play_logger
 import requests
-from ..db import *
+
 
 
 executing_folder = os.getcwd()

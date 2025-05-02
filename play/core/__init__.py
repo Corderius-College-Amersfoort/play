@@ -1,7 +1,7 @@
 """Core game loop and event handling functions."""
 
 import pygame  # pylint: disable=import-error
-import asyncio
+
 from .game_loop_wrapper import listen_to_failure
 from .mouse_loop import _handle_mouse_loop, mouse_state
 from .sprites_loop import _update_sprites

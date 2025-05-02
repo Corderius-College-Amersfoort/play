@@ -2,7 +2,7 @@
 
 import pygame
 import os
-import inspect
+
 
 def _clamp(num, min_, max_):
     if num < min_:
@@ -39,10 +39,6 @@ class _Position:
         else:
             raise IndexError()
 
-def get_executing_file():
-    calling_frame = inspect.curentframe().f_back
-    executing_file = calling_frame.f_globals.get("__file__", None)
-    return executing_file
 def search_file(start_directory, filename):
     """
     Search for a specified file from the start directory and return its full path.
