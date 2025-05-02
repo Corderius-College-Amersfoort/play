@@ -65,7 +65,7 @@ jobs:
 
     # Set package alias if provided
     - name: Set package alias (if provided)
-      run: sed -i "s/name=['\"][^'\"]*['\"]/name=\"py-play"/" setup.py
+      run: sed -i "s/name=['\"][^'\"]*['\"]/name=\"py-play\"/" setup.py
 
     # Deploy alias package
     - name: Publish package
