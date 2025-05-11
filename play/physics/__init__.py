@@ -4,6 +4,7 @@ import math as _math
 
 import pymunk as _pymunk
 
+from ..io.logging import play_logger
 from ..utils import _clamp
 
 
@@ -151,8 +152,10 @@ class Physics:
 
     def unpause(self):
         """Unpause the object."""
-        if not self._pymunk_body and not self._pymunk_shape:
+        if self._pymunk_body and self._pymunk_shape:
             physics_space.add(self._pymunk_body, self._pymunk_shape)
+        else:
+            play_logger.error("Cannot unpause object, it has not been created yet.")
 
     def _remove(self):
         if self._pymunk_body:
