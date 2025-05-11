@@ -1,7 +1,14 @@
+"""This module provides a wrapper around the Pygame display module to create a screen object"""
+
 from sys import platform
 
 import pygame
-from pygame import Window, SCALED, NOFRAME, FULLSCREEN
+from pygame import (  # pylint: disable=no-name-in-module
+    Window,
+    SCALED,
+    NOFRAME,
+    FULLSCREEN,
+)
 from screeninfo import get_monitors
 
 import pymunk as _pymunk
