@@ -3,7 +3,7 @@
 import os
 import pygame
 from .sprite import Sprite
-from ..io import convert_pos
+from ..io.screen import convert_pos
 from ..utils import color_name_to_rgb as _color_name_to_rgb
 from ..io.logging import play_logger
 

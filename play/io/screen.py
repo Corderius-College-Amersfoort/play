@@ -1,12 +1,10 @@
-"""This file contains all the IO-related code for the Python Play library."""
-
 from sys import platform
 
 import pygame
+from pygame import Window, SCALED, NOFRAME, FULLSCREEN
 from screeninfo import get_monitors
+
 import pymunk as _pymunk
-from pygame._sdl2.video import Window  # pylint: disable=no-name-in-module
-from pygame.locals import *
 
 from ..globals import globals_list
 from ..physics import physics_space

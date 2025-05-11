@@ -16,7 +16,7 @@ from .sprites_loop import _update_sprites
 from ..callback import callback_manager, CallbackType
 from ..callback.callback_helpers import run_async_callback, run_callback
 from ..globals import globals_list
-from ..io import screen, PYGAME_DISPLAY
+from ..io.screen import screen, PYGAME_DISPLAY
 from ..io.keypress import (
     key_num_to_name as _pygame_key_to_name,
     _keys_released_this_frame,
