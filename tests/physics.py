@@ -7,7 +7,7 @@ radius = 100
 
 def test_physics():
     import play
-    from play.io import screen
+    from play.io.screen import screen
 
     global radius
     sprite = play.new_circle(color="gray", radius=radius)
@@ -20,6 +20,7 @@ def test_physics():
         print("Starting program")
         # wait for 2 seconds
         await play.timer(seconds=4)
+        print("Stopping program")
         global y
         y = sprite.y
         play.stop_program()

@@ -4,7 +4,7 @@ import os
 import pygame
 
 from .sprite import Sprite
-from ..io import convert_pos
+from ..io.screen import convert_pos
 
 
 class Image(Sprite):
