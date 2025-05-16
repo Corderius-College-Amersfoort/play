@@ -2,7 +2,7 @@
 
 import random as _random
 
-from ..io import screen
+from ..io.screen import screen
 from ..utils import _Position
 
 
