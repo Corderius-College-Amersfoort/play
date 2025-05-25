@@ -6,26 +6,22 @@ x_speed = 60
 data_x_speed = []
 data_y = []
 
+
 def test_ball_movement():
-    import sys 
-    sys.path.insert(0, '.')
+    import sys
+
+    sys.path.insert(0, ".")
     import play
+
     print(play.__path__)
 
-    ball = play.new_circle(color="gray", 
-                           x=0,
-                           y=0,
-                           radius=10,
-                           border_color='light blue',
-                           size=100,
-                           angle=0
-                           )
-    ball.start_physics(x_speed=x_speed,
-                       obeys_gravity=False,
-                       mass=10,
-                       bounciness=1,
-                       friction=0)
-        
+    ball = play.new_circle(
+        color="gray", x=0, y=0, radius=10, border_color="light blue", size=100, angle=0
+    )
+    ball.start_physics(
+        x_speed=x_speed, obeys_gravity=False, mass=10, bounciness=1, friction=0
+    )
+
     @play.repeat_forever
     def move():
         global num_frames
@@ -39,16 +35,16 @@ def test_ball_movement():
 
         if num_frames == max_frames:
             play.stop_program()
-   
+
     play.start_program()
 
-    #for actual_value in data_x_speed:
+    # for actual_value in data_x_speed:
     #    if math.ceil(abs(actual_value)) != x_speed:
     #        pytest.fail(f'expected x_speed {actual_value} to be {x_speed}')
-    
+
     for actual_value in data_y:
         if actual_value != 0:
-            pytest.fail(f'expected y {actual_value} to be 0')
+            pytest.fail(f"expected y {actual_value} to be 0")
 
 
 if __name__ == "__main__":
