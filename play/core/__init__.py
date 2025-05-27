@@ -82,7 +82,7 @@ async def _handle_keyboard():
             if key in callback_manager.get_callbacks(CallbackType.PRESSED_KEYS):
                 for callback in press_subscription[key]:
                     if not callback.is_running:
-                        await run_async_callback(
+                        run_callback(
                             callback,
                             ["key"],
                             [],
@@ -91,7 +91,7 @@ async def _handle_keyboard():
             if "any" in press_subscription:
                 for callback in press_subscription["any"]:
                     if not callback.is_running:
-                        await run_async_callback(
+                        run_callback(
                             callback,
                             ["key"],
                             [],
@@ -101,7 +101,7 @@ async def _handle_keyboard():
         if keys_hash in press_subscription:
             for callback in press_subscription[keys_hash]:
                 if not callback.is_running:
-                    await run_async_callback(
+                    run_callback(
                         callback,
                         ["key"],
                         [],
@@ -121,7 +121,7 @@ async def _handle_keyboard():
             if key in release_subscriptions:
                 for callback in release_subscriptions[key]:
                     if not callback.is_running:
-                        await run_async_callback(
+                        run_callback(
                             callback,
                             ["key"],
                             [],
@@ -130,7 +130,7 @@ async def _handle_keyboard():
             if "any" in release_subscriptions:
                 for callback in release_subscriptions["any"]:
                     if not callback.is_running:
-                        await run_async_callback(
+                        run_callback(
                             callback,
                             ["key"],
                             [],
