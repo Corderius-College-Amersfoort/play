@@ -22,4 +22,5 @@ class Globals:  # pylint: disable=too-few-public-methods
     display = None  # This will be set in the screen module
     controllers = []
 
+
 globals_list = Globals()

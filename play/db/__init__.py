@@ -3,6 +3,7 @@
 import json
 import os
 
+
 class Database:
     def __init__(self, db_filename="database.json"):
         """
@@ -28,7 +29,6 @@ class Database:
         for k in keys:
             value = value.get(k, None)
         return value
-
 
     def set_data(self, key, value):
         """Set a value in the database.
