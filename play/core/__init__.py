@@ -6,13 +6,17 @@ from .controller_loop import (
     controller_axis_moved,
     controller_button_pressed,
     controller_button_released,
-    _handle_controller,
-    _handle_controller_events,
+    handle_controller as _handle_controller,
+    handle_controller_events as _handle_controller_events,
 )
 from .game_loop_wrapper import listen_to_failure
-from .mouse_loop import _handle_mouse_loop, mouse_state
+from .mouse_loop import (
+    handle_mouse_loop as _handle_mouse_loop,
+    handle_mouse_events as _handle_mouse_events,
+    mouse_state,
+)
 from .physics_loop import simulate_physics
-from .sprites_loop import _update_sprites
+from .sprites_loop import update_sprites as _update_sprites
 from ..callback import callback_manager, CallbackType
 from ..callback.callback_helpers import run_async_callback, run_callback
 from ..globals import globals_list
@@ -23,7 +27,6 @@ from ..io.keypress import (
     _keys_to_skip,
     _pressed_keys,
 )  # don't pollute user-facing namespace with library internals
-from ..io.mouse import mouse
 from ..loop import loop as _loop
 
 _clock = pygame.time.Clock()
@@ -43,16 +46,10 @@ def _handle_pygame_events():
             # quitting by clicking window's close button or pressing ctrl+q / command+q
             _loop.stop()
             return False
-        if event.type == pygame.MOUSEBUTTONDOWN:  # pylint: disable=no-member
-            mouse_state.click_happened_this_frame = True
-            mouse._is_clicked = True
-        if event.type == pygame.MOUSEBUTTONUP:  # pylint: disable=no-member
-            mouse_state.click_release_happened_this_frame = True
-            mouse._is_clicked = False
-        if event.type == pygame.MOUSEMOTION:  # pylint: disable=no-member
-            mouse.x, mouse.y = (event.pos[0] - screen.width / 2.0), (
-                screen.height / 2.0 - event.pos[1]
-            )
+        if event.type == pygame.VIDEORESIZE:
+            screen.width, screen.height = event.size
+
+        _handle_mouse_events(event)
         _handle_controller_events(event)
         if event.type == pygame.KEYDOWN:  # pylint: disable=no-member
             if event.key not in _keys_to_skip:
@@ -175,14 +172,14 @@ async def game_loop():
     await simulate_physics()
 
     if globals_list.backdrop_type == "color":
-        PYGAME_DISPLAY.fill(globals_list.backdrop)
+        globals_list.display.fill(globals_list.backdrop)
     elif globals_list.backdrop_type == "image":
-        PYGAME_DISPLAY.blit(
+        globals_list.display.blit(
             globals_list.backdrop,
             (0, 0),
         )
     else:
-        PYGAME_DISPLAY.fill((255, 255, 255))
+        globals_list.display.fill((255, 255, 255))
 
     await _update_sprites()
 

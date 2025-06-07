@@ -195,7 +195,7 @@ def new_sound(
 ) -> _Sound:
     """
     Initialize the Sound object.
-    :param file_name: The sound file to load (file path if not in the same directory as the .py).
+    :param file_name: The sound file to load (a file path if not in the same directory as the .py).
     :param volume: The initial volume (0.0 to 1.0).
     :param loops: Number of times to loop the sound (-1 for infinite, 0 for no loop).
     """

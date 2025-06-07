@@ -13,7 +13,7 @@ controller_button_pressed = False  # pylint: disable=invalid-name
 controller_button_released = False  # pylint: disable=invalid-name
 
 
-def _handle_controller_events(event):
+def handle_controller_events(event):
     """Handle controller events in the game loop.
     :param event: The event to handle."""
     if event.type == pygame.JOYAXISMOTION:  # pylint: disable=no-member
@@ -27,7 +27,7 @@ def _handle_controller_events(event):
         controller_button_released = True
 
 
-async def _handle_controller():  # pylint: disable=too-many-branches
+async def handle_controller():  # pylint: disable=too-many-branches
     """Handle controller events in the game loop."""
     ############################################################
     # @controller.when_button_pressed and @controller.when_any_button_pressed
@@ -41,7 +41,7 @@ async def _handle_controller():  # pylint: disable=too-many-branches
         )
         if "any" in controller_button_callbacks:
             for callback in controller_button_callbacks["any"]:
-                for button in range(controllers.get_numbuttons(callback.controller)):
+                for button in range(controllers.get_num_buttons(callback.controller)):
                     if (
                         controllers.get_controller(callback.controller).get_button(
                             button
@@ -71,7 +71,7 @@ async def _handle_controller():  # pylint: disable=too-many-branches
         )
         if "any" in released_callbacks:
             for callback in released_callbacks["any"]:
-                for button in range(controllers.get_numbuttons(callback.controller)):
+                for button in range(controllers.get_num_buttons(callback.controller)):
                     if (
                         controllers.get_controller(callback.controller).get_button(
                             button
@@ -97,7 +97,7 @@ async def _handle_controller():  # pylint: disable=too-many-branches
         )
         if "any" in axis_moved_callbacks:
             for callback in axis_moved_callbacks["any"]:
-                for axis in range(controllers.get_numaxes(callback.controller)):
+                for axis in range(controllers.get_num_axes(callback.controller)):
                     await run_async_callback(
                         callback,
                         ["axis_number", "axis_value"],

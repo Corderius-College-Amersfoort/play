@@ -5,7 +5,8 @@ from typing import Sequence
 import pygame
 
 
-def _clamp(num, min_, max_):
+def clamp(num, min_, max_):
+    """Clamp a number between a minimum and maximum value."""
     if num < min_:
         return min_
     if num > max_:

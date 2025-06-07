@@ -54,38 +54,38 @@ class Circle(Sprite):
     def update(self):
         """Update the circle's position, size, angle, transparency, and border."""
         if self._should_recompute:
-            self.original_image = pygame.Surface(
+            draw_image = pygame.Surface(
                 (self._radius * 2, self._radius * 2), pygame.SRCALPHA
             )
 
             if self._border_width > 0:
                 pygame.draw.circle(
-                    self.original_image,
+                    draw_image,
                     _color_name_to_rgb(self._border_color),
                     (self._radius, self._radius),
                     self._radius,
                 )
 
             pygame.draw.circle(
-                self.original_image,
+                draw_image,
                 _color_name_to_rgb(self._color),
                 (self._radius, self._radius),
                 max(self._radius - self._border_width, 0),
             )
 
-            self.original_image.set_alpha(self._transparency * 2.55)
+            draw_image.set_alpha(self._transparency * 2.55)
 
-            self.rect = self.original_image.get_rect()
+            self.rect = draw_image.get_rect()
             pos = convert_pos(self.x, self.y)
             self.rect.x = pos[0] - self._radius
             self.rect.y = pos[1] - self._radius
 
-        if self.physics:
-            angle_deg = -_math.degrees(self.physics._pymunk_body.angle)
-            self._image = pygame.transform.rotate(self.original_image, angle_deg)
-            self.rect = self._image.get_rect(center=self.rect.center)
-        else:
-            self._image = self.original_image
+            if self.physics:
+                angle_deg = -_math.degrees(self.physics._pymunk_body.angle)
+                self._image = pygame.transform.rotate(draw_image, angle_deg)
+                self.rect = self._image.get_rect(center=self.rect.center)
+            else:
+                self._image = draw_image
 
         super().update()
 

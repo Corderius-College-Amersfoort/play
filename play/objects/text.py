@@ -24,7 +24,7 @@ class Text(Sprite):
         super().__init__()
         self._font = font
         self._font_size = font_size
-        self._pygame_font = self._load_font(font, font_size)
+        self._load_font(font, font_size)
         self._words = words
         self._color = color
 
@@ -88,7 +88,7 @@ class Text(Sprite):
     def font(self, font_name):
         """Set the font of the text object. This will load the font dynamically."""
         self._font = font_name
-        self._pygame_font = self._load_font(font_name, self._font_size)
+        self._load_font(font_name, self._font_size)
 
     @property
     def font_size(self):
@@ -99,7 +99,7 @@ class Text(Sprite):
     def font_size(self, size):
         """Set the font size of the text object."""
         self._font_size = size
-        self._pygame_font = self._load_font(self._font, size)
+        self._load_font(self._font, size)
 
     @property
     def color(self):
@@ -114,11 +114,15 @@ class Text(Sprite):
     def _load_font(self, font_name, font_size):
         """Helper method to load a font, either from a file or system."""
         if font_name == "default":
-            return pygame.font.Font(pygame.font.get_default_font(), font_size)
-
-        if os.path.isfile(font_name):
-            return pygame.font.Font(font_name, font_size)
-        play_logger.warning(
-            "File to font doesnt exist, Using default font", exc_info=True
-        )
-        return pygame.font.Font(pygame.font.get_default_font(), font_size)
+            self._pygame_font = pygame.font.Font(
+                pygame.font.get_default_font(), font_size
+            )
+        elif os.path.isfile(font_name):
+            self._pygame_font = pygame.font.Font(font_name, font_size)
+        else:
+            play_logger.warning(
+                "File to font doesnt exist, Using default font", exc_info=True
+            )
+            self._pygame_font = pygame.font.Font(
+                pygame.font.get_default_font(), font_size
+            )

@@ -21,16 +21,16 @@ def _raise_on_await_warning(func):
                     0
                 ]  # e.g. "coroutine 'timer' was never awaited"
                 if "was never awaited" in str_message:
-                    unawaited_function_name = str_message.split("'")[1]
+                    function_name = str_message.split("'")[1]
                     play_logger.warning(
                         """Looks like you forgot to put "await" before play.%s """
                         + """on line %s of file %s.\n"""
                         + """To fix this, just add the word 'await' before play. %s """
                         + """on line %s of file %s in the function %s.""",
-                        unawaited_function_name,
+                        function_name,
                         warning.lineno,
                         warning.filename,
-                        unawaited_function_name,
+                        function_name,
                         warning.lineno,
                         warning.filename,
                         func.__name__,
@@ -41,14 +41,14 @@ def _raise_on_await_warning(func):
     return raise_on_warning
 
 
-def _make_async(func):
+def make_async(func):
     """
     Turn a non-async function into an async function.
     Used mainly in decorators like @repeat_forever.
     :param func: A function that may or may not be async.
     """
     if _asyncio.iscoroutinefunction(func):
-        # if it's already async just return it
+        # if it's already async, return it
         return _raise_on_await_warning(func)
 
     @_raise_on_await_warning

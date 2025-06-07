@@ -40,13 +40,11 @@ class Box(Sprite):
     def update(self):
         """Update the box's position, size, angle, transparency, and border."""
         if self._should_recompute:
-            self.original_image = pygame.Surface(
-                (self._width, self._height), pygame.SRCALPHA
-            )
+            draw_image = pygame.Surface((self._width, self._height), pygame.SRCALPHA)
 
             if self._border_width > 0:
                 pygame.draw.rect(
-                    self.original_image,
+                    draw_image,
                     _color_name_to_rgb(self._border_color),
                     (0, 0, self._width, self._height),
                     self._border_width,
@@ -54,7 +52,7 @@ class Box(Sprite):
                 )
 
             pygame.draw.rect(
-                self.original_image,
+                draw_image,
                 _color_name_to_rgb(self._color),
                 (
                     self._border_width,
@@ -65,23 +63,20 @@ class Box(Sprite):
                 border_radius=max(self._border_radius - self._border_width, 0),
             )
 
-            self.original_image.set_alpha(self._transparency * 2.55)
-            self.original_image = pygame.transform.rotate(
-                self.original_image, self._angle
-            )
+            draw_image.set_alpha(int(self._transparency * 2.55))
+            draw_image = pygame.transform.rotate(draw_image, self._angle)
 
-            self.rect = self.original_image.get_rect()
+            self.rect = draw_image.get_rect()
             pos = convert_pos(self.x, self.y)
             self.rect.x = pos[0] - self._width // 2
             self.rect.y = pos[1] - self._height // 2
 
-        if self.physics:
-            angle_deg = -_math.degrees(self.physics._pymunk_body.angle)
-            self.image = pygame.transform.rotate(self.original_image, angle_deg)
-            self.rect = self.image.get_rect(center=self.rect.center)
-        else:
-            self.image = self.original_image
-
+            if self.physics:
+                angle_deg = -_math.degrees(self.physics._pymunk_body.angle)
+                self.image = pygame.transform.rotate(draw_image, angle_deg)
+                self.rect = self.image.get_rect(center=self.rect.center)
+            else:
+                self.image = draw_image
         super().update()
 
     ##### width #####

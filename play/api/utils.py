@@ -90,7 +90,6 @@ def key_is_pressed(*keys):
             if play.key_is_pressed('up', 'w'):
                 print('up or w pressed')
     """
-
     for key in keys:
         if key in _pressed_keys.values():
             return True

@@ -2,7 +2,7 @@
 This module contains the API for the game.
 """
 
-from pygame import init  # pylint: disable=no-name-in-module,import-error
+import pygame
 
 from .generators import new_text, new_box, new_circle, new_line, new_image, new_sound
 from .events import (
@@ -28,4 +28,4 @@ from .utils import (
 )
 from .random import random_number, random_color, random_position
 
-init()
+pygame.init()
