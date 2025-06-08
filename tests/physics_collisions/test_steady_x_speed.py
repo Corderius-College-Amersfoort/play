@@ -9,9 +9,9 @@ data_y = []
 
 def test_ball_movement():
     import sys
+
     sys.path.insert(0, ".")
     import play
-
 
     ball = play.new_circle(
         color="gray", x=0, y=0, radius=10, border_color="light blue", size=100, angle=0

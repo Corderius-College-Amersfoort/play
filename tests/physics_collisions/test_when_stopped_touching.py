@@ -10,9 +10,9 @@ expected_num_collisions = 1
 
 def test_ball_movement():
     import sys
+
     sys.path.insert(0, ".")
     import play
-
 
     ball = play.new_circle(
         color="black",

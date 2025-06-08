@@ -15,6 +15,7 @@ expected = (
 
 def test_ball_movement():
     import sys
+
     sys.path.insert(0, ".")
     import play
 
@@ -61,7 +62,9 @@ def test_ball_movement():
     for expected_value, actual_value in zip(expected, data):
         print(expected_value, actual_value)
         if expected_value != actual_value:
-            pytest.fail(f"expected ball.y to be {expected_value} but the y value is {actual_value}")
+            pytest.fail(
+                f"expected ball.y to be {expected_value} but the y value is {actual_value}"
+            )
 
 
 if __name__ == "__main__":

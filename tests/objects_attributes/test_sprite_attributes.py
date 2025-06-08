@@ -14,7 +14,7 @@ sprite_to_expected = {
         "size": 100,
         "angle": 30,
     },
-        "new_circle": {
+    "new_circle": {
         "color": "yellow",
         "x": 0,
         "y": 0,
@@ -24,13 +24,14 @@ sprite_to_expected = {
         "transparency": 100,
         "size": 100,
         "angle": 0,
-    }
+    },
 }
 
 
 @pytest.mark.parametrize("sprite_items", list(sprite_to_expected.items()))
 def test_sprite_attributes(sprite_items):
     import sys
+
     sys.path.insert(0, ".")
     print(sys.path)
     import play
