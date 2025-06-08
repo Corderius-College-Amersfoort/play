@@ -9,11 +9,9 @@ data_y = []
 
 def test_ball_movement():
     import sys
-
     sys.path.insert(0, ".")
     import play
 
-    print(play.__path__)
 
     ball = play.new_circle(
         color="gray", x=0, y=0, radius=10, border_color="light blue", size=100, angle=0
@@ -37,10 +35,6 @@ def test_ball_movement():
             play.stop_program()
 
     play.start_program()
-
-    # for actual_value in data_x_speed:
-    #    if math.ceil(abs(actual_value)) != x_speed:
-    #        pytest.fail(f'expected x_speed {actual_value} to be {x_speed}')
 
     for actual_value in data_y:
         if actual_value != 0:

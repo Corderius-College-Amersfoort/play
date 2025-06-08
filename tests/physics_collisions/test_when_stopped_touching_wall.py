@@ -10,11 +10,9 @@ expected_num_collisions = 1
 
 def test_ball_movement():
     import sys
-
     sys.path.insert(0, ".")
     import play
 
-    print(play.__path__)
 
     ball = play.new_circle(
         color="black",
@@ -38,7 +36,6 @@ def test_ball_movement():
     @ball.when_stopped_touching_wall
     def detect_collision():
         global num_collisions
-        print("collision")
         num_collisions += 1
 
     play.start_program()

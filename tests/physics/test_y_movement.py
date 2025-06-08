@@ -9,11 +9,9 @@ y_data = []
 
 def test_ball_movement():
     import sys
-
     sys.path.insert(0, ".")
     import play
 
-    print(play.__path__)
 
     ball = play.new_circle(color="gray", radius=10)
     ball.start_physics(
@@ -41,7 +39,7 @@ def test_ball_movement():
         actual_value = index
         print(expected_value, actual_value)
         if expected_value != actual_value:
-            pytest.fail(f"expected {expected_value} to be {actual_value}")
+            pytest.fail(f"expected ball.y to be {expected_value} but the y value is {actual_value}")
 
 
 if __name__ == "__main__":
