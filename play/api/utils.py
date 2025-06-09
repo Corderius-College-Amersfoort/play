@@ -45,6 +45,7 @@ def stop_program():
     play.stop_program() should almost certainly go at the very end of your program.
     """
     _loop.stop()
+    pygame.display.quit()
     pygame.quit()  # pylint: disable=no-member
 
 
