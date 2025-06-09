@@ -12,6 +12,7 @@ def write_data():
     db.set_data("test", "value")
     assert db.get_data("test") == "value"
     db.set_data("test_nested", {})
+    assert db.get_data("test_nested") == {}
     db.set_data("test_nested:sub", "value")
     assert db.get_data("test_nested:sub") == "value"
 

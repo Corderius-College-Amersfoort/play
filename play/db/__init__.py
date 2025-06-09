@@ -5,7 +5,7 @@ import os
 
 
 class Database:
-    def __init__(self, db_filename="database.json"):
+    def __init__(self, db_filename="./database.json"):
         """
         Initialize the database with a JSON file.
         :param db_filename: The name of the JSON file to use as the database.
@@ -18,7 +18,7 @@ class Database:
                 write_f.write("{}")
 
         with open(db_filename, "r", encoding="utf-8") as read_file:
-            self.data = read_file.read()
+            self.data = json.loads(read_file.read())
 
     def get_data(self, key):
         """Get a value from the database.
