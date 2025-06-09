@@ -6,13 +6,16 @@ from .mouse_loop import mouse_state
 from ..callback import callback_manager, CallbackType
 from ..callback.callback_helpers import run_callback, run_async_callback
 from ..globals import globals_list
-from ..io.screen import convert_pos, PYGAME_DISPLAY
+from ..io.screen import convert_pos
 from ..io.mouse import mouse
 from ..objects.line import Line
 from ..objects.sprite import point_touching_sprite
 
 
-async def _update_sprites(do_events: bool = True):  # pylint: disable=too-many-branches
+async def update_sprites(do_events: bool = True):  # pylint: disable=too-many-branches
+    """Update all sprites in the game loop.
+    :param do_events: If True, run events for sprites. If False, only update positions.
+    """
     # pylint: disable=too-many-nested-blocks
     globals_list.sprites_group.update()
 
@@ -37,9 +40,7 @@ async def _update_sprites(do_events: bool = True):  # pylint: disable=too-many-b
                 if str(body.position.y) != "nan":
                     sprite._y = body.position.y
 
-            sprite.angle = (
-                angle  # needs to be .angle, not ._angle so surface gets recalculated
-            )
+            sprite.angle = angle
             sprite.physics._x_speed, sprite.physics._y_speed = body.velocity
 
         sprite._is_clicked = False
@@ -81,4 +82,4 @@ async def _update_sprites(do_events: bool = True):  # pylint: disable=too-many-b
                             )
 
     globals_list.sprites_group.update()
-    globals_list.sprites_group.draw(PYGAME_DISPLAY)
+    globals_list.sprites_group.draw(globals_list.display)

@@ -3,7 +3,7 @@
 import pygame
 
 from ..callback import callback_manager, CallbackType
-from ..utils.async_helpers import _make_async
+from ..utils.async_helpers import make_async
 from ..callback.callback_helpers import run_async_callback
 
 pygame.key.set_repeat(200, 16)
@@ -12,21 +12,11 @@ _pressed_keys = []
 
 _keys_released_this_frame = []
 _keys_to_skip = (pygame.K_MODE,)
-pygame.event.set_allowed(
-    [
-        pygame.QUIT,
-        pygame.KEYDOWN,
-        pygame.KEYUP,
-        pygame.MOUSEBUTTONDOWN,
-        pygame.MOUSEBUTTONUP,
-        pygame.MOUSEMOTION,
-    ]
-)
 
 
 def when_any_key(func, released=False):
     """Run a function when any key is pressed or released."""
-    async_callback = _make_async(func)
+    async_callback = make_async(func)
 
     async def wrapper(key):
         wrapper.is_running = True
@@ -44,20 +34,22 @@ def when_any_key(func, released=False):
 
 def when_key(*keys, released=False):
     """Run a function when a key is pressed or released."""
-    for key in keys:
-        if not isinstance(key, str) and not (isinstance(key, list) and (not released)):
+    for control_key in keys:
+        if not isinstance(control_key, str) and not (
+            isinstance(control_key, list) and (not released)
+        ):
             raise ValueError("Key must be a string or a list of strings.")
-        if isinstance(key, list):
-            for sub_key in key:
+        if isinstance(control_key, list):
+            for sub_key in control_key:
                 if not isinstance(sub_key, str):
                     raise ValueError("Key must be a string or a list of strings.")
 
     def decorator(func):
-        async_callback = _make_async(func)
+        async_callback = make_async(func)
 
-        async def wrapper(key):
+        async def wrapper(active_key):
             wrapper.is_running = True
-            await run_async_callback(async_callback, [], ["key"], key)
+            await run_async_callback(async_callback, [], ["key"], active_key)
             wrapper.is_running = False
 
         wrapper.is_running = False

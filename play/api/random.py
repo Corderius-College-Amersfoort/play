@@ -12,7 +12,6 @@ def random_number(lowest=0, highest=100):
     :param highest: The highest number that can be returned.
     :return: A random number between `lowest` and `highest`.
     """
-    # if user supplies whole numbers, return whole numbers
     if isinstance(lowest, int) and isinstance(highest, int):
         return _random.randint(lowest, highest)
     # if user supplied any floats, return decimals
@@ -35,7 +34,7 @@ def random_position(
         sprite.x = position.x
         sprite.y = position.y
 
-    or equivalently:
+    Or equivalently:
         sprite.go_to(play.random_position())
     """
     return _Position(

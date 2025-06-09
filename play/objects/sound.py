@@ -20,7 +20,6 @@ class Sound:
         self.loops = loops
         self.is_paused = False
         self.load(file_name)
-        self.set_volume(volume)
 
     def load(self, file_name):
         """Load a sound file."""
@@ -42,7 +41,7 @@ class Sound:
         if self.channel is None:
             logger.warning("No available channels to play the sound.", exc_info=True)
 
-        if not self.is_playing():
+        if not self.playing:
             self.channel.play(self.sound, loops=self.loops)
         if self.is_paused:
             self.channel.unpause()
@@ -54,27 +53,17 @@ class Sound:
             self.channel.pause()
             self.is_paused = True
 
-    def length_song(self):
+    @property
+    def length(self):
         """Returns the length of the song as a float"""
-
         return round((self.channel.get_sound().get_length()), 2)
 
     def stop(self):
         """Stop current channel"""
         self.channel.stop()
 
-    def set_volume(self, volume):
-        """Set the volume of the sound (0.0 to 1.0)."""
-        if not self.sound:
-            logger.warning(
-                "No sound loaded. Use the 'load' method first.", exc_info=True
-            )
-        if not 0.0 <= volume <= 1.0:
-            logger.warning("Volume must be between 0.0 and 1.0", exc_info=True)
-        self.volume = volume
-        self.sound.set_volume(volume)
-
-    def get_volume(self):
+    @property
+    def volume(self):
         """Get the current volume of the sound."""
         if not self.sound:
             logger.warning(
@@ -83,7 +72,20 @@ class Sound:
         volume = self.sound.get_volume()
         return volume
 
-    def is_playing(self):
+    @volume.setter
+    def volume(self, volume):
+        """Set the volume of the sound (0.0 to 1.0)."""
+        if not self.sound:
+            logger.warning(
+                "No sound loaded. Use the 'load' method first.", exc_info=True
+            )
+        if not 0.0 <= volume <= 1.0:
+            logger.warning("Volume must be between 0.0 and 1.0", exc_info=True)
+        self._volume = volume
+        self.sound.set_volume(volume)
+
+    @property
+    def playing(self):
         """Check if the sound is currently playing."""
         if self.channel:
             return self.channel.get_busy()
