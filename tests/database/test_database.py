@@ -6,6 +6,7 @@ sys.path.append(".")
 
 def write_data():
     from play.db import Database
+
     db = Database()
 
     db.set_data("test", "value")
@@ -17,6 +18,7 @@ def write_data():
 
 def check_data():
     from play.db import Database
+
     db = Database()
 
     assert db.get_data("test") == "value"
