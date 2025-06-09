@@ -1,5 +1,9 @@
 """The library to make pygame easier to use."""
 
+import pygame
+
+pygame.init()
+
 import warnings
 from .api import *
 from .io.controllers import controllers
