@@ -5,20 +5,22 @@ sys.path.append(".")
 
 
 def write_data():
-    from play.db import get_data, set_data
+    from play.db import Database
+    db = Database()
 
-    set_data("test", "value")
-    assert get_data("test") == "value"
-    set_data("test_nested", {})
-    set_data("test_nested:sub", "value")
-    assert get_data("test_nested:sub") == "value"
+    db.set_data("test", "value")
+    assert db.get_data("test") == "value"
+    db.set_data("test_nested", {})
+    db.set_data("test_nested:sub", "value")
+    assert db.get_data("test_nested:sub") == "value"
 
 
 def check_data():
-    from play.db import get_data
+    from play.db import Database
+    db = Database()
 
-    assert get_data("test") == "value"
-    assert get_data("test_nested:sub") == "value"
+    assert db.get_data("test") == "value"
+    assert db.get_data("test_nested:sub") == "value"
 
 
 def cleanup():
