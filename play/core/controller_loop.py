@@ -6,7 +6,7 @@ from ..callback import callback_manager, CallbackType
 from ..io.controllers import (
     controllers,
 )
-from ..callback.callback_helpers import run_async_callback
+from ..callback.callback_helpers import run_callback
 
 controller_axis_moved = False  # pylint: disable=invalid-name
 controller_button_pressed = False  # pylint: disable=invalid-name
@@ -48,16 +48,12 @@ async def _handle_controller():  # pylint: disable=too-many-branches
                         )
                         == 1
                     ):
-                        await run_async_callback(
-                            callback, ["button_number"], [], button
-                        )
+                        run_callback(callback, ["button_number"], [], button)
         for button, callbacks in controller_button_callbacks.items():
             if button != "any":
                 for callback in callbacks:
                     if controllers.get_button(callback.controller, button) == 1:
-                        await run_async_callback(
-                            callback, ["button_number"], [], [], button
-                        )
+                        run_callback(callback, ["button_number"], [], [], button)
         controller_button_pressed = False
 
     ############################################################
@@ -78,13 +74,11 @@ async def _handle_controller():  # pylint: disable=too-many-branches
                         )
                         == 0
                     ):
-                        await run_async_callback(
-                            callback, ["button_number"], [], button
-                        )
+                        run_callback(callback, ["button_number"], [], button)
         for button, callbacks in released_callbacks.items():
             for callback in callbacks:
                 if controllers.get_button(callback.controller, button) == 0:
-                    await run_async_callback(callback, ["button_number"], [], button)
+                    run_callback(callback, ["button_number"], [], button)
         controller_button_released = False
     ############################################################
     # @controller.when_axis_moved
@@ -98,7 +92,7 @@ async def _handle_controller():  # pylint: disable=too-many-branches
         if "any" in axis_moved_callbacks:
             for callback in axis_moved_callbacks["any"]:
                 for axis in range(controllers.get_numaxes(callback.controller)):
-                    await run_async_callback(
+                    run_callback(
                         callback,
                         ["axis_number", "axis_value"],
                         [],
@@ -108,7 +102,7 @@ async def _handle_controller():  # pylint: disable=too-many-branches
         for axis, callbacks in axis_moved_callbacks.items():
             if axis != "any":
                 for callback in callbacks:
-                    await run_async_callback(
+                    run_callback(
                         callback,
                         ["axis_number", "axis_value"],
                         [],

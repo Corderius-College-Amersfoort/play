@@ -445,6 +445,7 @@ You might want to look in your code where you're setting transparency and make s
     def when_touching(self, *sprites):
         """Run a function when the sprite is touching another sprite.
         :param sprites: The sprites to check if they're touching.
+        BEWARE: This function will yield the game loop until the given function returns.
         """
 
         def decorator(func):
@@ -526,6 +527,7 @@ You might want to look in your code where you're setting transparency and make s
     def when_touching_wall(self, callback):
         """Run a function when the sprite is touching the edge of the screen.
         :param callback: The function to run.
+        BEWARE: This function will yield the game loop until the given function returns.
         """
         async_callback = _make_async(callback)
 
