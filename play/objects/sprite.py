@@ -295,9 +295,9 @@ You might want to look in your code where you're setting transparency and make s
         :return: Whether the sprite is touching the other sprite or point."""
         if isinstance(sprite_or_point, Sprite):
             if self.physics and sprite_or_point.physics:
-                return self.physics._pymunk_shape.shapes_collide(
+                return len(self.physics._pymunk_shape.shapes_collide(
                     sprite_or_point.physics._pymunk_shape
-                ).points
+                ).points) > 0
             return _sprite_touching_sprite(self, sprite_or_point)
         return point_touching_sprite(sprite_or_point, self)
 
