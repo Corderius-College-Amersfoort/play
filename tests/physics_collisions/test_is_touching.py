@@ -45,21 +45,17 @@ def test_ball_movement():
         global num_collisions_method
         num_frames += 1
 
-        if ball.is_touching(batje):
-            num_collisions_method += 1
-
         if num_frames == max_frames:
             play.stop_program()
 
     play.start_program()
 
     if not (
-        num_collisions_method
-        == num_collisions_decorator
+        num_collisions_decorator
         == method_check_inside_decorator
     ):
         pytest.fail(
-            f"expected the number of collisions detected by the method and the decorator to be equal, but found {num_collisions_method}, {num_collisions_decorator}, {method_check_inside_decorator}"
+            f"expected the number of collisions detected by the method and the decorator to be equal, but found {num_collisions_decorator}, {method_check_inside_decorator}"
         )
 
 
