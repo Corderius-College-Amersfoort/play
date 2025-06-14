@@ -50,10 +50,7 @@ def test_ball_movement():
 
     play.start_program()
 
-    if not (
-        num_collisions_decorator
-        == method_check_inside_decorator
-    ):
+    if not (num_collisions_decorator == method_check_inside_decorator):
         pytest.fail(
             f"expected the number of collisions detected by the method and the decorator to be equal, but found {num_collisions_decorator}, {method_check_inside_decorator}"
         )
