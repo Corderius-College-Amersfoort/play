@@ -263,7 +263,6 @@ You might want to look in your code where you're setting transparency and make s
         self._is_hidden = False
         if self.physics:
             self.physics.unpause()
-            self.physics._make_pymunk()
 
     @property
     def is_hidden(self):
