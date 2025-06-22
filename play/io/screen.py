@@ -13,8 +13,10 @@ from screeninfo import get_monitors
 
 import pymunk as _pymunk
 
+from ..callback import run_callback, CallbackType, callback_manager
 from ..globals import globals_list
 from ..physics import physics_space
+from ..utils.async_helpers import make_async
 
 PYGAME_DISPLAY = None
 
@@ -132,6 +134,24 @@ class Screen:
         """Get the size of the screen.
         :return: The size of the screen."""
         return self.width, self.height
+
+    def when_resized(self, func):
+        """Run a function when the screen is resized.
+        :param func: The function to run."""
+        async_callback = make_async(func)
+
+        async def wrapper():
+            run_callback(
+                async_callback,
+                [],
+                [],
+            )
+
+        callback_manager.add_callback(
+            CallbackType.WHEN_RESIZED,
+            wrapper,
+        )
+        return wrapper
 
     def enable_fullscreen(self):
         """Enable fullscreen mode."""

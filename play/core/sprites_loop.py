@@ -68,18 +68,9 @@ async def update_sprites(do_events: bool = True):  # pylint: disable=too-many-br
             ):
                 # only run sprite clicks on the frame the mouse was clicked
                 sprite._is_clicked = True
-                if callback_manager.get_callback(
+                callback_manager.run_callbacks(
                     CallbackType.WHEN_CLICKED_SPRITE, id(sprite)
-                ):
-                    for callback in callback_manager.get_callback(
-                        CallbackType.WHEN_CLICKED_SPRITE, id(sprite)
-                    ):
-                        if not callback.is_running:
-                            run_callback(
-                                callback,
-                                [],
-                                [],
-                            )
+                )
 
     globals_list.sprites_group.update()
     globals_list.sprites_group.draw(globals_list.display)

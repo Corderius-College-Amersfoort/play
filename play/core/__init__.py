@@ -60,6 +60,16 @@ def _handle_pygame_events():
             if not (event.key in _keys_to_skip) and name in _pressed_keys:
                 _keys_released_this_frame.append(name)
                 _pressed_keys.remove(name)
+        if event.type == pygame.WINDOWRESIZED:
+            screen.width, screen.height = event.w, event.h
+            globals_list.display = pygame.display.set_mode(
+                (screen.width, screen.height), pygame.RESIZABLE
+            )
+            globals_list.backdrop = pygame.transform.smoothscale(
+                globals_list.backdrop, (screen.width, screen.height)
+            )
+            callback_manager.run_callbacks(CallbackType.WHEN_RESIZED)
+
     return True
 
 
@@ -102,7 +112,8 @@ async def game_loop():
     ):
         await _handle_mouse_loop()
 
-    await _handle_controller()
+    if controller_axis_moved or controller_button_pressed or controller_button_released:
+        await _handle_controller()
 
     #############################
     # @repeat_forever callbacks

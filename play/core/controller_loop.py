@@ -33,86 +33,49 @@ async def handle_controller():  # pylint: disable=too-many-branches
     # @controller.when_button_pressed and @controller.when_any_button_pressed
     ############################################################
     global controller_button_pressed, controller_button_released, controller_axis_moved
-    if controller_button_pressed and callback_manager.get_callbacks(
-        CallbackType.WHEN_CONTROLLER_BUTTON_PRESSED
-    ):
-        controller_button_callbacks = callback_manager.get_callbacks(
-            CallbackType.WHEN_CONTROLLER_BUTTON_PRESSED
-        )
-        if "any" in controller_button_callbacks:
-            for callback in controller_button_callbacks["any"]:
-                for button in range(controllers.get_num_buttons(callback.controller)):
-                    if (
-                        controllers.get_controller(callback.controller).get_button(
-                            button
-                        )
-                        == 1
-                    ):
-                        await run_async_callback(
-                            callback, ["button_number"], [], button
-                        )
-        for button, callbacks in controller_button_callbacks.items():
-            if button != "any":
-                for callback in callbacks:
-                    if controllers.get_button(callback.controller, button) == 1:
-                        await run_async_callback(
-                            callback, ["button_number"], [], [], button
-                        )
+    if controller_button_pressed:
+        for controller in controllers.get_controllers():
+            controller_buttons_pressed = controllers.get_controller(
+                controller
+            ).get_buttons_pressed()
+            callback_manager.run_callbacks_with_filter(
+                CallbackType.WHEN_CONTROLLER_BUTTON_PRESSED,
+                controller_buttons_pressed,
+                ["button_number"],
+                [],
+                {"controller": controller},
+            )
         controller_button_pressed = False
 
     ############################################################
     # @controller.when_button_released
     ############################################################
-    if controller_button_released and callback_manager.get_callbacks(
-        CallbackType.WHEN_CONTROLLER_BUTTON_RELEASED
-    ):
-        released_callbacks = callback_manager.get_callbacks(
-            CallbackType.WHEN_CONTROLLER_BUTTON_RELEASED
-        )
-        if "any" in released_callbacks:
-            for callback in released_callbacks["any"]:
-                for button in range(controllers.get_num_buttons(callback.controller)):
-                    if (
-                        controllers.get_controller(callback.controller).get_button(
-                            button
-                        )
-                        == 0
-                    ):
-                        await run_async_callback(
-                            callback, ["button_number"], [], button
-                        )
-        for button, callbacks in released_callbacks.items():
-            for callback in callbacks:
-                if controllers.get_button(callback.controller, button) == 0:
-                    await run_async_callback(callback, ["button_number"], [], button)
+    if controller_button_released:
+        for controller in controllers.get_controllers():
+            controller_buttons_released = controllers.get_controller(
+                controller
+            ).get_buttons_released()
+            callback_manager.run_callbacks_with_filter(
+                CallbackType.WHEN_CONTROLLER_BUTTON_RELEASED,
+                controller_buttons_released,
+                ["button_number"],
+                [],
+                {"controller": controller},
+            )
         controller_button_released = False
     ############################################################
     # @controller.when_axis_moved
     ############################################################
-    if controller_axis_moved and callback_manager.get_callbacks(
-        CallbackType.WHEN_CONTROLLER_AXIS_MOVED
-    ):
-        axis_moved_callbacks = callback_manager.get_callbacks(
-            CallbackType.WHEN_CONTROLLER_AXIS_MOVED
-        )
-        if "any" in axis_moved_callbacks:
-            for callback in axis_moved_callbacks["any"]:
-                for axis in range(controllers.get_num_axes(callback.controller)):
-                    await run_async_callback(
-                        callback,
-                        ["axis_number", "axis_value"],
-                        [],
-                        axis,
-                        controllers.get_axis(callback.controller, axis),
-                    )
-        for axis, callbacks in axis_moved_callbacks.items():
-            if axis != "any":
-                for callback in callbacks:
-                    await run_async_callback(
-                        callback,
-                        ["axis_number", "axis_value"],
-                        [],
-                        axis,
-                        controllers.get_axis(callback.controller, axis),
-                    )
+    if controller_axis_moved:
+        for controller in controllers.get_controllers():
+            controller_axis_moved = controllers.get_controller(
+                controller
+            ).get_axis_moved()
+            callback_manager.run_callbacks_with_filter(
+                CallbackType.WHEN_CONTROLLER_AXIS_MOVED,
+                controller_axis_moved,
+                ["axis_number", "value"],
+                [],
+                {"controller": controller},
+            )
         controller_axis_moved = False

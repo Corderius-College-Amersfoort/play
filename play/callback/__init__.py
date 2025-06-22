@@ -22,6 +22,7 @@ class CallbackType(Enum):
     WHEN_CONTROLLER_BUTTON_PRESSED = 11
     WHEN_CONTROLLER_BUTTON_RELEASED = 12
     WHEN_CONTROLLER_AXIS_MOVED = 13
+    WHEN_RESIZED = 14
 
 
 class CallbackManager:
@@ -72,18 +73,33 @@ class CallbackManager:
             return self.callbacks.get(callback_type, None)
         return self.callbacks.get(callback_type, {}).get(callback_discriminator, None)
 
-    def run_callbacks(self, callback_type, *args, **kwargs):
+    def run_callbacks(
+        self, callback_type, callback_discriminator=None, *args, **kwargs
+    ):
         """
         Run all callbacks of a certain type with the given arguments.
         :param callback_type: The type of callback.
+        :param callback_discriminator: The discriminator for the callback.
         :param args: Positional arguments to pass to the callbacks.
         :param kwargs: Keyword arguments to pass to the callbacks.
         :return: None
         """
         if callback_type in self.callbacks:
-            for callback in self.callbacks[callback_type]:
-                if callable(callback) and (hasattr(callback, "is_running") is False):
-                    run_callback(callback, args, kwargs)
+            if callback_discriminator is not None:
+                if callback_discriminator in self.callbacks[callback_type]:
+                    for callback in self.callbacks[callback_type][
+                        callback_discriminator
+                    ]:
+                        if callable(callback) and (
+                            hasattr(callback, "is_running") is False
+                        ):
+                            run_callback(callback, args, kwargs)
+            else:
+                for callback in self.callbacks[callback_type]:
+                    if callable(callback) and (
+                        hasattr(callback, "is_running") is False
+                    ):
+                        run_callback(callback, args, kwargs)
 
     async def run_callbacks_with_filter(
         self,
@@ -91,39 +107,56 @@ class CallbackManager:
         activated_states,
         required_args=None,
         optional_args=None,
+        property_filter={},
         *args
     ):
         """
         Run callbacks of a certain type with a specific discriminator.
         :param callback_type: The type of callback.
+        :param activated_states: The states to filter by.
         :param required_args: The required arguments for the callback.
         :param optional_args: The optional arguments for the callback.
-        :param activated_states: The states to filter by.
+        :param property_filter: A dictionary of properties to filter the callbacks. For example, {'controller': 0}.
         :return: None
         """
         if required_args is None:
             required_args = []
         if optional_args is None:
             optional_args = []
+
+        def is_valid_callback(callback):
+            if not callable(callback):
+                return False
+            if hasattr(callback, "is_running") and callback.is_running:
+                return False
+            if property_filter:
+                for key, value in property_filter.items():
+                    if (
+                        getattr(callback, key, None) != value
+                        and getattr(callback, key, None) != "any"
+                    ):
+                        return False
+            return True
+
         if activated_states and self.get_callbacks(callback_type):
             subscriptions = self.get_callbacks(callback_type)
             for state in activated_states:
                 if state in subscriptions:
                     for callback in subscriptions[state]:
-                        if not callback.is_running:
+                        if is_valid_callback(callback):
                             await run_async_callback(
                                 callback, required_args, optional_args, state, *args
                             )
                 if "any" in subscriptions:
                     for callback in subscriptions["any"]:
-                        if not callback.is_running:
+                        if is_valid_callback(callback):
                             await run_async_callback(
                                 callback, required_args, optional_args, state, *args
                             )
             all_hash = hash(frozenset(activated_states))
             if all_hash in subscriptions:
                 for callback in subscriptions[all_hash]:
-                    if not callback.is_running:
+                    if is_valid_callback(callback):
                         await run_async_callback(
                             callback,
                             required_args,
