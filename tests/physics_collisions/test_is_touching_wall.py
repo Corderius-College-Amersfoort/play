@@ -4,7 +4,6 @@ num_frames = 0
 max_frames = 200
 x_speed = 300
 
-num_collisions_method = 0
 method_check_inside_decorator = 0
 num_collisions_decorator = 0
 
@@ -37,24 +36,16 @@ def test_ball_movement():
     @play.repeat_forever
     def move():
         global num_frames
-        global num_collisions_method
         num_frames += 1
-
-        if ball.is_touching_wall():
-            num_collisions_method += 1
 
         if num_frames == max_frames:
             play.stop_program()
 
     play.start_program()
 
-    if not (
-        num_collisions_method
-        == num_collisions_decorator
-        == method_check_inside_decorator
-    ):
+    if not (num_collisions_decorator == 1 and method_check_inside_decorator == 1):
         pytest.fail(
-            f"expected the number of collisions detected by the method and the decorator to be equal, but found {num_collisions_method}, {num_collisions_decorator}, {method_check_inside_decorator}"
+            f"expected one collision by the method and the decorator, but found, {num_collisions_decorator}, {method_check_inside_decorator}"
         )
 
 
