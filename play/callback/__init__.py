@@ -4,6 +4,8 @@ This module contains the CallbackManager class and CallbackType enum.
 
 from enum import Enum
 
+from play.callback.callback_helpers import run_callback, run_async_callback
+
 
 class CallbackType(Enum):
     REPEAT_FOREVER = 0
@@ -69,6 +71,65 @@ class CallbackManager:
         if callback_discriminator is None:
             return self.callbacks.get(callback_type, None)
         return self.callbacks.get(callback_type, {}).get(callback_discriminator, None)
+
+    def run_callbacks(self, callback_type, *args, **kwargs):
+        """
+        Run all callbacks of a certain type with the given arguments.
+        :param callback_type: The type of callback.
+        :param args: Positional arguments to pass to the callbacks.
+        :param kwargs: Keyword arguments to pass to the callbacks.
+        :return: None
+        """
+        if callback_type in self.callbacks:
+            for callback in self.callbacks[callback_type]:
+                if callable(callback) and (hasattr(callback, "is_running") is False):
+                    run_callback(callback, args, kwargs)
+
+    async def run_callbacks_with_filter(
+        self,
+        callback_type,
+        activated_states,
+        required_args=None,
+        optional_args=None,
+        *args
+    ):
+        """
+        Run callbacks of a certain type with a specific discriminator.
+        :param callback_type: The type of callback.
+        :param required_args: The required arguments for the callback.
+        :param optional_args: The optional arguments for the callback.
+        :param activated_states: The states to filter by.
+        :return: None
+        """
+        if required_args is None:
+            required_args = []
+        if optional_args is None:
+            optional_args = []
+        if activated_states and self.get_callbacks(callback_type):
+            subscriptions = self.get_callbacks(callback_type)
+            for state in activated_states:
+                if state in subscriptions:
+                    for callback in subscriptions[state]:
+                        if not callback.is_running:
+                            await run_async_callback(
+                                callback, required_args, optional_args, state, *args
+                            )
+                if "any" in subscriptions:
+                    for callback in subscriptions["any"]:
+                        if not callback.is_running:
+                            await run_async_callback(
+                                callback, required_args, optional_args, state, *args
+                            )
+            all_hash = hash(frozenset(activated_states))
+            if all_hash in subscriptions:
+                for callback in subscriptions[all_hash]:
+                    if not callback.is_running:
+                        await run_async_callback(
+                            callback,
+                            required_args,
+                            optional_args,
+                            activated_states,
+                        )
 
 
 callback_manager = CallbackManager()

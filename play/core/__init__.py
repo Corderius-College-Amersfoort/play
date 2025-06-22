@@ -18,15 +18,14 @@ from .mouse_loop import (
 from .physics_loop import simulate_physics
 from .sprites_loop import update_sprites as _update_sprites
 from ..callback import callback_manager, CallbackType
-from ..callback.callback_helpers import run_async_callback, run_callback
 from ..globals import globals_list
-from ..io.screen import screen, PYGAME_DISPLAY
 from ..io.keypress import (
     key_num_to_name as _pygame_key_to_name,
     _keys_released_this_frame,
     _keys_to_skip,
     _pressed_keys,
 )  # don't pollute user-facing namespace with library internals
+from ..io.screen import screen
 from ..loop import loop as _loop
 
 _clock = pygame.time.Clock()
@@ -70,69 +69,16 @@ async def _handle_keyboard():
     ############################################################
     # @when_any_key_pressed and @when_key_pressed callbacks
     ############################################################
-    if (
-        _pressed_keys
-        and callback_manager.get_callbacks(CallbackType.PRESSED_KEYS) is not None
-    ):
-        press_subscription = callback_manager.get_callbacks(CallbackType.PRESSED_KEYS)
-        for key in _pressed_keys:
-            if key in callback_manager.get_callbacks(CallbackType.PRESSED_KEYS):
-                for callback in press_subscription[key]:
-                    if not callback.is_running:
-                        await run_async_callback(
-                            callback,
-                            ["key"],
-                            [],
-                            key,
-                        )
-            if "any" in press_subscription:
-                for callback in press_subscription["any"]:
-                    if not callback.is_running:
-                        await run_async_callback(
-                            callback,
-                            ["key"],
-                            [],
-                            key,
-                        )
-        keys_hash = hash(frozenset(_pressed_keys))
-        if keys_hash in press_subscription:
-            for callback in press_subscription[keys_hash]:
-                if not callback.is_running:
-                    await run_async_callback(
-                        callback,
-                        ["key"],
-                        [],
-                        _pressed_keys,
-                    )
+    await callback_manager.run_callbacks_with_filter(
+        CallbackType.PRESSED_KEYS, _pressed_keys, ["key"]
+    )
 
     ############################################################
     # @when_any_key_released and @when_key_released callbacks
     ############################################################
-    if _keys_released_this_frame and callback_manager.get_callbacks(
-        CallbackType.RELEASED_KEYS
-    ):
-        release_subscriptions = callback_manager.get_callbacks(
-            CallbackType.RELEASED_KEYS
-        )
-        for key in _keys_released_this_frame:
-            if key in release_subscriptions:
-                for callback in release_subscriptions[key]:
-                    if not callback.is_running:
-                        await run_async_callback(
-                            callback,
-                            ["key"],
-                            [],
-                            key,
-                        )
-            if "any" in release_subscriptions:
-                for callback in release_subscriptions["any"]:
-                    if not callback.is_running:
-                        await run_async_callback(
-                            callback,
-                            ["key"],
-                            [],
-                            key,
-                        )
+    await callback_manager.run_callbacks_with_filter(
+        CallbackType.RELEASED_KEYS, _keys_released_this_frame, ["key"]
+    )
 
 
 # pylint: disable=too-many-branches, too-many-statements
@@ -161,10 +107,7 @@ async def game_loop():
     #############################
     # @repeat_forever callbacks
     #############################
-    if callback_manager.get_callbacks(CallbackType.REPEAT_FOREVER) is not None:
-        for callback in callback_manager.get_callbacks(CallbackType.REPEAT_FOREVER):
-            if not callback.is_running:
-                run_callback(callback, [], [])
+    callback_manager.run_callbacks(CallbackType.REPEAT_FOREVER)
 
     #############################
     # physics simulation

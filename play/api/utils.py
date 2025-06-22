@@ -21,13 +21,7 @@ def start_program():
 
     play.start_program() should almost certainly go at the very end of your program.
     """
-    if callback_manager.get_callbacks(CallbackType.WHEN_PROGRAM_START) is not None:
-        for func in callback_manager.get_callbacks(CallbackType.WHEN_PROGRAM_START):
-            run_callback(
-                func,
-                [],
-                [],
-            )
+    callback_manager.run_callbacks(CallbackType.WHEN_PROGRAM_START)
 
     _loop.create_task(_game_loop())
     try:
