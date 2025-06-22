@@ -52,5 +52,5 @@ class Image(Sprite):
         """Set the image."""
         if not os.path.isfile(image):
             raise FileNotFoundError(f"Image file '{image}' not found.")
-        self._original_image = pygame.image.load(image)
+        self._image = pygame.image.load(image)
         self.update()

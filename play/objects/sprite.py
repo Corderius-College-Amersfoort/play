@@ -593,7 +593,6 @@ You might want to look in your code where you're setting transparency and make s
     def clone(self):
         """Clone the sprite.
         :return: The cloned sprite."""
-        # TODO: make work with physics
         return self.__class__(image=self.image)
 
     def start_physics(  # pylint: disable=too-many-arguments
