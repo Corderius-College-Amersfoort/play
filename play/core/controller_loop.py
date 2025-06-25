@@ -6,7 +6,7 @@ from ..callback import callback_manager, CallbackType
 from ..io.controllers import (
     controllers,
 )
-from ..callback.callback_helpers import run_async_callback
+from ..callback.callback_helpers import run_callback
 
 controller_axis_moved = False  # pylint: disable=invalid-name
 controller_button_pressed = False  # pylint: disable=invalid-name

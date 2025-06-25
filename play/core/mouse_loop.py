@@ -3,7 +3,6 @@
 import pygame
 
 from ..callback import callback_manager, CallbackType
-from ..callback.callback_helpers import run_async_callback
 from ..io.mouse import mouse
 from ..io.screen import screen
 
@@ -50,4 +49,3 @@ async def handle_mouse_loop():
             CallbackType.WHEN_CLICK_RELEASED,
             [],
             [],
-        )

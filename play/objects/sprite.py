@@ -10,7 +10,7 @@ from ..callback import callback_manager, CallbackType
 from ..callback.callback_helpers import run_async_callback, run_callback
 from ..callback.collision_callbacks import collision_registry, CollisionType
 from ..globals import globals_list
-from ..io import screen
+from ..io.screen import screen
 from ..physics import physics_space, Physics as _Physics
 from ..utils import clamp as _clamp
 from ..utils.async_helpers import make_async
@@ -70,8 +70,17 @@ class Sprite(
     def is_touching_wall(self) -> bool:
         """Check if the sprite is touching the edge of the screen.
         :return: Whether the sprite is touching the edge of the screen."""
-        for wall in globals_list.walls:
-            if self.physics._pymunk_shape.shapes_collide(wall).points:
+        if self.physics:
+            for wall in globals_list.walls:
+                if self.physics._pymunk_shape.shapes_collide(wall).points:
+                    return True
+        else:
+            if (
+                self.left < -screen.width / 2
+                or self.right > screen.width / 2
+                or self.top > screen.height / 2
+                or self.bottom < -screen.height / 2
+            ):
                 return True
         return False
 
@@ -254,7 +263,6 @@ You might want to look in your code where you're setting transparency and make s
         self._is_hidden = False
         if self.physics:
             self.physics.unpause()
-            self.physics._make_pymunk()
 
     @property
     def is_hidden(self):
@@ -285,6 +293,15 @@ You might want to look in your code where you're setting transparency and make s
         :param sprite_or_point: The sprite or point to check if it's touching.
         :return: Whether the sprite is touching the other sprite or point."""
         if isinstance(sprite_or_point, Sprite):
+            if self.physics and sprite_or_point.physics:
+                return (
+                    len(
+                        self.physics._pymunk_shape.shapes_collide(
+                            sprite_or_point.physics._pymunk_shape
+                        ).points
+                    )
+                    > 0
+                )
             return _sprite_touching_sprite(self, sprite_or_point)
         return point_touching_sprite(sprite_or_point, self)
 
@@ -445,6 +462,7 @@ You might want to look in your code where you're setting transparency and make s
     def when_touching(self, *sprites):
         """Run a function when the sprite is touching another sprite.
         :param sprites: The sprites to check if they're touching.
+        BEWARE: This function will yield the game loop until the given function returns.
         """
 
         def decorator(func):
@@ -526,6 +544,7 @@ You might want to look in your code where you're setting transparency and make s
     def when_touching_wall(self, callback):
         """Run a function when the sprite is touching the edge of the screen.
         :param callback: The function to run.
+        BEWARE: This function will yield the game loop until the given function returns.
         """
         async_callback = make_async(callback)
 

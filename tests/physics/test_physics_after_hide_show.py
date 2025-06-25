@@ -38,7 +38,7 @@ def test_ball_movement():
     def move():
         global num_frames
         global data
-
+        print(num_frames)
         num_frames += 1
 
         data.append(round(ball.y))
