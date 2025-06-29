@@ -8,7 +8,7 @@ import pygame  # pylint: disable=import-error
 from ..callback import callback_manager, CallbackType
 from ..core import game_loop as _game_loop
 from ..globals import globals_list
-from ..io.keypress import _pressed_keys
+from ..io.keypress import keyboard_state
 from ..loop import loop as _loop
 from ..physics import set_physics_simulation_steps as _set_physics_simulation_steps
 from ..utils import color_name_to_rgb as _color_name_to_rgb
@@ -85,7 +85,7 @@ def key_is_pressed(*keys):
                 print('up or w pressed')
     """
     for key in keys:
-        if key in _pressed_keys.values():
+        if key in keyboard_state.pressed_keys.values():
             return True
     return False
 

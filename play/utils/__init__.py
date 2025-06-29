@@ -44,7 +44,7 @@ class _Position:
 
 def color_name_to_rgb(
     name: str, transparency: int = 255
-) -> tuple[int, int, int, int] | str:
+) -> tuple[int, int, int, int] | tuple | str:
     """
     Turn an English color name into an RGB value.
 

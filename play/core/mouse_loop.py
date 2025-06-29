@@ -8,8 +8,15 @@ from ..io.screen import screen
 
 
 class MouseState:  # pylint: disable=too-few-public-methods
+    """Class to manage the state of the mouse."""
+
     click_happened_this_frame = False  # pylint: disable=invalid-name
     click_release_happened_this_frame = False  # pylint: disable=invalid-name
+
+    def clear(self):
+        """Clear the mouse state for the next frame."""
+        self.click_happened_this_frame = False
+        self.click_release_happened_this_frame = False
 
 
 mouse_state = MouseState()

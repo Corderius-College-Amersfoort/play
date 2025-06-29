@@ -8,7 +8,7 @@ from ..objects.sprite import point_touching_sprite
 from ..callback.callback_helpers import run_async_callback
 
 
-class _Mouse:
+class Mouse:
     def __init__(self):
         self.x = 0
         self.y = 0
@@ -77,4 +77,4 @@ class _Mouse:
         return _math.sqrt(dx**2 + dy**2)
 
 
-mouse = _Mouse()
+mouse = Mouse()

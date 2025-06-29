@@ -14,7 +14,7 @@ from ..callback.callback_helpers import run_async_callback
 pygame.joystick.init()
 
 
-def _when_button(index: int, released: bool, *buttons: list[int | list[int]] | None):
+def when_button(index: int, released: bool, *buttons: list[int | list[int]] | None):
     """A decorator that runs a function when a button on a controller is pressed.
     :param index: The index of the controller.
     :param button: The index of the button.
@@ -161,7 +161,7 @@ class _Controllers:
         :param index: The index of the controller.
         :param button: The index of the button.
         :return: The function to run."""
-        return _when_button(index, False, *buttons)
+        return when_button(index, False, *buttons)
 
     # @decorator
     def when_any_button_pressed(self, index):
@@ -169,7 +169,7 @@ class _Controllers:
         :param index: The index of the controller.
         :return: The function to run."""
         buttons = {"any": None}
-        return _when_button(index, False, *buttons)
+        return when_button(index, False, *buttons)
 
     # @decorator
     def when_button_released(self, index, *buttons):
@@ -177,7 +177,7 @@ class _Controllers:
         :param index: The index of the controller.
         :param button: The index of the button.
         :return: The function to run."""
-        return _when_button(index, True, *buttons)
+        return when_button(index, True, *buttons)
 
     # @decorator
     def when_any_button_released(self, index):
@@ -185,7 +185,7 @@ class _Controllers:
         :param index: The index of the controller.
         :return: The function to run."""
         buttons = {"any": None}
-        return _when_button(index, True, *buttons)
+        return when_button(index, True, *buttons)
 
     # @decorator
     def when_axis_moved(self, index, axis):

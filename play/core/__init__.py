@@ -25,7 +25,7 @@ from ..callback import callback_manager, CallbackType
 from ..globals import globals_list
 from ..io.screen import screen
 from ..loop import loop as _loop
-from ..io.keypress import _keys_released_this_frame
+from ..io.keypress import keyboard_state
 
 _clock = pygame.time.Clock()
 
@@ -68,9 +68,8 @@ def _handle_pygame_events():
 @listen_to_failure()
 async def game_loop():
     """The main game loop."""
-    _keys_released_this_frame.clear()
-    mouse_state.click_happened_this_frame = False
-    mouse_state.click_release_happened_this_frame = False
+    keyboard_state.clear()
+    mouse_state.clear()
 
     _clock.tick(globals_list.FRAME_RATE)
 

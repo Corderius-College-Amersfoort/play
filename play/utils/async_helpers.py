@@ -48,7 +48,6 @@ def make_async(func):
     :param func: A function that may or may not be async.
     """
     if _asyncio.iscoroutinefunction(func):
-        # if it's already async, return it
         return _raise_on_await_warning(func)
 
     @_raise_on_await_warning

@@ -190,7 +190,10 @@ class Screen:
 screen = Screen()
 
 
-def _create_wall(a, b):
+def create_wall(a, b):
+    """Create a wall segment in the physics space.
+    :param a: The start point of the wall segment.
+    :param b: The end point of the wall segment."""
     segment = _pymunk.Segment(physics_space.static_body, a, b, 0.0)
     segment.elasticity = 1.0
     segment.friction = 0.0
@@ -201,16 +204,16 @@ def _create_wall(a, b):
 def create_walls():
     """Create walls around the screen."""
     globals_list.walls.append(
-        _create_wall([screen.left, screen.top], [screen.right, screen.top])
+        create_wall([screen.left, screen.top], [screen.right, screen.top])
     )  # top
     globals_list.walls.append(
-        _create_wall([screen.left, screen.bottom], [screen.right, screen.bottom])
+        create_wall([screen.left, screen.bottom], [screen.right, screen.bottom])
     )  # bottom
     globals_list.walls.append(
-        _create_wall([screen.left, screen.bottom], [screen.left, screen.top])
+        create_wall([screen.left, screen.bottom], [screen.left, screen.top])
     )  # left
     globals_list.walls.append(
-        _create_wall([screen.right, screen.bottom], [screen.right, screen.top])
+        create_wall([screen.right, screen.bottom], [screen.right, screen.top])
     )  # right
 
 
