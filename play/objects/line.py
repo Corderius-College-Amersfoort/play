@@ -28,7 +28,7 @@ class Line(Sprite):
         self._color = color
         self._thickness = thickness
 
-        # can set either (length, angle) or (x1,y1), otherwise a default is used
+        # can set either (length, angle) or (x1,y1); otherwise a default is used
         if length is not None and angle is not None:
             self._length = length
             self._angle = angle

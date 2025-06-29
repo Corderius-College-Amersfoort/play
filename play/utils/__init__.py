@@ -5,7 +5,8 @@ from typing import Sequence
 import pygame
 
 
-def _clamp(num, min_, max_):
+def clamp(num, min_, max_):
+    """Clamp a number between a minimum and maximum value."""
     if num < min_:
         return min_
     if num > max_:
@@ -43,7 +44,7 @@ class _Position:
 
 def color_name_to_rgb(
     name: str, transparency: int = 255
-) -> tuple[int, int, int, int] | str:
+) -> tuple[int, int, int, int] | tuple | str:
     """
     Turn an English color name into an RGB value.
 

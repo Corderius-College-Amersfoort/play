@@ -12,8 +12,8 @@ from ..callback.collision_callbacks import collision_registry, CollisionType
 from ..globals import globals_list
 from ..io.screen import screen
 from ..physics import physics_space, Physics as _Physics
-from ..utils import _clamp
-from ..utils.async_helpers import _make_async
+from ..utils import clamp as _clamp
+from ..utils.async_helpers import make_async
 
 
 def _sprite_touching_sprite(a, b):
@@ -434,7 +434,7 @@ You might want to look in your code where you're setting transparency and make s
         :param callback: The function to run.
         :param call_with_sprite: Whether to call the function with the sprite as an argument.
         """
-        async_callback = _make_async(callback)
+        async_callback = make_async(callback)
 
         async def wrapper():
             wrapper.is_running = True
@@ -466,7 +466,7 @@ You might want to look in your code where you're setting transparency and make s
         """
 
         def decorator(func):
-            async_callback = _make_async(func)
+            async_callback = make_async(func)
 
             if self.physics:
                 for sprite in sprites:
@@ -506,7 +506,7 @@ You might want to look in your code where you're setting transparency and make s
         """
 
         def decorator(func):
-            async_callback = _make_async(func)
+            async_callback = make_async(func)
 
             if self.physics:
                 for sprite in sprites:
@@ -546,7 +546,7 @@ You might want to look in your code where you're setting transparency and make s
         :param callback: The function to run.
         BEWARE: This function will yield the game loop until the given function returns.
         """
-        async_callback = _make_async(callback)
+        async_callback = make_async(callback)
 
         async def wrapper():
             await run_async_callback(
@@ -574,7 +574,7 @@ You might want to look in your code where you're setting transparency and make s
         """Run a function when the sprite is no longer touching the edge of the screen.
         :param callback: The function to run.
         """
-        async_callback = _make_async(callback)
+        async_callback = make_async(callback)
 
         async def wrapper():
             await run_async_callback(
@@ -612,7 +612,6 @@ You might want to look in your code where you're setting transparency and make s
     def clone(self):
         """Clone the sprite.
         :return: The cloned sprite."""
-        # TODO: make work with physics
         return self.__class__(image=self.image)
 
     def start_physics(  # pylint: disable=too-many-arguments

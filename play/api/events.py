@@ -5,12 +5,9 @@ from ..io.keypress import (
     when_key as _when_key,
     when_any_key as _when_any_key,
 )
-from ..io.controllers import controllers
 from ..io.mouse import mouse
-from ..utils.async_helpers import _make_async
+from ..utils.async_helpers import make_async
 from ..callback.callback_helpers import run_async_callback
-
-_ = controllers  # Work around for the global variable not being imported
 
 
 # @decorator
@@ -29,7 +26,7 @@ def when_program_starts(func):
     :param func: The function to call when the program starts.
     :return: The decorator function.
     """
-    async_callback = _make_async(func)
+    async_callback = make_async(func)
 
     async def wrapper():
         return await run_async_callback(
@@ -59,7 +56,7 @@ def repeat_forever(func):
     :param func: The function to call repeatedly.
     :return: The decorator function.
     """
-    async_callback = _make_async(func)
+    async_callback = make_async(func)
 
     async def repeat_wrapper():
         repeat_wrapper.is_running = True

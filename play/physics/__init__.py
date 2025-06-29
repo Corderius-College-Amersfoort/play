@@ -4,8 +4,9 @@ import math as _math
 
 import pymunk as _pymunk
 
+from ..globals import globals_list
 from ..io.logging import play_logger
-from ..utils import _clamp
+from ..utils import clamp as _clamp
 
 
 class Physics:
@@ -23,8 +24,7 @@ class Physics:
         friction,
     ):
         """
-
-        Examples of objects with the different parameters:
+        Examples of objects with different parameters:
 
             Blocks that can be knocked over (the default):
                 can_move = True
@@ -261,13 +261,11 @@ class _Gravity:  # pylint: disable=too-few-public-methods
     horizontal = 0
 
 
-GRAVITY = _Gravity()
+globals_list.gravity = _Gravity()
 physics_space = _pymunk.Space()
 physics_space.sleep_time_threshold = 0.5
-physics_space.idle_speed_threshold = (
-    0  # pymunk estimates good threshold based on gravity
-)
-physics_space.gravity = GRAVITY.horizontal, GRAVITY.vertical
+physics_space.idle_speed_threshold = 0
+physics_space.gravity = globals_list.gravity.horizontal, globals_list.gravity.vertical
 
 
 def set_gravity(vertical=-100, horizontal=None):
@@ -276,15 +274,14 @@ def set_gravity(vertical=-100, horizontal=None):
     :param vertical: The vertical gravity of the game.
     :param horizontal: The horizontal gravity of the game.
     """
-    global GRAVITY  # pylint: disable=global-variable-not-assigned
-    GRAVITY.vertical = vertical
+    globals_list.gravity.vertical = vertical
     if horizontal is not None:
-        GRAVITY.horizontal = horizontal
+        globals_list.gravity.horizontal = horizontal
 
-    physics_space.gravity = GRAVITY.horizontal, GRAVITY.vertical
-
-
-_NUM_SIMULATION_STEPS = 10
+    physics_space.gravity = (
+        globals_list.gravity.horizontal,
+        globals_list.gravity.vertical,
+    )
 
 
 def set_physics_simulation_steps(num_steps: int) -> None:
@@ -292,5 +289,4 @@ def set_physics_simulation_steps(num_steps: int) -> None:
     Set the number of simulation steps for the physics engine.
     :param num_steps: The number of simulation steps.
     """
-    global _NUM_SIMULATION_STEPS
-    _NUM_SIMULATION_STEPS = num_steps
+    globals_list.num_sim_steps = num_steps

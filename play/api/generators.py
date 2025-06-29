@@ -1,5 +1,6 @@
 """Generators for creating new objects."""
 
+from ..db import Database
 from ..objects import (
     Box as _Box,
     Circle as _Circle,
@@ -195,9 +196,19 @@ def new_sound(
 ) -> _Sound:
     """
     Initialize the Sound object.
-    :param file_name: The sound file to load (file path if not in the same directory as the .py).
+    :param file_name: The sound file to load (a file path if not in the same directory as the .py).
     :param volume: The initial volume (0.0 to 1.0).
     :param loops: Number of times to loop the sound (-1 for infinite, 0 for no loop).
     """
 
     return _Sound(file_name=file_name, volume=volume, loops=loops)
+
+
+def new_database(
+    db_filename: str = "database.json",
+) -> Database:
+    """
+    Create a new database with the specified name and table.
+    :param db_filename: The name of the database file.
+    """
+    return Database(db_filename=db_filename)

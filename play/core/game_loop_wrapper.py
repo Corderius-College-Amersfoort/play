@@ -8,9 +8,7 @@ from ..loop import loop as _loop
 
 # @decorator
 def listen_to_failure():
-    """
-    A decorator that listens to exceptions in the game loop.
-    """
+    """A decorator that listens to exceptions in the game loop."""
 
     def decorate(f):
         def applicator(*args, **kwargs):

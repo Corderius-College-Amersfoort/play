@@ -13,23 +13,61 @@ from screeninfo import get_monitors
 
 import pymunk as _pymunk
 
+from ..callback import run_callback, CallbackType, callback_manager
 from ..globals import globals_list
 from ..physics import physics_space
+from ..utils.async_helpers import make_async
 
 PYGAME_DISPLAY = None
 
 
 class Screen:
-    def __init__(self, width=globals_list.WIDTH, height=globals_list.HEIGHT):
-        global PYGAME_DISPLAY
+    def update_display(self, extra_flags=0):
+        """Update the display with the current width and height."""
+        globals_list.display = pygame.display.set_mode(
+            (self._width, self._height),
+            (
+                pygame.RESIZABLE
+                if self._resizable
+                else 0 | pygame.DOUBLEBUF | extra_flags
+            ),  # pylint: disable=no-member
+        )  # pylint: disable=no-member
 
+    def __init__(self, width=globals_list.WIDTH, height=globals_list.HEIGHT):
         self._width = width
         self._height = height
-        PYGAME_DISPLAY = pygame.display.set_mode(
-            (width, height), pygame.DOUBLEBUF  # pylint: disable=no-member
-        )  # pylint: disable=no-member
-        pygame.display.set_caption("Python Play")
+
+        self._resizable = False
         self._fullscreen = False
+        self._caption = "Python Play"
+
+        self.update_display()
+        pygame.display.set_caption(self._caption)
+
+    @property
+    def caption(self):
+        """Get the caption of the screen.
+        :return: The caption of the screen."""
+        return self._caption
+
+    @caption.setter
+    def caption(self, _caption):
+        """Set the caption of the screen.
+        :param _caption: The new caption of the screen."""
+        self._caption = _caption
+        pygame.display.set_caption(self._caption)
+
+    @property
+    def resizable(self):
+        """Get whether the screen is resizable.
+        :return: Whether the screen is resizable."""
+        return self._resizable
+
+    @resizable.setter
+    def resizable(self, _resizable):
+        """Set whether the screen is resizable.
+        :param _resizable: Whether the screen is resizable."""
+        self._resizable = _resizable
 
     @property
     def width(self):
@@ -41,7 +79,6 @@ class Screen:
     def width(self, _width):
         """Set the width of the screen.
         :param _width: The new width of the screen."""
-        global PYGAME_DISPLAY
         self._width = _width
 
         remove_walls()
@@ -49,8 +86,6 @@ class Screen:
 
         if self._fullscreen:
             self.enable_fullscreen()
-        else:
-            PYGAME_DISPLAY = pygame.display.set_mode((self._width, self._height))
 
     @property
     def height(self):
@@ -62,7 +97,6 @@ class Screen:
     def height(self, _height):
         """Set the height of the screen.
         :param _height: The new height of the screen."""
-        global PYGAME_DISPLAY
         self._height = _height
 
         remove_walls()
@@ -70,8 +104,6 @@ class Screen:
 
         if self._fullscreen:
             self.enable_fullscreen()
-        else:
-            PYGAME_DISPLAY = pygame.display.set_mode((self._width, self._height))
 
     @property
     def top(self):
@@ -103,9 +135,26 @@ class Screen:
         :return: The size of the screen."""
         return self.width, self.height
 
+    def when_resized(self, func):
+        """Run a function when the screen is resized.
+        :param func: The function to run."""
+        async_callback = make_async(func)
+
+        async def wrapper():
+            run_callback(
+                async_callback,
+                [],
+                [],
+            )
+
+        callback_manager.add_callback(
+            CallbackType.WHEN_RESIZED,
+            wrapper,
+        )
+        return wrapper
+
     def enable_fullscreen(self):
         """Enable fullscreen mode."""
-        global PYGAME_DISPLAY
         if self._fullscreen:
             return
         self._fullscreen = True
@@ -120,31 +169,31 @@ class Screen:
         create_walls()
 
         if platform != "linux":
-            PYGAME_DISPLAY = pygame.display.set_mode((width, height), pygame.FULLSCREEN)
+            self.update_display(pygame.FULLSCREEN)
             window = Window.from_display_module()
             window.position = (0, 0)
         else:
-            PYGAME_DISPLAY = pygame.display.set_mode(
-                (width, height),
-                SCALED + NOFRAME + FULLSCREEN,  # pylint: disable=undefined-variable
-                32,  # pylint: disable=undefined-variable
+            self.update_display(
+                SCALED + NOFRAME + FULLSCREEN,
             )
 
     def disable_fullscreen(self):
         """Disable fullscreen mode."""
-        global PYGAME_DISPLAY
         if not self._fullscreen:
             return
         self._fullscreen = False
         pygame.display.quit()
         pygame.display.init()
-        PYGAME_DISPLAY = pygame.display.set_mode((self.width, self.height))
+        self.update_display()
 
 
 screen = Screen()
 
 
-def _create_wall(a, b):
+def create_wall(a, b):
+    """Create a wall segment in the physics space.
+    :param a: The start point of the wall segment.
+    :param b: The end point of the wall segment."""
     segment = _pymunk.Segment(physics_space.static_body, a, b, 0.0)
     segment.elasticity = 1.0
     segment.friction = 0.0
@@ -155,16 +204,16 @@ def _create_wall(a, b):
 def create_walls():
     """Create walls around the screen."""
     globals_list.walls.append(
-        _create_wall([screen.left, screen.top], [screen.right, screen.top])
+        create_wall([screen.left, screen.top], [screen.right, screen.top])
     )  # top
     globals_list.walls.append(
-        _create_wall([screen.left, screen.bottom], [screen.right, screen.bottom])
+        create_wall([screen.left, screen.bottom], [screen.right, screen.bottom])
     )  # bottom
     globals_list.walls.append(
-        _create_wall([screen.left, screen.bottom], [screen.left, screen.top])
+        create_wall([screen.left, screen.bottom], [screen.left, screen.top])
     )  # left
     globals_list.walls.append(
-        _create_wall([screen.right, screen.bottom], [screen.right, screen.top])
+        create_wall([screen.right, screen.bottom], [screen.right, screen.top])
     )  # right
 
 

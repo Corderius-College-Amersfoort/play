@@ -3,12 +3,12 @@
 import math as _math
 
 from ..callback import callback_manager, CallbackType
-from ..utils.async_helpers import _make_async
+from ..utils.async_helpers import make_async
 from ..objects.sprite import point_touching_sprite
 from ..callback.callback_helpers import run_async_callback
 
 
-class _Mouse:
+class Mouse:
     def __init__(self):
         self.x = 0
         self.y = 0
@@ -30,7 +30,7 @@ class _Mouse:
     def when_clicked(self, func):
         """Run a function when the mouse is clicked.
         :param func: The function to run."""
-        async_callback = _make_async(func)
+        async_callback = make_async(func)
 
         async def wrapper():
             await run_async_callback(
@@ -49,7 +49,7 @@ class _Mouse:
     def when_click_released(self, func):
         """Run a function when the mouse click is released.
         :param func: The function to run."""
-        async_callback = _make_async(func)
+        async_callback = make_async(func)
 
         async def wrapper():
             await run_async_callback(
@@ -64,19 +64,12 @@ class _Mouse:
         )
         return wrapper
 
-    def distance_to(self, x=None, y=None):
+    def distance_to(self, x: int | float, y: int | float):
         """Get the distance from the mouse to a point.
         :param x: The x-coordinate of the point.
         :param y: The y-coordinate of the point.
         :return: The distance from the mouse to the point."""
-        assert x is not None
-
-        try:
-            # x can either be a number or a sprite. If it's a sprite:
-            x = x.x
-            y = x.y
-        except AttributeError:
-            pass
+        assert x is not None and y is not None, "x and y must not be None"
 
         dx = self.x - x
         dy = self.y - y
@@ -84,4 +77,4 @@ class _Mouse:
         return _math.sqrt(dx**2 + dy**2)
 
 
-mouse = _Mouse()
+mouse = Mouse()

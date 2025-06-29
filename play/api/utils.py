@@ -7,12 +7,11 @@ import pygame  # pylint: disable=import-error
 
 from ..callback import callback_manager, CallbackType
 from ..core import game_loop as _game_loop
-from ..callback.callback_helpers import run_callback
-from ..loop import loop as _loop
-from ..utils import color_name_to_rgb as _color_name_to_rgb
-from ..io.keypress import _pressed_keys
 from ..globals import globals_list
+from ..io.keypress import keyboard_state
+from ..loop import loop as _loop
 from ..physics import set_physics_simulation_steps as _set_physics_simulation_steps
+from ..utils import color_name_to_rgb as _color_name_to_rgb
 
 
 def start_program():
@@ -21,13 +20,7 @@ def start_program():
 
     play.start_program() should almost certainly go at the very end of your program.
     """
-    if callback_manager.get_callbacks(CallbackType.WHEN_PROGRAM_START) is not None:
-        for func in callback_manager.get_callbacks(CallbackType.WHEN_PROGRAM_START):
-            run_callback(
-                func,
-                [],
-                [],
-            )
+    callback_manager.run_callbacks(CallbackType.WHEN_PROGRAM_START)
 
     _loop.create_task(_game_loop())
     try:
@@ -91,9 +84,8 @@ def key_is_pressed(*keys):
             if play.key_is_pressed('up', 'w'):
                 print('up or w pressed')
     """
-
     for key in keys:
-        if key in _pressed_keys.values():
+        if key in keyboard_state.pressed_keys.values():
             return True
     return False
 
