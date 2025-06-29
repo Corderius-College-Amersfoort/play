@@ -4,10 +4,10 @@ import math as _math
 
 from .mouse_loop import mouse_state
 from ..callback import callback_manager, CallbackType
-from ..callback.callback_helpers import run_callback, run_async_callback
+from ..callback.callback_helpers import run_async_callback
 from ..globals import globals_list
-from ..io.screen import convert_pos
 from ..io.mouse import mouse
+from ..io.screen import convert_pos
 from ..objects.line import Line
 from ..objects.sprite import point_touching_sprite
 

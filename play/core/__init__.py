@@ -10,6 +10,10 @@ from .controller_loop import (
     handle_controller_events as _handle_controller_events,
 )
 from .game_loop_wrapper import listen_to_failure
+from .keyboard_loop import (
+    handle_keyboard as _handle_keyboard,
+    handle_keyboard_events as _handle_keyboard_events,
+)
 from .mouse_loop import (
     handle_mouse_loop as _handle_mouse_loop,
     handle_mouse_events as _handle_mouse_events,
@@ -19,14 +23,9 @@ from .physics_loop import simulate_physics
 from .sprites_loop import update_sprites as _update_sprites
 from ..callback import callback_manager, CallbackType
 from ..globals import globals_list
-from ..io.keypress import (
-    key_num_to_name as _pygame_key_to_name,
-    _keys_released_this_frame,
-    _keys_to_skip,
-    _pressed_keys,
-)  # don't pollute user-facing namespace with library internals
 from ..io.screen import screen
 from ..loop import loop as _loop
+from ..io.keypress import _keys_released_this_frame
 
 _clock = pygame.time.Clock()
 
@@ -48,18 +47,10 @@ def _handle_pygame_events():
         if event.type == pygame.VIDEORESIZE:
             screen.width, screen.height = event.size
 
+        _handle_keyboard_events(event)
         _handle_mouse_events(event)
         _handle_controller_events(event)
-        if event.type == pygame.KEYDOWN:  # pylint: disable=no-member
-            if event.key not in _keys_to_skip:
-                name = _pygame_key_to_name(event)
-                if name not in _pressed_keys:
-                    _pressed_keys.append(name)
-        if event.type == pygame.KEYUP:  # pylint: disable=no-member
-            name = _pygame_key_to_name(event)
-            if not (event.key in _keys_to_skip) and name in _pressed_keys:
-                _keys_released_this_frame.append(name)
-                _pressed_keys.remove(name)
+
         if event.type == pygame.WINDOWRESIZED:
             screen.width, screen.height = event.w, event.h
             globals_list.display = pygame.display.set_mode(
@@ -71,24 +62,6 @@ def _handle_pygame_events():
             callback_manager.run_callbacks(CallbackType.WHEN_RESIZED)
 
     return True
-
-
-# pylint: disable=too-many-branches
-async def _handle_keyboard():
-    """Handle keyboard events in the game loop."""
-    ############################################################
-    # @when_any_key_pressed and @when_key_pressed callbacks
-    ############################################################
-    await callback_manager.run_callbacks_with_filter(
-        CallbackType.PRESSED_KEYS, _pressed_keys, ["key"]
-    )
-
-    ############################################################
-    # @when_any_key_released and @when_key_released callbacks
-    ############################################################
-    await callback_manager.run_callbacks_with_filter(
-        CallbackType.RELEASED_KEYS, _keys_released_this_frame, ["key"]
-    )
 
 
 # pylint: disable=too-many-branches, too-many-statements

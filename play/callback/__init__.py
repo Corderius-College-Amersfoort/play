@@ -47,6 +47,7 @@ class CallbackManager:
                 self.callbacks[callback_type] = []
             else:
                 self.callbacks[callback_type] = {}
+
         if callback_discriminator is None:
             self.callbacks[callback_type].append(callback)
         else:
@@ -74,7 +75,11 @@ class CallbackManager:
         return self.callbacks.get(callback_type, {}).get(callback_discriminator, None)
 
     def run_callbacks(
-        self, callback_type, callback_discriminator=None, *args, **kwargs
+        self,
+        callback_type,
+        *args,
+        callback_discriminator=None,
+        **kwargs,
     ):
         """
         Run all callbacks of a certain type with the given arguments.
@@ -84,31 +89,35 @@ class CallbackManager:
         :param kwargs: Keyword arguments to pass to the callbacks.
         :return: None
         """
-        if callback_type in self.callbacks:
-            if callback_discriminator is not None:
-                if callback_discriminator in self.callbacks[callback_type]:
-                    for callback in self.callbacks[callback_type][
-                        callback_discriminator
-                    ]:
-                        if callable(callback) and (
-                            hasattr(callback, "is_running") is False
-                        ):
-                            run_callback(callback, args, kwargs)
-            else:
-                for callback in self.callbacks[callback_type]:
-                    if callable(callback) and (
-                        hasattr(callback, "is_running") is False
-                    ):
-                        run_callback(callback, args, kwargs)
+        if callback_type not in self.callbacks:
+            return
 
-    async def run_callbacks_with_filter(
+        if callback_discriminator is not None:
+            if callback_discriminator not in self.callbacks[callback_type]:
+                return
+
+            for callback in self.callbacks[callback_type][
+                callback_discriminator
+            ]:
+                if callable(callback) and (
+                    hasattr(callback, "is_running") is False
+                ):
+                    run_callback(callback, args, kwargs)
+        else:
+            for callback in self.callbacks[callback_type]:
+                if callable(callback) and (
+                    hasattr(callback, "is_running") is False
+                ):
+                    run_callback(callback, args, kwargs)
+
+    async def run_callbacks_with_filter(  # pylint: disable=keyword-arg-before-vararg,dangerous-default-value,too-many-branches
         self,
         callback_type,
         activated_states,
         required_args=None,
         optional_args=None,
         property_filter={},
-        *args
+        *args,
     ):
         """
         Run callbacks of a certain type with a specific discriminator.
@@ -124,45 +133,54 @@ class CallbackManager:
         if optional_args is None:
             optional_args = []
 
-        def is_valid_callback(callback):
-            if not callable(callback):
+        def is_valid_callback(cb):
+            if not callable(cb):
                 return False
-            if hasattr(callback, "is_running") and callback.is_running:
+            if hasattr(cb, "is_running") and cb.is_running:
                 return False
+
             if property_filter:
                 for key, value in property_filter.items():
                     if (
-                        getattr(callback, key, None) != value
-                        and getattr(callback, key, None) != "any"
+                        getattr(cb, key, None) != value
+                        and getattr(cb, key, None) != "any"
                     ):
                         return False
             return True
 
-        if activated_states and self.get_callbacks(callback_type):
-            subscriptions = self.get_callbacks(callback_type)
-            for state in activated_states:
-                if state in subscriptions:
-                    for callback in subscriptions[state]:
-                        if is_valid_callback(callback):
-                            await run_async_callback(
-                                callback, required_args, optional_args, state, *args
-                            )
-                if "any" in subscriptions:
-                    for callback in subscriptions["any"]:
-                        if is_valid_callback(callback):
-                            await run_async_callback(
-                                callback, required_args, optional_args, state, *args
-                            )
-            all_hash = hash(frozenset(activated_states))
-            if all_hash in subscriptions:
-                for callback in subscriptions[all_hash]:
-                    if is_valid_callback(callback):
-                        await run_async_callback(
-                            callback,
-                            required_args,
-                            optional_args,
-                            activated_states,
-                        )
+        if not activated_states or not self.get_callbacks(callback_type):
+            return
+
+        subscriptions = self.get_callbacks(callback_type)
+        for state in activated_states:
+            if state in subscriptions:
+                for callback in subscriptions[state]:
+                    if not is_valid_callback(callback):
+                        continue
+
+                    await run_async_callback(
+                        callback, required_args, optional_args, state, *args
+                    )
+            if "any" in subscriptions:
+                for callback in subscriptions["any"]:
+                    if not is_valid_callback(callback):
+                        continue
+
+                    await run_async_callback(
+                        callback, required_args, optional_args, state, *args
+                    )
+        all_hash = hash(frozenset(activated_states))
+        if all_hash in subscriptions:
+            for callback in subscriptions[all_hash]:
+                if not is_valid_callback(callback):
+                    continue
+
+                await run_async_callback(
+                    callback,
+                    required_args,
+                    optional_args,
+                    activated_states, *args,
+                )
 
 
 callback_manager = CallbackManager()

@@ -35,7 +35,7 @@ def when_any_key(func, released=False):
 def when_key(*keys, released=False):
     """Run a function when a key is pressed or released."""
     for control_key in keys:
-        if not isinstance(control_key, str) and not (isinstance(control_key, list)):
+        if not isinstance(control_key, str) and not isinstance(control_key, list):
             raise ValueError("Key must be a string or a list of strings.")
         if isinstance(control_key, list):
             for sub_key in control_key:

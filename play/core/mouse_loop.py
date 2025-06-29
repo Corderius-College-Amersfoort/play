@@ -49,3 +49,4 @@ async def handle_mouse_loop():
             CallbackType.WHEN_CLICK_RELEASED,
             [],
             [],
+        )
