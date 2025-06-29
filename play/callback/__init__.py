@@ -92,16 +92,23 @@ class CallbackManager:
         if callback_type not in self.callbacks:
             return
 
+        def is_valid_callback(cb):
+            if not callable(cb):
+                return False
+            if hasattr(cb, "is_running") and cb.is_running:
+                return False
+            return True
+
         if callback_discriminator is not None:
             if callback_discriminator not in self.callbacks[callback_type]:
                 return
 
             for callback in self.callbacks[callback_type][callback_discriminator]:
-                if callable(callback) and (hasattr(callback, "is_running") is False):
+                if is_valid_callback(callback):
                     run_callback(callback, args, kwargs)
         else:
             for callback in self.callbacks[callback_type]:
-                if callable(callback) and (hasattr(callback, "is_running") is False):
+                if is_valid_callback(callback):
                     run_callback(callback, args, kwargs)
 
     async def run_callbacks_with_filter(  # pylint: disable=keyword-arg-before-vararg,dangerous-default-value,too-many-branches
