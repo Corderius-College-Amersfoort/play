@@ -1,4 +1,5 @@
 """Keyboard event handling for the game loop."""
+
 import pygame
 
 from ..callback import callback_manager, CallbackType
